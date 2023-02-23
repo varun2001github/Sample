@@ -113,9 +113,7 @@ public class Login extends HttpServlet{
 							    	c2.setHttpOnly(true);
 									c2.setSecure(true);
 								    response.addCookie(c2);
-							    	
-
-								    session.setAttribute("dataobj", userDataObj);
+							    	session.setAttribute("dataobj", userDataObj);
 								    response.sendRedirect("userpage.jsp");
 									
 								}else {

@@ -21,7 +21,7 @@ public class GroupInfoModel{
 	@Column
     Integer admin_id=null;
     
-	public Integer getGroup_id() {
+	public Integer getGroup_id(){
 		return group_id;
 	}
 	public void setGroup_id(Integer group_id) {
@@ -33,7 +33,7 @@ public class GroupInfoModel{
 	public void setGroup_name(String group_name) {
 		this.group_name = group_name;
 	}
-	public Integer getAdmin_id() {
+	public Integer getAdmin_id(){
 		return admin_id;
 	}
 	public void setAdmin_id(Integer admin_id) {

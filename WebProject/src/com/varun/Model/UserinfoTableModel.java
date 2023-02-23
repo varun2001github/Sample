@@ -34,7 +34,8 @@ public class UserinfoTableModel{
 	private List<EmailTableModel> emailTableObjs=null;
 	
     private List<MobileTableModel> mobileTableObjs=null;
-        
+    
+    
     //column variables getter setters
     public Integer getUser_id(){
     	logger.log(Level.INFO,"method"+this.user_id);

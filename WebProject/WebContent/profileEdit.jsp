@@ -5,8 +5,8 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="UTF-8">
-<title>Edit</title>
+	<meta charset="UTF-8">
+	<title>Edit</title>
 </head>
 <body>
   <a href="userpage.jsp">Continue chat</a>

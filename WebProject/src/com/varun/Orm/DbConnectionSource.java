@@ -19,10 +19,10 @@ public class DbConnectionSource{
 	
 	public DbConnectionSource(){
 		// TODO Auto-generated constructor stub
-		try {
+		try{
 			Class.forName("com.mysql.cj.jdbc.Driver");
 	        logger.log(Level.INFO,"db connection occured to "+urlpath);
-		} catch (ClassNotFoundException e) {
+		}catch(ClassNotFoundException e) {
 			// TODO Auto-generated catch block
 	        logger.log(Level.INFO,"db connection not occured to "+urlpath);
 		}

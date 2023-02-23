@@ -60,8 +60,8 @@ public class SessionAuthFilter implements Filter {
         String username=null;
         int sessionFlag=0,dataobjFlag=0;
         boolean isSessionValid=false;
-		HttpServletRequest httpRequest = (HttpServletRequest) request;
-		HttpServletResponse httpResponse = (HttpServletResponse) response;
+		HttpServletRequest httpRequest = (HttpServletRequest)request;
+		HttpServletResponse httpResponse = (HttpServletResponse)response;
 		HttpSession session=httpRequest.getSession();
 		UserinfoTableModel userObj =null;
 		try{
@@ -81,6 +81,7 @@ public class SessionAuthFilter implements Filter {
 				       		sessioninfo=c.getValue();
                         }
 				    }
+			       
 			        if(sessionFlag==1){
 			       	    AuthDao dao=new AuthDao();
 			       	    userObj=new UserinfoTableModel();

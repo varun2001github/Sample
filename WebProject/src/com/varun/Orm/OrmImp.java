@@ -11,7 +11,7 @@ import com.varun.Logger.LoggerUtil;
 
 
 public class OrmImp{
-	private Connection con;
+	private Connection con=null;
 	private static PreparedStatement stmt;
 	private String query="";
 	private Object obj=null;
@@ -113,10 +113,10 @@ public class OrmImp{
     }
     
     public List<Object> getSelect(){
-//        logger.log(Level.INFO,"getSelect()");
+//      logger.log(Level.INFO,"getSelect()");
 		List<Object> l=new ArrayList<Object>();
         logger.log(Level.INFO,"select Query: "+query);
-		try {
+		try{
 			stmt = con.prepareStatement(query,ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY);
 			ResultSet rs=stmt.executeQuery();
 			if(rs.next()){
@@ -124,7 +124,7 @@ public class OrmImp{
 				ResultSetMetaData meta = rs.getMetaData();
 				rs.last();
 				@SuppressWarnings("unchecked")
-				Constructor<Object> constructor = (Constructor<Object>) obj.getClass().getDeclaredConstructor();
+				Constructor<Object> constructor =(Constructor<Object>) obj.getClass().getDeclaredConstructor();
 				Method setterMethod=null;
 			    rs.beforeFirst();
 			    int colcount=meta.getColumnCount(); 
