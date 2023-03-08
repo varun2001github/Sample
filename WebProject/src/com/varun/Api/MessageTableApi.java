@@ -1,6 +1,7 @@
 package com.varun.Api;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -9,30 +10,36 @@ import com.varun.Logger.LoggerUtil;
 import com.varun.Model.*;
 import com.varun.Orm.CriteriaBuilder;
 import com.varun.Orm.OrmImp;
+import com.varun.Orm.Table;
 
-public class MessageTableApi {
-	private static MessagesModel messageObj=new MessagesModel();
-	private static OrmImp ormObj;
+public class MessageTableApi{
+	private MessagesModel messageObj=null;
+	private OrmImp ormObj;
 	private static final Logger logger=LoggerUtil.getLogger(MessageTableApi.class);
 	private CriteriaBuilder cb=new CriteriaBuilder();
-	
-	public MessageTableApi(){
-		ormObj=new OrmImp(messageObj);
+	private static String Table=MessagesModel.class.getAnnotation(Table.class).name();
+
+	public MessageTableApi(OrmImp obj){
+		this.ormObj=obj;
 	}
-//     public List<messages> get
-	public void closeOrmConnection(){
-  		 ormObj.close();
-	}
+
 	public List<MessagesModel> getNormalMsg(Integer senderid,Integer recieverid){
          logger.log(Level.INFO,"method called");
          try{
         	 CriteriaBuilder cbNested=new CriteriaBuilder();
-    		 ormObj.SelectQuery("senderid","text","chattime")
+    		 ormObj.SelectQuery("senderid","text","chattime").From(Table)
     		 .Where(cb.addNestedCondition(cbNested.addEquals("senderid",senderid).AndEquals("recieverid",recieverid)))
     		 .Or(cb.addNestedCondition(cbNested.addEquals("senderid",recieverid).AndEquals("recieverid",senderid)));
-    	   	 @SuppressWarnings("unchecked")
-			 List<MessagesModel> l=(List<MessagesModel>)(Object)ormObj.getSelect();
-    	   	 return l;
+    	
+    	   	List<DataObject> dataList=ormObj.getSelect();
+       	    List<MessagesModel> l=null;
+       	    if(dataList.size()>0) {
+             	l=new ArrayList<MessagesModel>();
+            	for(DataObject ob:dataList){
+            		l.add(new MessagesModel(ob));
+            	}
+       	    }
+    	   	return l;
  	   	 }catch(Exception e){
  		     logger.log(Level.WARNING,"unexpected",e);
  	   	 }
@@ -42,13 +49,20 @@ public class MessageTableApi {
 	public List<MessagesModel> getGroupMsg(Integer senderid,Integer recieverid){
          logger.log(Level.INFO,"method called");
          try{
-        	 CriteriaBuilder cbNested=new CriteriaBuilder();
-    		 ormObj.SelectQuery("senderid","text","chattime")
-    		 .Where(cb.addNestedCondition(cbNested.addEquals("senderid",senderid).AndEquals("group_id",recieverid)))
-    		 .Or(cb.addNestedCondition(cbNested.addEquals("senderid",recieverid).AndEquals("group_id",senderid)));
-    	   	 @SuppressWarnings("unchecked")
-			 List<MessagesModel> l=(List<MessagesModel>)(Object)ormObj.getSelect();
-    	   	 return l;
+        	CriteriaBuilder cbNested=new CriteriaBuilder();
+    		ormObj.SelectQuery("senderid","text","chattime").From(Table)
+    		.Where(cb.addNestedCondition(cbNested.addEquals("senderid",senderid).AndEquals("group_id",recieverid)))
+    		.Or(cb.addNestedCondition(cbNested.addEquals("senderid",recieverid).AndEquals("group_id",senderid)));
+    		 
+		    List<DataObject> dataList=ormObj.getSelect();
+    	    List<MessagesModel> l=null;
+    	    if(dataList.size()>0) {
+	          	l=new ArrayList<MessagesModel>();
+	         	for(DataObject ob:dataList){
+	         		l.add(new MessagesModel(ob));
+	         	}
+    	    }
+    	   	return l;
  	   	 }catch(Exception e){
  		     logger.log(Level.WARNING,"unexpected",e);
  	   	 }
@@ -57,12 +71,13 @@ public class MessageTableApi {
     }
 	public boolean addNormalMessage(Integer senderid,Integer recieverid,String text) {
         logger.log(Level.INFO,"method called");
+        messageObj=new MessagesModel();
         try{
      		messageObj.setSenderid(senderid);
      		messageObj.setRecieverid(recieverid);
      		messageObj.setText(text);
-     		messageObj.setChattime(BigInteger.valueOf(System.currentTimeMillis()));
-     		Integer isInserted=ormObj.Insert(messageObj);
+     		messageObj.setChattime(System.currentTimeMillis());
+     		Integer isInserted=ormObj.Insert(messageObj.getDataObject());
      		if(isInserted!=null) {
      			return true;
      		}
@@ -71,14 +86,15 @@ public class MessageTableApi {
 	   	 }
  		 return false;
 	}
-	public boolean addGroupMessage(Integer senderid,Integer groupid,String text) {
+	public boolean addGroupMessage(Integer senderid,Integer groupid,String text){
         logger.log(Level.INFO,"method called");
+        messageObj=new MessagesModel();
         try{
         	messageObj.setSenderid(senderid);
     		messageObj.setGroup_id(groupid);
     		messageObj.setText(text);
-    		messageObj.setChattime(BigInteger.valueOf(System.currentTimeMillis()));
-    		Integer isInserted=ormObj.Insert(messageObj);
+    		messageObj.setChattime(System.currentTimeMillis());
+    		Integer isInserted=ormObj.Insert(messageObj.getDataObject());
     		if(isInserted!=null) {
     			return true;
     		}

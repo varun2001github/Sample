@@ -20,7 +20,7 @@ import javax.servlet.http.*;
  * Servlet implementation class GroupFormation
  */
 @WebServlet("/GroupFormation")
-public class GroupFormation extends HttpServlet {
+public class GroupFormation extends HttpServlet{
 	
 	private PrintWriter out=null;
 	private int userid=0;
@@ -30,7 +30,7 @@ public class GroupFormation extends HttpServlet {
 	
 	public GroupFormation() {
 	        super();
-	        // TODO Auto-generated constructor stub
+	        // TODO Auto-generated construcnametor stub
 	}
 	public void doGet(HttpServletRequest request, HttpServletResponse response)throws ServletException, IOException {
 		// TODO Auto-generated method stub
@@ -50,8 +50,7 @@ public class GroupFormation extends HttpServlet {
 					out.println("<input type=\"submit\" value=\"create\"></form>");
 					out.println("<br><button onclick=\"hidePopup()\">Close</button>\n");
 				}
-				
-		  }catch(Exception e){
+			}catch(Exception e){
 		        logger.log(Level.WARNING,"Exception",e);
 		  }
 	}

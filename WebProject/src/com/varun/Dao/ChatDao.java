@@ -8,25 +8,33 @@ import com.varun.Api.*;
 import com.varun.Controller.ChatList;
 import com.varun.Logger.LoggerUtil;
 import com.varun.Model.*;
+import com.varun.Orm.OrmImp;
 
 public class ChatDao{
 	private static final Logger logger=LoggerUtil.getLogger(ChatList.class);
-
+    private OrmImp ormObj=null;
     public List<UserinfoTableModel> fetchFrnds(Integer uid){
           logger.log(Level.INFO,"method called");
-		  UserTableApi userApi=new UserTableApi();
-		  return userApi.fetchChatList(uid);
+  		  ormObj=new OrmImp();
+		  UserTableApi userApi=new UserTableApi(ormObj);
+		  List<UserinfoTableModel> list=userApi.fetchChatList(uid);
+		  ormObj.close();
+		  return list;
     }	
     
 	public List<GroupInfoModel> fetchGroups(Integer uid){
           logger.log(Level.INFO,"method called");
-		  GroupTableApi grpApi=new GroupTableApi();
-		  return grpApi.fetchChatList(uid);       
+  		  ormObj=new OrmImp();
+		  GroupTableApi grpApi=new GroupTableApi(ormObj);
+		  List<GroupInfoModel> list=grpApi.fetchChatList(uid);
+		  ormObj.close();
+		  return list;       
 	}
 	
 	public List<MessagesModel> chatFetch(Integer senderid,Integer recieverid,Integer isGroup){
           logger.log(Level.INFO,"method called");
-	      MessageTableApi messageApi=new MessageTableApi();
+  		  ormObj=new OrmImp();
+	      MessageTableApi messageApi=new MessageTableApi(ormObj);
 	      List<MessagesModel> chatmsg=null;
 		  if(isGroup==1){
 			 //reciever id is group uid
@@ -34,25 +42,29 @@ public class ChatDao{
 	      }else{
 			 chatmsg=messageApi.getNormalMsg(senderid,recieverid);
 		  }
+		  ormObj.close();
 		  return chatmsg;
     }
 	
 	public boolean sendMessage(Integer senderid,Integer recieverid,String text,int isGroup){
           logger.log(Level.INFO,"method called");
-		  MessageTableApi msgApi=new MessageTableApi();
+  		  ormObj=new OrmImp();
+		  MessageTableApi msgApi=new MessageTableApi(ormObj);
 		  boolean isAdded=false;
 		  if(isGroup==1){
 			isAdded=msgApi.addGroupMessage(senderid, recieverid, text);
 		  }else {
 			isAdded=msgApi.addNormalMessage(senderid, recieverid, text);
 		  }
+		  ormObj.close();
 		  return isAdded;
 	}
      
 	public void createGroup(Integer adminid,String groupname,String[] members){
           logger.log(Level.INFO,"method called");
-          GroupTableApi groupApi=new GroupTableApi();
-	      GroupMemberTableApi memberApi=new GroupMemberTableApi(); 
+  		  ormObj=new OrmImp();
+          GroupTableApi groupApi=new GroupTableApi(ormObj);
+	      GroupMemberTableApi memberApi=new GroupMemberTableApi(ormObj); 
 		  if(adminid!=0 && groupname!="" && members!=null) {
 		 	try {
 				Integer groupId=groupApi.addGroup(adminid, groupname);
@@ -61,6 +73,6 @@ public class ChatDao{
 				e.printStackTrace();
 			}
 		  }
-
+		  ormObj.close();
 	}
 }

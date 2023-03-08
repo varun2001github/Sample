@@ -59,31 +59,35 @@ public class ChatList extends HttpServlet{
                   List<GroupInfoModel> grpChatList=dao.fetchGroups(id);
                   
                   //group chat list
- 	             for(GroupInfoModel obj:grpChatList){
-         			 recieverId=obj.getGroup_id();
-         			 recieverName=obj.getGroup_name();
-// 	            	 JSONObject json=new JSONObject();
-//         			 json.put("groupyn",1);
-//                   json.put("recieverid",recieverId);
-//         			 json.put("senderid",id);
-          			 out.println("<button type=\"button\" class=\"btn btn-primary active\" onclick=\"chat("+id+","+recieverId+","+1+",'"+recieverName+"');\">"+recieverName+"</button><br>");
-
+                  if(grpChatList!=null) {
+                	  for(GroupInfoModel obj:grpChatList){
+              			 recieverId=obj.getGroup_id();
+              			 recieverName=obj.getGroup_name();
+//      	            	 JSONObject json=new JSONObject();
+//              			 json.put("groupyn",1);
+//                        json.put("recieverid",recieverId);
+//              			 json.put("senderid",id);
+               			 out.println("<button type=\"button\" class=\"btn btn-primary active\" onclick=\"chat("+id+","+recieverId+","+1+",'"+recieverName+"');\">"+recieverName+"</button><br>");
+                       }  
+                  }
+ 	              
+ 	              if(chatList!=null) {
+ 	            	 for(UserinfoTableModel obj:chatList){
+ 	         			 recieverId=obj.getUser_id();
+ 	         			 recieverName=obj.getUser_name();
+// 	 	            	 JSONObject json=new JSONObject();
+// 	         			 json.put("groupyn",1);
+// 	                   json.put("recieverid",recieverId);
+// 	         			 json.put("senderid",id);
+ 	          			 out.println("<button type=\"button\" class=\"btn btn-primary active\" onclick=\"chat("+id+","+recieverId+","+0+",'"+recieverName+"');\">"+recieverName+"</button><br>");
+// 	          		 if(status.equals("1")){
+// 	            		    out.println("<div style=\"padding-left:5px;padding-top:4px\"><div class=\"status\" style=\"background-color:#40CF49;width:10px;height:10px;border-radius:100%;\"></div></div><br></div>");
+// 	            	     }else{
+// 	            	    	out.println("<br></div>");
+// 	        	         }
+ 	 	              }  
  	              }
  	              
- 	              for(UserinfoTableModel obj:chatList) {
-         			 recieverId=obj.getUser_id();
-         			 recieverName=obj.getUser_name();
-// 	            	 JSONObject json=new JSONObject();
-//         			 json.put("groupyn",1);
-//                   json.put("recieverid",recieverId);
-//         			 json.put("senderid",id);
-          			 out.println("<button type=\"button\" class=\"btn btn-primary active\" onclick=\"chat("+id+","+recieverId+","+0+",'"+recieverName+"');\">"+recieverName+"</button><br>");
-//          		 if(status.equals("1")){
-//            		    out.println("<div style=\"padding-left:5px;padding-top:4px\"><div class=\"status\" style=\"background-color:#40CF49;width:10px;height:10px;border-radius:100%;\"></div></div><br></div>");
-//            	     }else{
-//            	    	out.println("<br></div>");
-//        	         }
- 	              }
  	       }catch (JSONException e){
 			// TODO Auto-generated catch block
 		        logger.log(Level.WARNING,"JSONException",e);

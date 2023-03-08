@@ -6,10 +6,11 @@ import java.util.logging.Logger;
 
 public class LoggerUtil {
     private static final String PROPERTIES_FILE_PATH = "/home/local/ZOHOCORP/varun-pt6303/ZIDE Workspace/WebProject/logger.properties";
-    private static LogManager manager=LogManager.getLogManager();
+    private static LogManager manager;
     
-    public static Logger getLogger(Class<?> clazz){
+    private static void createManager(){
     	try{
+    	    manager=LogManager.getLogManager();
 			manager.readConfiguration(new FileInputStream(PROPERTIES_FILE_PATH));
 		}catch (SecurityException e){
 			// TODO Auto-generated catch block
@@ -21,6 +22,12 @@ public class LoggerUtil {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-        return Logger.getLogger(clazz.getName());
+    }
+    
+    public static Logger getLogger(Class<?> clazz){
+    	if(manager==null) {
+    		createManager();
+    	}
+    	return Logger.getLogger(clazz.getName());
     }
 }

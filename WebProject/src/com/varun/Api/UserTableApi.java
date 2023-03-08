@@ -2,6 +2,7 @@ package com.varun.Api;
 
 import java.math.BigInteger;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.logging.Level;
@@ -9,75 +10,70 @@ import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
 import com.varun.Logger.LoggerUtil;
+import com.varun.Model.DataObject;
+import com.varun.Model.EmailTableModel;
 import com.varun.Model.UserinfoTableModel;
 import com.varun.Orm.*;
 
-
-public class UserTableApi {
+public class UserTableApi{
 	//logger 
 	private static final Logger logger=LoggerUtil.getLogger(UserTableApi.class);
-	private static UserinfoTableModel userObject=new UserinfoTableModel();
+	private static UserinfoTableModel userObject=null;
 	private CriteriaBuilder c=new CriteriaBuilder();
 	private OrmImp orm;
-	
-    public UserTableApi(){
-   	    try{
-			orm=new OrmImp(userObject);
+	private static String Table=UserinfoTableModel.class.getAnnotation(Table.class).name();
+    public UserTableApi(OrmImp ob){
+		try {
+			this.orm=ob;
    	    	logger.log(Level.INFO," constructor ");
-		}catch (Exception e){
+		}catch(Exception e){
 			// TODO Auto-generated catch block
    	    	logger.log(Level.WARNING," constructor ",e);
 		}
     }
     
-    public void closeOrmConnection(){
-    	orm.close();
-	}
-    
-    public UserTableApi(UserinfoTableModel userObject){
-   	    try{
-   	    	UserTableApi.userObject=userObject;
-			orm=new OrmImp(userObject);
-   	    	logger.log(Level.INFO," constructor ");
-		}catch (Exception e){
-			// TODO Auto-generated catch block
-   	    	logger.log(Level.WARNING," constructor ",e);
-		}
-    }
     
     public UserinfoTableModel getUserById(Integer id){
     	
     	//query formation
-    	orm.SelectQuery("user_id","user_name")
+    	orm.SelectAll().From(Table)
     	.Where(c.addEquals("user_id",id));
 	    logger.log(Level.INFO," query generated ");
-    	List<UserinfoTableModel> selectList=(List<UserinfoTableModel>)(Object)orm.getSelect();
-    	if(selectList.size()>0){
+	    List<DataObject> dataList=orm.getSelect();
+//    	List<UserinfoTableModel> selectList=(List<UserinfoTableModel>)(Object)orm.getSelect();
+    	if(dataList.size()>0){
+    		System.out.println("avl");
    	       logger.log(Level.INFO,"select list available");
-    	   return selectList.get(0);
+    	   return new UserinfoTableModel(dataList.get(0));
     	}
     	return null;
     }
     
-    public boolean updateUserinfo(UserinfoTableModel obj){
+    public boolean updateUserinfo(UserinfoTableModel obj,Integer userid){
 	    logger.log(Level.INFO,"METHOD CALLED");
-    	orm.UpdateQuery(obj).Where(c.addEquals("user_id",obj.getUser_id()));
+    	orm.UpdateQuery(obj.getDataObject()).Where(c.addEquals("user_id",userid));
         boolean isUpdated=orm.update();
 	    logger.log(Level.INFO,"object updated");
     	return isUpdated;
     }
     
     public Integer addUser(String username){
-    	UserinfoTableModel obj=new UserinfoTableModel();
-	    logger.log(Level.INFO,"METHOD CALLED");
-    	obj.setUser_name(username);
-    	Integer id=orm.Insert(obj);
+    	userObject=new UserinfoTableModel();
+    	userObject.setUser_name(username);
+    	Integer id=orm.Insert(userObject.getDataObject());
 	    logger.log(Level.INFO,"object inserted");
     	return id;
     }
     public List<UserinfoTableModel> fetchChatList(Integer uid){
-    	orm.SelectQuery("user_id","user_name").Where(c.addNotEquals("user_id",uid));
-    	List<UserinfoTableModel> l=(List<UserinfoTableModel>)(Object)orm.getSelect();
+    	orm.SelectQuery("user_id","user_name").From(Table).Where(c.addNotEquals("user_id",uid));
+    	List<DataObject> dataList=orm.getSelect();
+    	List<UserinfoTableModel> l=null;
+    	if(dataList.size()>0) {
+        	l=new ArrayList<UserinfoTableModel>();
+        	for(DataObject ob:dataList){
+        		l.add(new UserinfoTableModel(ob));
+        	}
+    	}
     	return l;
     }
 }

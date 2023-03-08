@@ -10,7 +10,7 @@
 </head>
 <body>
        <div style="align_items:center; padding:20%; display:flex; flex-direction:column;">
-	    <form style=" justify-content: center; padding-left:40%" action="changepass" className="login-screen-container" name="body" >
+	    <form method="post" style=" justify-content: center; padding-left:40%" action="Authentication?operation=passchange" className="login-screen-container" name="body" >
 			<div className="log-con" >
 		        <p>Password expired,please change the password</p>
 		         <%    
@@ -27,6 +27,7 @@
 		          <p>Enter new Password </p>
 		          <input type="text" placeholder="New password" name="new-pass" required />
 		        </div>
+		        <input type="hidden" name="old-pass" required />
 		        <div style="padding-top:10px;">
 		          <button style="width:64px;" type="submit" className="login-button" placeholder="login" >confirm</button>
 	            </div>

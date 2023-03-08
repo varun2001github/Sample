@@ -34,10 +34,9 @@
 	       List<EmailTableModel> emailList=null;
 	       List<MobileTableModel> mobileList=null;
 	       if(request.getAttribute("dataobj")!=null){
-	    	   System.out.println("data obj from request attribute123123");
+	    	   System.out.println("up data obj from request attribute123123");
 	    	   dataObj=(UserinfoTableModel)request.getAttribute("dataobj");
 	       }
-	       
 	       if(dataObj!=null){
 	    	    System.out.println("dataobj not null");
 	            int flag=0;
@@ -60,9 +59,9 @@
        <% response.setHeader("Cache-Control","no-cache,no-store,must-revalidate"); %>
        <div name="logout_container" style="display:flex;">
 	       <h1> Welcome to the page,</h1><h1> <%out.println(username); %> </h1>  
-	       <form action="logout" style="padding-left:135vh; padding-top:50px;">
+	       <form action="Authentication?operation=logout" method="post" style="padding-left:135vh; padding-top:50px;">
 	          <button type="submit" style="height:30px;width:60px;">Logout</button>
-	          <a href="profileEdit.jsp">Editprofile</a> 
+	          <a href="profilepage.jsp">PROFILE</a> 
 	       </form>           
        </div>
        
@@ -91,39 +90,10 @@
                     <div id="users_for_group"></div>
                     <div id="group_list"></div>
            </div>
-           <div >
-           <button onclick="showPopup()">Show Details</button>
-           <div style="display:none" id="user_contacts">
-              <h2>USER DETAILS</h2>
-              <h3>USER EMAIL ID</h3>
-              <%  
-	              emailList=dataObj.getEmailTableObj();
-	              mobileList=dataObj.getMobileTableObj();
-                  System.out.println("em mob ret frm db"+emailList.size());
-                  for(EmailTableModel emailData:emailList){
-                      out.println(emailData.getEmailid()+"<br>");
-                  }
-              %>
-              <h3>USER MOBILE NUMBER</h3>
-              <%  System.out.println(mobileList.size());
-                  for(MobileTableModel mobileData:mobileList){
-                      out.println(mobileData.getMobileno()+"<br>");
-                  }
-              %>
-              <br><button onclick="closeGroupCreation()">Close</button>
-           </div>
-           
-           </div>
             </div> 
            <script>
-	           var popup = document.getElementById("user_contacts");
 	           var createGroupObj = document.getElementById("create_group");
-	           function showPopup(){
-	             popup.style.display = "block";
-	           }
-	           function hidePopup(){
-	             popup.style.display = "none";
-	           }
+	           
 	           function closeGroupCreation(){
 	        	   createGroupObj.innerHTML="";
 	           }
@@ -132,15 +102,14 @@
 		        JSONObject json=new JSONObject();
 		        json.put("userid",userid);
 		        out.println("var uid="+userid+";");%>
-		            $(document).ready(function(){
-		           	 $("#cg").click(function(){
-		           		  <% out.println("$.get(\"GroupFormation?uid="+userid+"\",function(data){");%>
+		        $(document).ready(function(){
+		           	$("#cg").click(function(){
+		           		 <% out.println("$.get(\"GroupFormation?uid="+userid+"\",function(data){");%>
 		           		     $("#create_grp_header").html("CREATE GROUP");
 		           			 $("#users_for_group").html(data);
-		           			 
-				    	})
-		          	 })  
-		        	}); 
+		           		 <% out.println("})");%> 
+		          	})  
+		        }); 
                     
                     
 		        	$(document).ready(function(){
@@ -160,13 +129,15 @@
 		        	
 		        	var interval;
 		        	var offsetInMillis = new Date().getTimezoneOffset() * 60 * 1000;
+		        	var receivername="";
 		        	const timezone=Intl.DateTimeFormat().resolvedOptions().timeZone;
-		        	function chat(sid,rid,isgroup,reciever){
+		        	function chat(sid,rid,isgroup,receiver){
+		        		this.receivername=receiver;
 		        		console.log(offsetInMillis+" "+Intl.DateTimeFormat().resolvedOptions().timeZone);
 		        		/*clearInterval(interval); */
-		        		$("#send_btn").html("<button onclick=\"sendmsg("+sid+","+rid+","+isgroup+",'"+reciever+"');\">send</button>");
+		        		$("#send_btn").html("<button onclick=\"sendmsg("+sid+","+rid+","+isgroup+",'"+receiver+"');\">send</button>");
 		        		$(document).ready(function(){
-		        			$("#1").html(reciever);
+		        			$("#1").html(receiver);
 			            	/*interval=setInterval(function(){
 			            		
 			           			
@@ -203,6 +174,9 @@
 			               		 url:"sendmessage", 
 			               		 type:"POST",
 			               		 data:JSON.stringify({senderid:sid,recieverid:rid,groupyn:isgroup,text:text}),
+			               		 success: function(result){
+			               		  chat(sid,rid,isgroup,this.receivername);	
+			               	     }
 			              	});
                         });
 		        	}
