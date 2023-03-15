@@ -44,6 +44,7 @@ public class OrmImp{
 		}catch(SQLException e){
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			logger.log(Level.WARNING,e+"");
 		}
 	}
 	
@@ -52,54 +53,46 @@ public class OrmImp{
 			con.commit();
 			con.setAutoCommit(true);
 			return true;
-		}catch (SQLException e){//		if(super.map!=null){
-//			for(DbColumn c:DbColumn.values()){
-//			//if getter methods result not null
-//			if(c.getValFromRef().apply(this)!=null){
-//				//put in parents hashmap
-//				super.map.put(c.name(),c.getValFromRef().apply(this));
-//			}
-//		}	
-//	}
-			// TODO Auto-generated catch block
+		}catch (SQLException e){
 			try{
 				con.rollback();
 			}catch (SQLException e1){
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
+				logger.log(Level.WARNING,e1+"");
 			}
 			e.printStackTrace();
+			logger.log(Level.WARNING,e+"");
 			return false;
 		}
 	}
 	
 	public OrmImp UpdateQuery(DataObject obj){
-		 String query="UPDATE "+obj.getClass().getAnnotation(Table.class).name()+" SET ",keyval="";
+		 String query="UPDATE "+obj.getDataMap().get("Table")+" SET ",keyval="";
 	     int counter=0;
 	     String key="";
 	     Object value=null;
 	     //iterating map and creating query
 	     for (Map.Entry<String,Object> mapElement : obj.getDataMap().entrySet()){
-			            key = mapElement.getKey();
-			 			value =mapElement.getValue();
-			 			if(value!=null){
-			 				//if value not null 
-			   				if(counter!=0){
-			   						 keyval+=",";							 
-			   				}
-			   				keyval+=key+"=";
-			   				if(value.getClass().getTypeName().endsWith("String")){
-			   					  keyval+="'"+(String)value+"'";
-			   				}else{
-			   					  keyval+=value;
-			   				}
-			   				counter++;
-			 			}
-			   			
+		            key = mapElement.getKey();
+		 			value =mapElement.getValue();
+		 			if(value!=null && key!="Table"){
+		 				//if value not null 
+		   				if(counter!=0){
+		   						 keyval+=",";							 
+		   				}
+		   				keyval+=key+"=";
+		   				if(value.getClass().getTypeName().endsWith("String")){
+		   					  keyval+="'"+(String)value+"'";
+		   				}else{
+		   					  keyval+=value;
+		   				}
+		   				counter++;
+		 			}
 	     }
 	     query+=keyval;
 		 this.query=query;
-		 System.out.println(query);
+//		 System.out.println(query);
          logger.log(Level.INFO,"Update Query created "+query);
 		 return this;
 	}
@@ -180,9 +173,8 @@ public class OrmImp{
 	}
     
 	public Integer Insert(DataObject obj){
-		System.out.println("in");
-//		this.obj=obj;
-	    String query="INSERT INTO "+obj.getClass().getAnnotation(Table.class).name(),col="(",val="(";
+
+	    String query="INSERT INTO "+obj.getDataMap().get("Table"),col="(",val="(";
 	    int counter=0;
         logger.log(Level.INFO,"Insert Query: "+query);
         String key="";
@@ -190,7 +182,7 @@ public class OrmImp{
         for(Map.Entry<String,Object> mapElement : obj.getDataMap().entrySet()){
             key = mapElement.getKey();
             value =mapElement.getValue();
-            if(value!=null){
+            if(value!=null && key!="Table"){
             	if(counter!=0){
   			      col+=",";
   			      val+=",";
@@ -242,7 +234,6 @@ public class OrmImp{
 	
     public boolean update(){
          logger.log(Level.INFO,"update() called. Update Query is "+query);
-		 System.out.println(query + " status");
 
     	 try{
 	 		stmt = con.prepareStatement(query);
@@ -279,7 +270,7 @@ public class OrmImp{
         return this;
     }
     public String getQuery(){
-    	return this.query;
+    	return query;
     }
 	public OrmImp Where(CriteriaBuilder cr){
     	query+=" WHERE "+cr.getCriteria();

@@ -38,9 +38,10 @@ public class UserTableApi{
     	//query formation
     	orm.SelectAll().From(Table)
     	.Where(c.addEquals("user_id",id));
+    	
+    	System.out.println(orm.getQuery());
 	    logger.log(Level.INFO," query generated ");
 	    List<DataObject> dataList=orm.getSelect();
-//    	List<UserinfoTableModel> selectList=(List<UserinfoTableModel>)(Object)orm.getSelect();
     	if(dataList.size()>0){
     		System.out.println("avl");
    	       logger.log(Level.INFO,"select list available");
@@ -66,6 +67,7 @@ public class UserTableApi{
     }
     public List<UserinfoTableModel> fetchChatList(Integer uid){
     	orm.SelectQuery("user_id","user_name").From(Table).Where(c.addNotEquals("user_id",uid));
+    	System.out.println(orm.getQuery());
     	List<DataObject> dataList=orm.getSelect();
     	List<UserinfoTableModel> l=null;
     	if(dataList.size()>0) {

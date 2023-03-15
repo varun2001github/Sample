@@ -19,7 +19,7 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.jasper.tagplugins.jstl.core.Url;
 
-import com.varun.Dao.UserDao;
+import com.varun.Dao.*;
 import com.varun.Model.EmailTableModel;
 import com.varun.Model.MobileTableModel;
 import com.varun.Model.UserinfoTableModel;
@@ -45,17 +45,21 @@ public class ProfileServlet extends HttpServlet{
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 //		String userid=request.getParameter("uid");
 //		String username=request.getParameter("username");
+		Integer userid=null;
 		HttpSession session=request.getSession();
-		if(request.getAttribute("dataobj")!=null) {
+  	    UserDao dao=new UserDao();
+	    UserinfoTableModel dataObj=null;
+		if(request.getAttribute("userid")!=null){
+			userid=(Integer)request.getAttribute("userid");
+			dataObj=(UserinfoTableModel)dao.getUserById(userid);
 			System.out.println("do not null"+request.getAttribute("dataobj"));
 		}else{
 			System.out.println("do null"+request.getAttribute("dataobj"));
 		}
-	    UserinfoTableModel dataObj=(UserinfoTableModel)request.getAttribute("dataobj");
 	    UserinfoTableModel updatedObj=new UserinfoTableModel();
 		String name=request.getParameter("username");
 		String gender=request.getParameter("gender");
@@ -90,9 +94,12 @@ public class ProfileServlet extends HttpServlet{
 				}
 	            updatedObj.setMobileTableObj(l);
             }			        	
-			UserDao dao=new UserDao();
             boolean isUpdated=false;
             isUpdated=dao.updateProfile(dataObj, updatedObj);
+            
+            //clear cache
+            LRUCache.remove(userid+"-"+"UserinfoTableModel");;
+            
             System.out.println(" UPDATE STAT :"+isUpdated);
             if(isUpdated){
 	    		session.setAttribute("updateerr","UPDATED");
@@ -107,32 +114,32 @@ public class ProfileServlet extends HttpServlet{
 		response.sendRedirect("profilepage.jsp");
 	}
 	
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException,IOException{
-		String operation=(String)request.getParameter("operation");
-		System.out.println(operation);
-		switch(operation) {
-		  case "login":
-			  getWeatherData(request,response);
-			  break;
-		  
-		}
-	}
+//	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException,IOException{
+//		String operation=(String)request.getParameter("operation");
+//		System.out.println(operation);
+//		switch(operation) {
+//		  case "login":
+//			  getWeatherData(request,response);
+//			  break;
+//		  
+//		}
+//	}
 	
-	protected void getWeatherData(HttpServletRequest request, HttpServletResponse response) throws ServletException,IOException{
-		String lat=request.getParameter("latitude");
-		String lon=request.getParameter("longitude");
-		if(lat!=null && lon!=null){
-			String WeatherUrl="https://api.openweathermap.org/data/2.5/weather?lat="+lat+"&lon="+lon+"&appid=43b81b5911427aa18abe13dfa021e861";
-		    URL url=new URL(WeatherUrl);
-		    HttpURLConnection con=(HttpURLConnection)url.openConnection();
-		    con.setRequestMethod("GET");
-	        StringBuilder strBuf = new StringBuilder();  
-		    BufferedReader br=new BufferedReader(new InputStreamReader(con.getInputStream(),"utf-8"));
-            String output = null;  
-            while ((output = br.readLine()) != null)  
-                strBuf.append(output);
-		    System.out.println(strBuf.toString());
-		}
-		
-	}
+//	protected void getWeatherData(HttpServletRequest request, HttpServletResponse response) throws ServletException,IOException{
+//		String lat=request.getParameter("latitude");
+//		String lon=request.getParameter("longitude");
+//		if(lat!=null && lon!=null){
+//			String WeatherUrl="https://api.openweathermap.org/data/2.5/weather?lat="+lat+"&lon="+lon+"&appid=43b81b5911427aa18abe13dfa021e861";
+//		    URL url=new URL(WeatherUrl);
+//		    HttpURLConnection con=(HttpURLConnection)url.openConnection();
+//		    con.setRequestMethod("GET");
+//	        StringBuilder strBuf = new StringBuilder();  
+//		    BufferedReader br=new BufferedReader(new InputStreamReader(con.getInputStream(),"utf-8"));
+//            String output = null;  
+//            while ((output = br.readLine()) != null)  
+//                strBuf.append(output);
+//		    System.out.println(strBuf.toString());
+//		}
+//		
+//	}
 }

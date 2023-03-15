@@ -20,6 +20,7 @@ import javax.servlet.http.HttpSession;
 
 import org.json.JSONObject;
 import com.varun.Controller.ChatList;
+import com.varun.Dao.LRUCache;
 import com.varun.Dao.UserDao;
 import com.varun.Logger.LoggerUtil;
 import com.varun.Model.UserinfoTableModel;
@@ -41,7 +42,7 @@ public class SessionAuthFilter implements Filter {
 	/**
 	 * @see Filter#destroy()
 	 */
-	public void destroy() {
+	public void destroy(){
 		// TODO Auto-generated method stub
 	}
 
@@ -57,7 +58,7 @@ public class SessionAuthFilter implements Filter {
         String username=null;
         int sessionFlag=0,dataobjFlag=0;
         boolean isSessionValid=false;
-		HttpServletRequest httpRequest =(HttpServletRequest)request;
+		HttpServletRequest httpRequest = (HttpServletRequest)request;
 		HttpServletResponse httpResponse = (HttpServletResponse)response;
 		HttpSession session=httpRequest.getSession();
 		UserinfoTableModel userObj =null;
@@ -83,11 +84,10 @@ public class SessionAuthFilter implements Filter {
 			        if(sessionFlag==1 && dataobjFlag==1){
 			       	    UserDao dao=new UserDao();
 			       	    userObj=new UserinfoTableModel();
+			       	   
 			       	    isSessionValid=dao.checkSession(userid,sessionid);
 			       	    if(isSessionValid && userObj!=null){
-			       	    	userObj=dao.getUserBySession(sessionid);
-			       	    	System.out.println("session valid in filter,redirecting");
-			       	    	httpRequest.setAttribute("dataobj",userObj);
+			       	    	httpRequest.setAttribute("userid",userid);
 		            		chain.doFilter(request, response);
 		            	}else{
 		       			    System.out.println("logout1");
@@ -96,12 +96,10 @@ public class SessionAuthFilter implements Filter {
 			       	    }
 					}
 			}
-			
 		 }catch(Exception e){
  	        logger.log(Level.WARNING,"unexpected",e);
      	 }
 		 if(sessionFlag==0 || dataobjFlag==0){
-			System.out.println("logout2");
     	    RequestDispatcher rd = httpRequest.getRequestDispatcher("/Authentication?operation=logout");
   			try {
 				rd.forward(request, response);

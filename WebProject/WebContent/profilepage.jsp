@@ -3,14 +3,16 @@
 <%@ page import="java.util.logging.*"%>
 <%@ page import="com.varun.Model.*" %>
 <%@ page import="java.util.*" %>
+<%@ page import="com.varun.Dao.*" %>
 
 <!DOCTYPE html>
 <html>
 <head>
        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script> 
        <%  
-           System.out.println("inside profilepage");
+           System.out.println("----------Inside profilepage------------");
 	       String sessioninfo="";
+     	    UserDao dao=new UserDao();
 	       UserinfoTableModel dataObj=null;
 	       Integer userid=null;
 	       String username=null;
@@ -19,22 +21,28 @@
 	       String gender=null;
 	       List<EmailTableModel> emailList=null;
 	       List<MobileTableModel> mobileList=null;
-	       if(request.getAttribute("dataobj")!=null){
-	    	   System.out.println("pp data obj from request attribute123123");
-	    	   dataObj=(UserinfoTableModel)request.getAttribute("dataobj");
-	       }
-	       if(dataObj!=null){
-	    	    System.out.println("dataobj not null");
-	            int flag=0;
+	       if(request.getAttribute("userid")!=null){
+	    	   
+	    	    userid=(Integer)request.getAttribute("userid");
+	    	    
+     	    	if(LRUCache.get(userid+"-"+"UserinfoTableModel")==null){
+     	    		 dataObj=dao.getUserById(userid);
+	      	    	 System.out.println("userpage userDataObject from db");
+	      	    	 LRUCache.put(userid+"-"+"UserinfoTableModel", dataObj);
+	  	    	}else{
+	      	    	 System.out.println("userpage userDataObject from cache");
+	      	    	 dataObj=(UserinfoTableModel)LRUCache.get(userid+"-"+"UserinfoTableModel");
+	  	    	}
+     	    	int flag=0;
 	            userid=dataObj.getUser_id();
 	            username=dataObj.getUser_name();
 	            country=dataObj.getCountry();
 	            gender=dataObj.getGender();
+	    	  
 	       }else{
 	    	   System.out.println("dataobj null");
-	    	 //  response.sendRedirect("logout");
 	       }
-    	   System.out.println(username);
+ //   	   System.out.println(username);
 	       request.setAttribute("dataobj",dataObj);
            //response.setIntHeader("Refresh",1);
            //response.setHeader("Expires","0");
@@ -65,8 +73,8 @@
 		         if(dataObj!=null){
 	 		         emailList=dataObj.getEmailTableObj();
 			         mobileList=dataObj.getMobileTableObj();   
-			         System.out.println("em mob ret frm db"+emailList.size());
-		             System.out.println(mobileList.size());
+			         //System.out.println("em mob ret frm db"+emailList.size());
+		             //System.out.println(mobileList.size());
 		        	 for(EmailTableModel emailData:emailList){
 			              out.println("<input name=\"email[]\" value="+emailData.getEmailid()+" disabled><br>");
 				     }

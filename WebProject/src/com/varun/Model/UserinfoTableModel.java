@@ -18,21 +18,17 @@ import com.varun.Orm.Table;
 
 
 @Table(name="userinfo")
-public class UserinfoTableModel extends DataObject{
+public class UserinfoTableModel{
 	
 	//constructor
 	public UserinfoTableModel(DataObject ob){
-		super(ob.getDataMap());
+		this.map=ob.getDataMap();
 		setMapInVariables();
-		// TODO Auto-generated constructor stub
 	}
 	public UserinfoTableModel(){
-		super();
-		// TODO Auto-generated constructor stub
 	}
 	
 	public UserinfoTableModel(UserinfoTableModel copyObj){
-		super();
 		this.user_id = copyObj.getUser_id();
 		this.user_name = copyObj.getUser_name();
 		this.gender = copyObj.getGender();;
@@ -46,6 +42,8 @@ public class UserinfoTableModel extends DataObject{
 	}
 	
 	private static final Logger logger=LoggerUtil.getLogger(ChatList.class);
+	
+	private HashMap<String,Object> map=new HashMap<String,Object>();
 
     private Integer user_id=null;
 	
@@ -61,66 +59,46 @@ public class UserinfoTableModel extends DataObject{
     
     private Long modif_time=null;
     
-    private static Map<DbColumn, Function<UserinfoTableModel,Object>> methodMap=null;
-
     public enum DbColumn {
-    	user_id(UserinfoTableModel::getUser_id),
-    	user_name(UserinfoTableModel::getUser_name),
-    	gender(UserinfoTableModel::getGender),
-    	country(UserinfoTableModel::getCountry),
-    	picfile(UserinfoTableModel::getPicfile),
-    	created_time(UserinfoTableModel::getCreated_time),
-    	modif_time(UserinfoTableModel::getModif_time);
-    	Function<UserinfoTableModel,Object> ob;
-		private DbColumn(Function<UserinfoTableModel,Object> ob){
-			this.ob=ob;
-		}
-		public Function<UserinfoTableModel,Object> getValFromRef(){
-			return this.ob;
-		}
+    	user_id,
+    	user_name,
+    	gender,
+    	country,
+    	picfile,
+    	created_time,
+    	modif_time;
+    	
 	}
 	
 	/////
 	
 	private void setMapInVariables(){
-		this.user_id=(Integer)super.map.get(DbColumn.user_id.name());
-		this.user_name=(String)super.map.get(DbColumn.user_name.name());
-		this.gender=(String)super.map.get(DbColumn.gender.name());
-		this.country=(String)super.map.get(DbColumn.country.name());
-		this.picfile=(String)super.map.get(DbColumn.picfile.name());
-		this.created_time=(Long)super.map.get(DbColumn.created_time.name());
-		this.modif_time=(Long)super.map.get(DbColumn.modif_time.name());
+		this.user_id=(Integer)map.get(DbColumn.user_id.name());
+		this.user_name=(String)map.get(DbColumn.user_name.name());
+		this.gender=(String)map.get(DbColumn.gender.name());
+		this.country=(String)map.get(DbColumn.country.name());
+		this.picfile=(String)map.get(DbColumn.picfile.name());
+		this.created_time=(Long)map.get(DbColumn.created_time.name());
+		this.modif_time=(Long)map.get(DbColumn.modif_time.name());
 	}
 	
 	private void setVariablesInMap(){
-		super.map.put(DbColumn.user_id.name(), this.user_id);
-		super.map.put(DbColumn.user_name.name(), this.user_name);
-		super.map.put(DbColumn.gender.name(), this.gender);
-		super.map.put(DbColumn.country.name(), this.country);
-		super.map.put(DbColumn.picfile.name(), this.picfile);
-		super.map.put(DbColumn.created_time.name(), this.created_time);
-		super.map.put(DbColumn.modif_time.name(), this.modif_time);
-	}
-	
-	public DataObject getDataObject(){
-		setVariablesInMap();
-		return super.getDataObjectRef();
-	}
-	
-//	public void updateDataObject(DataObject obj){
-//		super.updateMap(obj.getDataMap());
-//		setMapInVariables();
-//	}
-    
-	public HashMap<String,Object> getMapFromVars(){
-		setVariablesInMap();
-		return super.map;
-	}
+		map.put("Table","userinfo");
+		map.put(DbColumn.user_id.name(), this.user_id);
+		map.put(DbColumn.user_name.name(), this.user_name);
+		map.put(DbColumn.gender.name(), this.gender);
+		map.put(DbColumn.country.name(), this.country);
+		map.put(DbColumn.picfile.name(), this.picfile);
+		map.put(DbColumn.created_time.name(), this.created_time);
+		map.put(DbColumn.modif_time.name(), this.modif_time);
+	}    
 
-    //for using in insert,update
-	public Object getColumnVal(DbColumn column){
-	    return methodMap.get(column).apply(this);
+	public DataObject getDataObject() {
+		setVariablesInMap();
+		return new DataObject(map);
 	}
+//
+    //for using in insert,update
     	
     private PasswordTableModel passTableObj=null;
     

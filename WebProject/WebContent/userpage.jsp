@@ -24,8 +24,9 @@
        
        <%  
            //<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-           System.out.println("inside userpage");
+           System.out.println("-------------inside userpage------------------");
 	       String sessioninfo="";
+      	    UserDao dao=new UserDao();
 	       UserinfoTableModel dataObj=null;
 	       Integer userid=null;
 	       String username=null;
@@ -33,22 +34,32 @@
 	       
 	       List<EmailTableModel> emailList=null;
 	       List<MobileTableModel> mobileList=null;
-	       if(request.getAttribute("dataobj")!=null){
-	    	   System.out.println("up data obj from request attribute123123");
-	    	   dataObj=(UserinfoTableModel)request.getAttribute("dataobj");
+	       if(request.getAttribute("userid")!=null){
+	    	   
+	    	    userid=(Integer)request.getAttribute("userid");
+	    	    
+      	    	if(LRUCache.get(userid+"-"+"UserinfoTableModel")==null){
+      	    		 dataObj=dao.getUserById(userid);
+	      	    	 System.out.println("userpage userDataObject from db");
+	      	    	 LRUCache.put(userid+"-"+"UserinfoTableModel", dataObj);
+	  	    	}else{
+	      	    	 System.out.println("userpage userDataObject from cache");
+	      	    	 dataObj=(UserinfoTableModel)LRUCache.get(userid+"-"+"UserinfoTableModel");
+	  	    	}
+
+	    	  // System.out.println("up data obj from request attribute123123");
+	    	   //dataObj=(UserinfoTableModel)request.getAttribute("dataobj");
 	       }
 	       if(dataObj!=null){
-	    	    System.out.println("dataobj not null");
 	            int flag=0;
 	            userid=dataObj.getUser_id();
 	            username=dataObj.getUser_name();
 	       }else{
-	    	   System.out.println("dataobj null");
 	    	   response.sendRedirect("log");
 	       }
 	       
-           request.setAttribute("dataobj",dataObj);
-           session.setAttribute("dataobj",dataObj);
+           //request.setAttribute("dataobj",dataObj);
+           //session.setAttribute("dataobj",dataObj);
            //response.setIntHeader("Refresh",1);
            response.setHeader("Expires","0");
        %>

@@ -15,7 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.json.JSONObject;
 
 @WebServlet("/WeatherServlet")
-public class WeatherServlet extends HttpServlet {
+public class WeatherServlet extends HttpServlet{
 	private static final long serialVersionUID = 1L;
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -40,12 +40,12 @@ public class WeatherServlet extends HttpServlet {
            strBuf.append(output);
         br.close();
         JSONObject json=new JSONObject(strBuf.toString());
-        System.out.println(json.toString());
+//        System.out.println(json.toString());
         JSONObject nestedJson=new JSONObject(json.get("current").toString());
         
         //sending JSP response
         out.println("<div id=\"weather-report\" style=\"padding-left:20%;\">\n" + 
-        		"		         <div style=\"background: linear-gradient(to right, #33ccff -28%, #ffffff 132%);width:360px;height:220px;border-radius:20px;\">\n" + 
+        		"		         <div style=\"background:#F5FFFA;width:360px;height:220px;border-radius:20px;\">\n" + 
         		"			             <div id=\"profile-weather\" style=\"width:60px;height:60px;padding-left:15%;\" >\n" + 
         		"					              <div style=\"display:flex;height:60%;\">\n" + 
         		"					                   <img src=\"https://developer.foreca.com/static/images/symbols/"+nestedJson.get("symbol")+".png\" style=\"width:100px;height:80px;padding-top:10px;\">\n" + 
@@ -75,11 +75,8 @@ public class WeatherServlet extends HttpServlet {
         		"	      </div>");
 	}
 
-	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
-	 */
 
-    public WeatherServlet() {
+    public WeatherServlet(){
         super();
         // TODO Auto-generated constructor stub
     }

@@ -9,9 +9,11 @@ import com.varun.Model.MobileTableModel.DbColumn;
 import com.varun.Orm.Table;
 
 @Table(name="messages")
-public class MessagesModel extends DataObject{
+public class MessagesModel{
 
 	private static final Logger logger=LoggerUtil.getLogger(ChatList.class);
+	
+	private HashMap<String,Object> map=new HashMap<String,Object>();
     
 	private Integer chat_id=null;
 
@@ -33,18 +35,15 @@ public class MessagesModel extends DataObject{
 		chattime,
 		group_id;
     }
-	/////
+	///// constructor
 	public MessagesModel(DataObject ob){
-		super(ob.getDataMap());
+		this.map=ob.getDataMap();
 		setMapInVariables();
-		// TODO Auto-generated constructor stub
 	}
 	public MessagesModel(){
-		super();
-		// TODO Auto-generated constructor stub
 	}
+	
 	private void setMapInVariables(){
-		HashMap<String,Object> map=super.getDataMap();
 		this.chat_id=(Integer)map.get(DbColumn.chat_id.name());
 		this.senderid=(Integer)map.get(DbColumn.senderid.name());
 		this.recieverid=(Integer)map.get(DbColumn.recieverid.name());
@@ -54,28 +53,18 @@ public class MessagesModel extends DataObject{
 	}
 	
 	private void setVariablesInMap(){
-		HashMap<String,Object> map=new HashMap<String,Object>();
-		super.map.put(DbColumn.chat_id.name(),this.chat_id);
-		super.map.put(DbColumn.senderid.name(),this.senderid);
-		super.map.put(DbColumn.recieverid.name(),this.recieverid);
-		super.map.put(DbColumn.group_id.name(),this.group_id);
-		super.map.put(DbColumn.text.name(),this.text);
-		super.map.put(DbColumn.chattime.name(),this.chattime);
+		map.put("Table","messages");
+		map.put(DbColumn.chat_id.name(),this.chat_id);
+		map.put(DbColumn.senderid.name(),this.senderid);
+		map.put(DbColumn.recieverid.name(),this.recieverid);
+		map.put(DbColumn.group_id.name(),this.group_id);
+		map.put(DbColumn.text.name(),this.text);
+		map.put(DbColumn.chattime.name(),this.chattime);
 	}
 	
-	public DataObject getDataObject(){
+	public DataObject getDataObject() {
 		setVariablesInMap();
-		return super.getDataObjectRef();
-	}
-	
-	public void updateDataObject(DataObject obj){
-		super.updateMap(obj.getDataMap());
-		setMapInVariables();
-	}
-    
-	public HashMap<String,Object> getMapFromVars(){
-		setVariablesInMap();
-		return super.map;
+		return new DataObject(map);
 	}
 	//
 

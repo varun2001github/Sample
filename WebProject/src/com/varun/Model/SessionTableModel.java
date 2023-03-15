@@ -11,9 +11,11 @@ import com.varun.Model.UserinfoTableModel.DbColumn;
 import com.varun.Orm.Table;
 
 @Table(name="session_info")
-public class SessionTableModel extends DataObject{
+public class SessionTableModel{
 	
 	private static final Logger logger=LoggerUtil.getLogger(ChatList.class);
+	
+	private HashMap<String,Object> map=new HashMap<String,Object>();
 
     private Integer user_id=null;
 	
@@ -29,47 +31,31 @@ public class SessionTableModel extends DataObject{
 
 	//constructor
 	public SessionTableModel(DataObject ob){
-		super(ob.getDataMap());
+		this.map=ob.getDataMap();
 		setMapInVariables();
 	}
 	
 	public SessionTableModel(){
-		super();
 	}
     	
 	//private methods
 	private void setMapInVariables(){
-		HashMap<String,Object> map=super.getDataMap();
 		this.user_id=(Integer)map.get(DbColumn.user_id.name());
 		this.session_id=(String)map.get(DbColumn.session_id.name());
 		this.Expiry=(Long)map.get(DbColumn.Expiry.name());
 	}
 	
 	private void setVariablesInMap(){
-		HashMap<String,Object> map=new HashMap<String,Object>();
+		map.put("Table","session_info");
 		map.put(DbColumn.user_id.name(),this.user_id);
 		map.put(DbColumn.session_id.name(),this.session_id);
 		map.put(DbColumn.Expiry.name(),this.Expiry);
-		super.updateMap(map);
 	}
-	
-	//get data from super class 
-	
-	public DataObject getDataObject(){
+
+	public DataObject getDataObject() {
 		setVariablesInMap();
-		return super.getDataObjectRef();
+		return new DataObject(map);
 	}
-	
-	public void updateDataObject(DataObject obj){
-		super.updateMap(obj.getDataMap());
-		setMapInVariables();
-	}
-    
-	public HashMap<String,Object> getMapFromVars(){
-		setVariablesInMap();
-		return super.map;
-	}
-	
 	//
 
     

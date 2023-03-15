@@ -12,9 +12,11 @@ import com.varun.Model.PasswordTableModel.DbColumn;
 import com.varun.Orm.Table;
 
 @Table(name="mobile")
-public class MobileTableModel extends DataObject{
+public class MobileTableModel{
 	
 	private static final Logger logger=LoggerUtil.getLogger(ChatList.class);
+
+	private HashMap<String,Object> map=new HashMap<String,Object>();
 	
 	private Integer user_id=null;
 	
@@ -40,48 +42,37 @@ public class MobileTableModel extends DataObject{
 	
 	//constructor
 	public MobileTableModel(DataObject ob){
-		super(ob.getDataMap());
+		this.map=ob.getDataMap();
 		setMapInVariables();
-		// TODO Auto-generated constructor stub
 	}
 	public MobileTableModel(){
-		super();
-		// TODO Auto-generated constructor stub
+
 	}
 	/////
 	
 	private void setMapInVariables(){
-		this.user_id=(Integer)super.map.get(DbColumn.user_id.name());
-		this.mobileno=(Long)super.map.get(DbColumn.mobileno.name());
-		this.is_primary=(Integer)super.map.get(DbColumn.is_primary.name());
-		this.is_verified=(Integer)super.map.get(DbColumn.is_verified.name());
-		this.created_time=(Long)super.map.get(DbColumn.created_time.name());
-		this.modif_time=(Long)super.map.get(DbColumn.modif_time.name());
+		this.user_id=(Integer)map.get(DbColumn.user_id.name());
+		this.mobileno=(Long)map.get(DbColumn.mobileno.name());
+		this.is_primary=(Integer)map.get(DbColumn.is_primary.name());
+		this.is_verified=(Integer)map.get(DbColumn.is_verified.name());
+		this.created_time=(Long)map.get(DbColumn.created_time.name());
+		this.modif_time=(Long)map.get(DbColumn.modif_time.name());
 	}
 	
 	private void setVariablesInMap(){
-		super.map.put(DbColumn.user_id.name(),this.user_id);
-		super.map.put(DbColumn.mobileno.name(),this.mobileno);
-		super.map.put(DbColumn.is_primary.name(),this.is_primary);
-		super.map.put(DbColumn.is_verified.name(),this.is_verified);
-		super.map.put(DbColumn.created_time.name(),this.created_time);
-		super.map.put(DbColumn.modif_time.name(),this.modif_time);
+		map.put("Table","mobile");
+		map.put(DbColumn.user_id.name(),this.user_id);
+		map.put(DbColumn.mobileno.name(),this.mobileno);
+		map.put(DbColumn.is_primary.name(),this.is_primary);
+		map.put(DbColumn.is_verified.name(),this.is_verified);
+		map.put(DbColumn.created_time.name(),this.created_time);
+		map.put(DbColumn.modif_time.name(),this.modif_time);
 
 	}
-	
-	public DataObject getDataObject(){
-		setVariablesInMap();
-		return super.getDataObjectRef();
-	}
-	
-	public void updateDataObject(DataObject obj){
-		super.updateMap(obj.getDataMap());
-		setMapInVariables();
-	}
     
-	public HashMap<String,Object> getMapFromVars(){
+	public DataObject getDataObject() {
 		setVariablesInMap();
-		return super.map;
+		return new DataObject(map);
 	}
 	
 	//

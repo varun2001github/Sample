@@ -10,9 +10,11 @@ import com.varun.Model.UserinfoTableModel.DbColumn;
 import com.varun.Orm.Table;
 
 @Table(name="user_pass")
-public class PasswordTableModel extends DataObject{
+public class PasswordTableModel{
 	
 	private static final Logger logger=LoggerUtil.getLogger(ChatList.class);
+	
+	private HashMap<String,Object> map=new HashMap<String,Object>();
 	
 	private Integer user_id=null;
 	
@@ -34,14 +36,12 @@ public class PasswordTableModel extends DataObject{
 	
 	//constructor
 	public PasswordTableModel(DataObject ob){
-		super(ob.getDataMap());
+		this.map=ob.getDataMap();
 		setMapInVariables();
-		// TODO Auto-generated constructor stub
 	}
 
 	public PasswordTableModel(){
-		super();
-		// TODO Auto-generated constructor stub
+
 	}
 	public PasswordTableModel(Integer uid,String pass_salt,String pass_hash){
     	this.user_id=uid;
@@ -51,34 +51,25 @@ public class PasswordTableModel extends DataObject{
     }
 	
 	private void setMapInVariables(){
-		this.user_id=(Integer)super.map.get(DbColumn.user_id.name());
-		this.pass_salt=(String)super.map.get(DbColumn.pass_salt.name());
-		this.pass_hash=(String)super.map.get(DbColumn.pass_hash.name());
-		this.pass_status=(Integer)super.map.get(DbColumn.pass_status.name());
-		this.created_time=(Long)super.map.get(DbColumn.created_time.name());
+		this.user_id=(Integer)map.get(DbColumn.user_id.name());
+		this.pass_salt=(String)map.get(DbColumn.pass_salt.name());
+		this.pass_hash=(String)map.get(DbColumn.pass_hash.name());
+		this.pass_status=(Integer)map.get(DbColumn.pass_status.name());
+		this.created_time=(Long)map.get(DbColumn.created_time.name());
 	}
 	
 	private void setVariablesInMap(){
-		super.map.put(DbColumn.user_id.name(),this.user_id);
-		super.map.put(DbColumn.pass_salt.name(),this.pass_salt);
-		super.map.put(DbColumn.pass_hash.name(),this.pass_hash);
-		super.map.put(DbColumn.pass_status.name(),this.pass_status);
-		super.map.put(DbColumn.created_time.name(),this.created_time);
+		map.put("Table","user_pass");
+		map.put(DbColumn.user_id.name(),this.user_id);
+		map.put(DbColumn.pass_salt.name(),this.pass_salt);
+		map.put(DbColumn.pass_hash.name(),this.pass_hash);
+		map.put(DbColumn.pass_status.name(),this.pass_status);
+		map.put(DbColumn.created_time.name(),this.created_time);
 	}
-	
-	public DataObject getDataObject(){
+
+	public DataObject getDataObject() {
 		setVariablesInMap();
-		return super.getDataObjectRef();
-	}
-	
-	public void updateDataObject(DataObject obj){
-		super.updateMap(obj.getDataMap());
-		setMapInVariables();
-	}
-    
-	public HashMap<String,Object> getMapFromVars(){
-		setVariablesInMap();
-		return super.map;
+		return new DataObject(map);
 	}
 	//
 	

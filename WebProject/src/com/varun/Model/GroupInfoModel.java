@@ -10,9 +10,11 @@ import com.varun.Model.UserinfoTableModel.DbColumn;
 import com.varun.Orm.Table;
 
 @Table(name="group_info")
-public class GroupInfoModel extends DataObject{
+public class GroupInfoModel{
 	
 	private static final Logger logger=LoggerUtil.getLogger(ChatList.class);
+	
+	private HashMap<String,Object> map=new HashMap<String,Object>();
     
     Integer group_id=null;
 	
@@ -31,63 +33,41 @@ public class GroupInfoModel extends DataObject{
 		created_time,
 		modif_time;
     }
+	
 /////
 	public GroupInfoModel(DataObject ob){
-		super(ob.getDataMap());
+		this.map=ob.getDataMap();
 		setMapInVariables();
-		// TODO Auto-generated constructor stub
 	}
 	public GroupInfoModel(){
-		super();
-		// TODO Auto-generated constructor stub
 	}
 	
 	private void setMapInVariables(){
-		this.group_id=(Integer)super.map.get(DbColumn.group_id.name());
-		this.group_name=(String)super.map.get(DbColumn.group_name.name());
-		this.admin_id=(Integer)super.map.get(DbColumn.admin_id.name());
-		this.created_time=(Long)super.map.get(DbColumn.created_time.name());
-		this.modif_time=(Long)super.map.get(DbColumn.modif_time.name());
+		this.group_id=(Integer)map.get(DbColumn.group_id.name());
+		this.group_name=(String)map.get(DbColumn.group_name.name());
+		this.admin_id=(Integer)map.get(DbColumn.admin_id.name());
+		this.created_time=(Long)map.get(DbColumn.created_time.name());
+		this.modif_time=(Long)map.get(DbColumn.modif_time.name());
 	}
 	
 	private void setVariablesInMap(){
-		super.map.put(DbColumn.group_id.name(),this.group_id);
-		super.map.put(DbColumn.group_name.name(),this.group_name);
-		super.map.put(DbColumn.admin_id.name(),this.admin_id);
-		super.map.put(DbColumn.created_time.name(),this.created_time);
-		super.map.put(DbColumn.modif_time.name(),this.modif_time);
-	}
-	
-	public DataObject getDataObject(){
-		setVariablesInMap();
-		return super.getDataObjectRef();
-	}
-	
-	public void updateDataObject(DataObject obj){
-		super.updateMap(obj.getDataMap());
-		setMapInVariables();
+		map.put("Table","group_info");
+		map.put(DbColumn.group_id.name(),this.group_id);
+		map.put(DbColumn.group_name.name(),this.group_name);
+		map.put(DbColumn.admin_id.name(),this.admin_id);
+	    map.put(DbColumn.created_time.name(),this.created_time);
+		map.put(DbColumn.modif_time.name(),this.modif_time);
 	}
     
-	public HashMap<String,Object> getMapFromVars(){
+//	public HashMap<String,Object> getMapFromVars(){
+//		setVariablesInMap();
+//		return map;
+//	}
+	public DataObject getDataObject() {
 		setVariablesInMap();
-		return super.map;
+		return new DataObject(map);
 	}
-	//
-//	private static Map<DbColumn,Function<GroupInfoModel,Object>> methodMap=null;
-//    
-//	public GroupInfoModel(){
-//		if(methodMap==null){
-//			methodMap=new HashMap<>();
-//			methodMap.put(DbColumn.group_id,GroupInfoModel::getGroup_id);
-//			methodMap.put(DbColumn.group_name,GroupInfoModel::getGroup_name);
-//			methodMap.put(DbColumn.admin_id,GroupInfoModel::getAdmin_id);
-//		}
-//	}
-//	
-//	public Object getColumnVal(DbColumn column){
-//        return methodMap.get(column).apply(this);
-//	}
-	
+
 	public Integer getGroup_id(){
 		return group_id;
 	}

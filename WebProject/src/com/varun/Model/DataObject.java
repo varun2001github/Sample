@@ -11,12 +11,12 @@ public class DataObject{
     	this.map=map;
     }
     
-	public DataObject(){}
-	
-	//methods
-    protected void updateMap(HashMap<String,Object> map){
-    	this.map=map;
-    }
+//	public DataObject(){}
+//	
+//	//methods
+//    protected void updateMap(HashMap<String,Object> map){
+//    	this.map=map;
+//    }
     
     protected DataObject getDataObjectRef(){
 		return this;

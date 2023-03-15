@@ -46,7 +46,7 @@ public class AuthenticationServlet extends HttpServlet{
 		// TODO Auto-generated method stub
 		String operation=(String)request.getParameter("operation");
 		System.out.println(operation);
-		switch(operation) {
+		switch(operation){
 		  case "login":
 			  Login(request,response);
 			  break;
@@ -134,7 +134,7 @@ public class AuthenticationServlet extends HttpServlet{
 							    	session.setAttribute("dataobj", userDataObj);
 								    response.sendRedirect("userpage.jsp");
 									
-								}else {
+								}else{
 									  //pass expired
 								      session.setAttribute("userid",userDataObj.getUser_id());
 							    	  response.sendRedirect("passchange.jsp");

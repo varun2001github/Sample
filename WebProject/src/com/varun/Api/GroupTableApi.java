@@ -33,7 +33,7 @@ public class GroupTableApi{
         try{
         	GroupMemberTableApi groupmemApi=new GroupMemberTableApi(new OrmImp());
     		ormObj.SelectQuery("group_id","group_name").From(Table).Where(cb.addIn("group_id",groupmemApi.getGroupOrmByUid(uid)));
-
+            System.out.println(ormObj.getQuery());
 	       	List<DataObject> dataList=ormObj.getSelect();
 	       	List<GroupInfoModel> l=null;
 	       	if(dataList.size()>0) {

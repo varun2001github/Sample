@@ -34,7 +34,6 @@ import de.mkammerer.argon2.Argon2Factory.Argon2Types;
 public class UserDao{
 	private Argon2 argon2 = (Argon2) Argon2Factory.create(Argon2Types.ARGON2i);
 	private static final Logger logger=LoggerUtil.getLogger(ChatList.class);
-
 	public UserinfoTableModel validate(String loginId,String password) throws ClassNotFoundException{
         logger.log(Level.INFO,"method called");
 		Integer userid=null;
@@ -159,6 +158,15 @@ public class UserDao{
         UserinfoTableModel ud;
         Integer userid=sessionApi.getIdBySession(sessionid);
 	    ud=userApi.getUserById(userid);
+	    ormObj.close();
+	    return ud;
+	}
+	
+	public UserinfoTableModel getUserById(Integer userId){
+        logger.log(Level.INFO,"method called");
+		OrmImp ormObj=new OrmImp();
+		UserTableApi userApi=new UserTableApi(ormObj);
+        UserinfoTableModel ud=userApi.getUserById(userId);
 	    ormObj.close();
 	    return ud;
 	}

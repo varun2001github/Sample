@@ -9,10 +9,12 @@ import com.varun.Model.GroupInfoModel.DbColumn;
 import com.varun.Orm.Table;
 
 @Table(name="email")
-public class EmailTableModel extends DataObject{
+public class EmailTableModel{
 	
 	private static final Logger logger=LoggerUtil.getLogger(ChatList.class);
 
+	private HashMap<String,Object> map=new HashMap<String,Object>();
+	
 	private Integer user_id=null;
 	
 	private String emailid=null;
@@ -34,48 +36,42 @@ public class EmailTableModel extends DataObject{
 		modif_time;
     }
   
-	
-/////
 	//constructor
-	public EmailTableModel(HashMap<String, Object> map){
-		super(map);
+	public EmailTableModel(DataObject ob){
+		map=ob.getDataMap();
 		setMapInVariables();
 	}
 	public EmailTableModel(){
-		super();
+		
 	}
 	
 	private void setMapInVariables(){
-		this.user_id=(Integer)super.map.get(DbColumn.user_id.name());
-		this.emailid=(String)super.map.get(DbColumn.emailid.name());
-		this.is_primary=(Integer)super.map.get(DbColumn.is_primary.name());
-		this.is_verified=(Integer)super.map.get(DbColumn.is_verified.name());
-		this.created_time=(Long)super.map.get(DbColumn.created_time.name());
-		this.modif_time=(Long)super.map.get(DbColumn.modif_time.name());
+		this.user_id=(Integer)map.get(DbColumn.user_id.name());
+		this.emailid=(String)map.get(DbColumn.emailid.name());
+		this.is_primary=(Integer)map.get(DbColumn.is_primary.name());
+		this.is_verified=(Integer)map.get(DbColumn.is_verified.name());
+		this.created_time=(Long)map.get(DbColumn.created_time.name());
+		this.modif_time=(Long)map.get(DbColumn.modif_time.name());
 	}
 	
 	private void setVariablesInMap(){
-		super.map.put(DbColumn.user_id.name(),this.user_id);
-		super.map.put(DbColumn.emailid.name(),this.emailid);
-		super.map.put(DbColumn.is_primary.name(),this.is_primary);
-		super.map.put(DbColumn.is_verified.name(),this.is_verified);
-		super.map.put(DbColumn.created_time.name(),this.created_time);
-		super.map.put(DbColumn.modif_time.name(),this.modif_time);
+		map.put("Table","email");
+		map.put(DbColumn.user_id.name(),this.user_id);
+		map.put(DbColumn.emailid.name(),this.emailid);
+		map.put(DbColumn.is_primary.name(),this.is_primary);
+		map.put(DbColumn.is_verified.name(),this.is_verified);
+		map.put(DbColumn.created_time.name(),this.created_time);
+		map.put(DbColumn.modif_time.name(),this.modif_time);
 	}
-	
-	public DataObject getDataObject(){
+//	
+//	public HashMap<String,Object> getMapFromVars(){
+//		setVariablesInMap();
+//		return this.map;
+//	}
+//	
+	public DataObject getDataObject() {
 		setVariablesInMap();
-		return super.getDataObjectRef();
-	}
-	
-	public void updateDataObject(DataObject obj){
-		super.updateMap(obj.getDataMap());
-		setMapInVariables();
-	}
-    
-	public HashMap<String,Object> getMapFromVars(){
-		setVariablesInMap();
-		return super.map;
+		return new DataObject(map);
 	}
 	//
 	

@@ -13,20 +13,40 @@ import com.varun.Orm.OrmImp;
 public class ChatDao{
 	private static final Logger logger=LoggerUtil.getLogger(ChatList.class);
     private OrmImp ormObj=null;
-    public List<UserinfoTableModel> fetchFrnds(Integer uid){
+    
+    @SuppressWarnings("unchecked")
+	public List<UserinfoTableModel> fetchFrnds(Integer uid){
           logger.log(Level.INFO,"method called");
   		  ormObj=new OrmImp();
 		  UserTableApi userApi=new UserTableApi(ormObj);
-		  List<UserinfoTableModel> list=userApi.fetchChatList(uid);
+		  List<UserinfoTableModel> list=null;
+    	  if(LRUCache.get(uid+"-"+"FriendList<UserinfoTableModel>")==null){
+    		  System.out.println("---- DB chatlist----");
+    		  list =userApi.fetchChatList(uid);
+    		  LRUCache.put(uid+"-"+"FriendList<UserinfoTableModel>", list);
+    	  }else{
+    		  System.out.println("---- cache chatlist----");
+    		  list=(List<UserinfoTableModel>)LRUCache.get(uid+"-"+"FriendList<UserinfoTableModel>");
+    	  }
 		  ormObj.close();
 		  return list;
     }	
     
+	@SuppressWarnings("unchecked")
 	public List<GroupInfoModel> fetchGroups(Integer uid){
           logger.log(Level.INFO,"method called");
   		  ormObj=new OrmImp();
 		  GroupTableApi grpApi=new GroupTableApi(ormObj);
-		  List<GroupInfoModel> list=grpApi.fetchChatList(uid);
+		  List<GroupInfoModel> list=null;
+
+		  if(LRUCache.get(uid+"-"+"GroupList<UserinfoTableModel>")==null){
+    		  System.out.println("---- DB grouplist----");
+    		  list =grpApi.fetchChatList(uid);
+    		  LRUCache.put(uid+"-"+"GroupList<UserinfoTableModel>", list);
+    	  }else{
+    		  System.out.println("---- cache grouplist----");
+    		  list=(List<GroupInfoModel>)LRUCache.get(uid+"-"+"GroupList<UserinfoTableModel>");
+    	  }
 		  ormObj.close();
 		  return list;       
 	}

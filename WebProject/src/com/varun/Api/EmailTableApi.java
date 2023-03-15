@@ -38,7 +38,7 @@ public class EmailTableApi {
          	 if(dataList.size()>0) {
              	l=new ArrayList<EmailTableModel>();
              	for(DataObject ob:dataList){
-             		l.add(new EmailTableModel(ob.getDataMap()));
+             		l.add(new EmailTableModel(ob));
              	}
          	 }
          	 return l.get(0).getUser_id();
@@ -108,7 +108,7 @@ public class EmailTableApi {
         	 if(dataList.size()>0){
             	l=new ArrayList<EmailTableModel>();
             	for(DataObject ob:dataList){
-            		l.add(new EmailTableModel(ob.getDataMap()));
+            		l.add(new EmailTableModel(ob));
             	}
         	 }
 	       	 return l;
