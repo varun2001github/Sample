@@ -69,6 +69,7 @@ public class UserDao{
 
 			if(isvalid){	
 			    UserinfoTableModel userDetail=userApi.getUserById(userid);
+			    System.out.println(" af "+userDetail.getUser_id());
 				//password policy check- 30days
 			    if(userDetail!=null){
 			    	userDataObj.setUser_id(userDetail.getUser_id());

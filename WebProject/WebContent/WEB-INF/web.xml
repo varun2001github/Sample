@@ -1,6 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app>  
-  <welcome-file-list>  
-   <welcome-file>login.jsp</welcome-file>  
-  </welcome-file-list>  
+   <display-name>WebProject</display-name>
+  
+     <welcome-file-list>  
+     <welcome-file>login.jsp</welcome-file>  
+   </welcome-file-list> 
+     
+  
+  <!-- Jersey Servlet configurations 
+    <servlet>
+	    <servlet-name>Jersey REST Service</servlet-name>
+	    <servlet-class>org.glassfish.jersey.servlet.ServletContainer.class</servlet-class>
+	    <init-param>
+	      <param-name>jersey.config.server.provider.packages</param-name>
+	      <param-value>com.varun.Api</param-value>
+	    </init-param>
+	    <load-on-startup>1</load-on-startup>
+  </servlet>
+  <servlet-mapping>
+	    <servlet-name>Jersey REST Service</servlet-name>
+	    <url-pattern>/*</url-pattern>
+  </servlet-mapping>
+   Jersey Servlet configurations -->
+  
 </web-app>  

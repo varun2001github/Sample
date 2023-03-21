@@ -9,12 +9,20 @@ import java.util.logging.Level;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Application;
+import javax.ws.rs.ApplicationPath;
+
 import com.varun.Logger.LoggerUtil;
 import com.varun.Model.DataObject;
 import com.varun.Model.EmailTableModel;
 import com.varun.Model.UserinfoTableModel;
 import com.varun.Orm.*;
 
+@Path("/UserApi")
 public class UserTableApi{
 	//logger 
 	private static final Logger logger=LoggerUtil.getLogger(UserTableApi.class);
@@ -22,6 +30,7 @@ public class UserTableApi{
 	private CriteriaBuilder c=new CriteriaBuilder();
 	private OrmImp orm;
 	private static String Table=UserinfoTableModel.class.getAnnotation(Table.class).name();
+	
     public UserTableApi(OrmImp ob){
 		try {
 			this.orm=ob;
@@ -32,9 +41,13 @@ public class UserTableApi{
 		}
     }
     
-    
+    @GET
+    @Path("/getUser")
+    @Produces(MediaType.TEXT_XML)
+    public String getUser(){
+    	return "varun";
+    }
     public UserinfoTableModel getUserById(Integer id){
-    	
     	//query formation
     	orm.SelectAll().From(Table)
     	.Where(c.addEquals("user_id",id));
@@ -65,6 +78,7 @@ public class UserTableApi{
 	    logger.log(Level.INFO,"object inserted");
     	return id;
     }
+    
     public List<UserinfoTableModel> fetchChatList(Integer uid){
     	orm.SelectQuery("user_id","user_name").From(Table).Where(c.addNotEquals("user_id",uid));
     	System.out.println(orm.getQuery());

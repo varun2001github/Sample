@@ -93,7 +93,7 @@ public class AuthenticationServlet extends HttpServlet{
 				  if(loginidmatch && passmatch){
 				   		logger.log(Level.INFO,"credentials regex valid ");
 			        	userDataObj=dao.validate(userId,pass);
-//			        	System.out.println("dao ret"+userDataObj.getUser_id());
+			        	System.out.println("dao ret"+userDataObj.getUser_id());
 						if(userDataObj!=null){
 								long passCreatedTime=userDataObj.getPassTableObj().getCreated_time().longValue();
 								long usedDays = TimeUnit.MILLISECONDS.toDays(System.currentTimeMillis()-passCreatedTime);
@@ -275,7 +275,7 @@ public class AuthenticationServlet extends HttpServlet{
 				System.out.println("mobilematch");
 				e.printStackTrace();
 			    logger.log(Level.WARNING,"IOException",e);
-			}catch(Exception e) {
+			}catch(Exception e){
 				System.out.println("mobilematch");
 				e.printStackTrace();
 			    logger.log(Level.WARNING,"Exception",e);

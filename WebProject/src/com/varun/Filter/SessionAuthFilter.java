@@ -88,6 +88,7 @@ public class SessionAuthFilter implements Filter {
 			       	    isSessionValid=dao.checkSession(userid,sessionid);
 			       	    if(isSessionValid && userObj!=null){
 			       	    	httpRequest.setAttribute("userid",userid);
+			       	    	httpRequest.setAttribute("sessionid",sessionid);
 		            		chain.doFilter(request, response);
 		            	}else{
 		       			    System.out.println("logout1");

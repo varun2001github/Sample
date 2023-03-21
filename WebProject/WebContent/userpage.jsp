@@ -41,6 +41,7 @@
       	    	if(LRUCache.get(userid+"-"+"UserinfoTableModel")==null){
       	    		 dataObj=dao.getUserById(userid);
 	      	    	 System.out.println("userpage userDataObject from db");
+	      	    	 LRUCache.setThreadLocal(Thread.currentThread().getName());
 	      	    	 LRUCache.put(userid+"-"+"UserinfoTableModel", dataObj);
 	  	    	}else{
 	      	    	 System.out.println("userpage userDataObject from cache");

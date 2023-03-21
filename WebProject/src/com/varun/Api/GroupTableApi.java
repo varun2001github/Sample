@@ -48,6 +48,7 @@ public class GroupTableApi{
 		 }
 		 return null;
     }
+	
 	public Integer addGroup(int adminid,String groupname){
         logger.log(Level.INFO,"method called");
         grpObj=new GroupInfoModel();
