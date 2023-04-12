@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.servlet.http.HttpServletRequest;
+
 import com.varun.Api.*;
 import com.varun.Controller.ChatList;
 import com.varun.Logger.LoggerUtil;
@@ -13,66 +15,65 @@ import com.varun.Orm.OrmImp;
 public class ChatDao{
 	private static final Logger logger=LoggerUtil.getLogger(ChatList.class);
     private OrmImp ormObj=null;
+	private AuditTableModel auditModel=null;
+
+    public ChatDao(){
+		
+	}
+    public ChatDao(HttpServletRequest request){
+    	auditModel=new AuditTableModel((Integer)request.getAttribute("userid"),(String)request.getAttribute("sessionid"),request.getRemoteAddr());
+	}
     
-    @SuppressWarnings("unchecked")
 	public List<UserinfoTableModel> fetchFrnds(Integer uid){
           logger.log(Level.INFO,"method called");
   		  ormObj=new OrmImp();
 		  UserTableApi userApi=new UserTableApi(ormObj);
 		  List<UserinfoTableModel> list=null;
-    	  if(LRUCache.get(uid+"-"+"FriendList<UserinfoTableModel>")==null){
-    		  System.out.println("---- DB chatlist----");
-    		  list =userApi.fetchChatList(uid);
-    		  LRUCache.put(uid+"-"+"FriendList<UserinfoTableModel>", list);
-    	  }else{
-    		  System.out.println("---- cache chatlist----");
-    		  list=(List<UserinfoTableModel>)LRUCache.get(uid+"-"+"FriendList<UserinfoTableModel>");
-    	  }
-		  ormObj.close();
+		  list =userApi.fetchChatList(uid);
+    	  ormObj.close();
 		  return list;
     }	
     
-	@SuppressWarnings("unchecked")
 	public List<GroupInfoModel> fetchGroups(Integer uid){
           logger.log(Level.INFO,"method called");
   		  ormObj=new OrmImp();
 		  GroupTableApi grpApi=new GroupTableApi(ormObj);
 		  List<GroupInfoModel> list=null;
-
-		  if(LRUCache.get(uid+"-"+"GroupList<UserinfoTableModel>")==null){
-    		  System.out.println("---- DB grouplist----");
-    		  list =grpApi.fetchChatList(uid);
-    		  LRUCache.put(uid+"-"+"GroupList<UserinfoTableModel>", list);
-    	  }else{
-    		  System.out.println("---- cache grouplist----");
-    		  list=(List<GroupInfoModel>)LRUCache.get(uid+"-"+"GroupList<UserinfoTableModel>");
-    	  }
-		  ormObj.close();
+    	  list =grpApi.fetchChatList(uid);
+    	  ormObj.close();
 		  return list;       
 	}
 	
-	public List<MessagesModel> chatFetch(Integer senderid,Integer recieverid,Integer isGroup){
+	public List<MessagesModel> chatFetch(Integer senderid,Integer recieverid){
           logger.log(Level.INFO,"method called");
   		  ormObj=new OrmImp();
 	      MessageTableApi messageApi=new MessageTableApi(ormObj);
+	      groupMessageTableApi groupMessageApi=new groupMessageTableApi();
 	      List<MessagesModel> chatmsg=null;
-		  if(isGroup==1){
-			 //reciever id is group uid
-			 chatmsg=messageApi.getGroupMsg(senderid,recieverid);
-	      }else{
-			 chatmsg=messageApi.getNormalMsg(senderid,recieverid);
-		  }
+		  chatmsg=messageApi.getNormalMsg(senderid,recieverid);
 		  ormObj.close();
 		  return chatmsg;
     }
 	
+	public List<GroupMessagesModel> groupChatFetch(Integer groupid){
+        logger.log(Level.INFO,"method called");
+		  ormObj=new OrmImp();
+	      groupMessageTableApi groupMessageApi=new groupMessageTableApi(ormObj);
+	      List<GroupMessagesModel> chatmsg=null;
+		  
+	      //reciever id is group uid
+		  chatmsg=groupMessageApi.getGroupMsg(groupid);
+	      ormObj.close();
+		  return chatmsg;
+   }
 	public boolean sendMessage(Integer senderid,Integer recieverid,String text,int isGroup){
           logger.log(Level.INFO,"method called");
-  		  ormObj=new OrmImp();
+  		  ormObj=new OrmImp(auditModel);
 		  MessageTableApi msgApi=new MessageTableApi(ormObj);
+	      groupMessageTableApi groupMessageApi=new groupMessageTableApi(ormObj);
 		  boolean isAdded=false;
 		  if(isGroup==1){
-			isAdded=msgApi.addGroupMessage(senderid, recieverid, text);
+			isAdded=groupMessageApi.addGroupMessage(senderid,recieverid,text);
 		  }else {
 			isAdded=msgApi.addNormalMessage(senderid, recieverid, text);
 		  }
@@ -82,7 +83,7 @@ public class ChatDao{
      
 	public void createGroup(Integer adminid,String groupname,String[] members){
           logger.log(Level.INFO,"method called");
-  		  ormObj=new OrmImp();
+  		  ormObj=new OrmImp(auditModel);
           GroupTableApi groupApi=new GroupTableApi(ormObj);
 	      GroupMemberTableApi memberApi=new GroupMemberTableApi(ormObj); 
 		  if(adminid!=0 && groupname!="" && members!=null) {

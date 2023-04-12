@@ -19,14 +19,13 @@ import javax.servlet.http.*;
 /**
  * Servlet implementation class GroupFormation
  */
-@WebServlet("/GroupFormation")
 public class GroupFormation extends HttpServlet{
 	
 	private PrintWriter out=null;
 	private int userid=0;
 	private String groupName="";
 	private static final Logger logger=LoggerUtil.getLogger(GroupFormation.class);
-	private ChatDao dao=new ChatDao();
+	private ChatDao dao=null;
 	
 	public GroupFormation() {
 	        super();
@@ -35,7 +34,7 @@ public class GroupFormation extends HttpServlet{
 	public void doGet(HttpServletRequest request, HttpServletResponse response)throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		try {
-			
+			    dao=new ChatDao(request);
 				userid=Integer.parseInt(request.getParameter("uid"));
 				out=response.getWriter();
 				List<UserinfoTableModel> l=null;
@@ -48,7 +47,7 @@ public class GroupFormation extends HttpServlet{
 						out.println("<label for=\"names\">"+u.getUser_name()+"</label><br>");
 					}
 					out.println("<input type=\"submit\" value=\"create\"></form>");
-					out.println("<br><button onclick=\"hidePopup()\">Close</button>\n");
+					out.println("<br><button onclick=\"closeGroupCreation()\">Close</button>\n");
 				}
 			}catch(Exception e){
 		        logger.log(Level.WARNING,"Exception",e);
@@ -57,14 +56,13 @@ public class GroupFormation extends HttpServlet{
 	public void doPost(HttpServletRequest request,HttpServletResponse response)throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		try{
-			
 			out=response.getWriter();
 			userid=Integer.parseInt(request.getParameter("uid"));
 			String[] users=request.getParameterValues("groupusers");
 			groupName=request.getParameter("groupname");
 			out.println(userid+groupName+users[0]);
 			dao.createGroup(userid,groupName,users);
-		    response.sendRedirect("userpage.jsp");
+		    response.sendRedirect(request.getContextPath()+"/userpage.jsp");
 		    
 		}catch(Exception e){
 	        logger.log(Level.WARNING,"Exception",e);

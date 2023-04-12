@@ -10,7 +10,11 @@ public class CriteriaBuilder{
 	 private static final Logger logger=LoggerUtil.getLogger(ChatList.class);
 
 	    
-	    
+	    public CriteriaBuilder(String criteria) {
+	    	this.condition=criteria;
+	    }
+	    public CriteriaBuilder() {
+	    }
 	    public <T> CriteriaBuilder addGreaterThan(String column,T value){
 	    	if(!value.getClass().getSimpleName().equals("String")) {
 	    		condition+=column+">"+value+" ";
@@ -72,7 +76,11 @@ public class CriteriaBuilder{
         	condition+=" OR "+cr.getCriteria();
           	return this;
         }
-        public String getCriteria() {
+        
+        private String getCriteria(String criteria){
+        	return null;
+        }
+        public String getCriteria(){
     	    String condition=this.condition;
     	    this.condition="";
     	    return condition;

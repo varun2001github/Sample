@@ -62,7 +62,7 @@ public class MessagesModel{
 		map.put(DbColumn.chattime.name(),this.chattime);
 	}
 	
-	public DataObject getDataObject() {
+	public DataObject getDataObject(){
 		setVariablesInMap();
 		return new DataObject(map);
 	}

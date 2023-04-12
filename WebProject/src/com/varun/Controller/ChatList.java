@@ -12,6 +12,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.varun.Dao.ChatDao;
+import com.varun.Dao.LRUCache;
 import com.varun.Logger.LoggerUtil;
 import com.varun.Model.*;
 import com.varun.Security.EncryptionHandler;
@@ -27,19 +28,20 @@ import javax.servlet.http.HttpSession;
 /**
  * Servlet implementation class messages
  */
-@WebServlet("/chatlist")
 public class ChatList extends HttpServlet{
 	private static final long serialVersionUID = 1L;
 	private static final Logger logger=LoggerUtil.getLogger(ChatList.class);
 
    
     public  void service(HttpServletRequest request, HttpServletResponse response){
-//       	  String name="",text="",time="";
+//        String name="",text="",time="";
 //		  HttpSession session=request.getSession();
 //		  EncryptionHandler handler=new EncryptionHandler();
+    	  System.out.println("__chatlist servlet called ___");
 		  int recieverId;
    	      String recieverName="",status="";
-    	  try{      
+   	      
+   	      try{      
     		      PrintWriter out=response.getWriter();
 				  StringBuffer jb = new StringBuffer();
 				  String line = null;
@@ -54,10 +56,50 @@ public class ChatList extends HttpServlet{
 //				  jsondata=handler.decrypt(jsondata.getString("encrypteddata"),sessionid);
 				  int id=jsondata.getInt("userid");
        	          recieverName="";
-                  ChatDao dao= new ChatDao();
-                  List<UserinfoTableModel> chatList=dao.fetchFrnds(id);
+                  ChatDao dao= new ChatDao(request);
+                  List<UserinfoTableModel> chatList=null;
                   List<GroupInfoModel> grpChatList=dao.fetchGroups(id);
+                  UserinfoTableModel userObject=null;
                   
+                  try {
+                	  if(LRUCache.getThreadLocal()!=null){
+                    	  
+                    	  int uid=(Integer)request.getAttribute("userid");
+//                    	  System.out.println(LRUCache.get(key));
+                    	  userObject=(UserinfoTableModel)LRUCache.get("userid"+uid);
+                    	  
+                    	  if(userObject==null){
+                    		  userObject=new UserinfoTableModel();
+                    	  }
+                    	  
+                		  if(userObject.getChatList()==null){
+                    		  System.out.println("---- DB chatlist----");
+                    		  chatList= dao.fetchFrnds(id);
+                    		  userObject.setChatList(chatList);
+                    		  LRUCache.put("userid"+uid,userObject);
+                    	  }else{
+        			 		  System.out.println("---- cache chatlist----");
+        			 		  userObject=(UserinfoTableModel)LRUCache.get("userid"+uid);
+        			 		  chatList=userObject.getChatList();
+                          }
+                		  
+                		  if(userObject.getGroupChatList()==null){
+                    		  System.out.println("---- DB grp chatlist----");
+                    		  grpChatList =dao.fetchGroups(id);
+                    		  userObject.setGroupChatList(grpChatList);
+                    		  LRUCache.put("userid"+uid,userObject);
+                    	  }else{
+        			 		  System.out.println("---- cache grp chatlist----");
+        			 		  userObject=(UserinfoTableModel)LRUCache.get("userid"+uid);
+        			 		  grpChatList=userObject.getGroupChatList();
+                          }
+                      }
+                  }catch(Exception e) {
+                	  e.printStackTrace();
+                  }
+                  
+        		  
+        		  
                   //group chat list
                   if(grpChatList!=null) {
                 	  for(GroupInfoModel obj:grpChatList){

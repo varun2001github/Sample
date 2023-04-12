@@ -27,17 +27,15 @@ import com.varun.Model.UserinfoTableModel;
 /**
  * Servlet implementation class ProfileEdit
  */
-@WebServlet("/editprofile")
 public class ProfileServlet extends HttpServlet{
 	private PrintWriter out=null;
-	private Integer userid=0;
 	private static final long serialVersionUID = 1L;
 	 List<EmailTableModel> emailList=null;
      List<MobileTableModel> mobileList=null;
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public ProfileServlet() {
+    public ProfileServlet(){
         super();
         // TODO Auto-generated constructor stub
     }
@@ -46,20 +44,31 @@ public class ProfileServlet extends HttpServlet{
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
+// TODO Auto-generated method stub
 //		String userid=request.getParameter("uid");
 //		String username=request.getParameter("username");
-		Integer userid=null;
+		
+		Integer userId=null;
+		String sessionId=null;
 		HttpSession session=request.getSession();
-  	    UserDao dao=new UserDao();
 	    UserinfoTableModel dataObj=null;
+  	    UserDao dao=null;
 		if(request.getAttribute("userid")!=null){
-			userid=(Integer)request.getAttribute("userid");
-			dataObj=(UserinfoTableModel)dao.getUserById(userid);
-			System.out.println("do not null"+request.getAttribute("dataobj"));
+			userId=(Integer)request.getAttribute("userid");
+			sessionId=(String)request.getAttribute("sessionid");
+			dao=new UserDao(request);
+			if(LRUCache.getThreadLocal()!=null){
+				dataObj=LRUCache.getThreadLocal();
+			}else if(LRUCache.get("userid"+userId)!=null){
+				dataObj=(UserinfoTableModel)LRUCache.get("userid"+userId);
+			}else{
+				dataObj=dao.getUserById(userId);
+			}
+			System.out.println("do not null"+dataObj);
 		}else{
 			System.out.println("do null"+request.getAttribute("dataobj"));
 		}
+		
 	    UserinfoTableModel updatedObj=new UserinfoTableModel();
 		String name=request.getParameter("username");
 		String gender=request.getParameter("gender");
@@ -67,13 +76,13 @@ public class ProfileServlet extends HttpServlet{
 		String[] emailArr=request.getParameterValues("email[]");
 		String[] mobileArr=request.getParameterValues("mobile[]");
 		try{
-			if(name!=null && !(dataObj.getUser_name()==name)){
+			if(name!=null && !(dataObj.getUser_name().equals(name))){
 					updatedObj.setUser_name(name);
 			}
-			if(country!=null && !(dataObj.getCountry()==country)){
+			if(country!=null && !(dataObj.getCountry().equals(country))){
 					updatedObj.setCountry(country);
 			}			
-			if( gender!=null && !(dataObj.getGender()==country)){
+			if( gender!=null && !(dataObj.getGender().equals(gender))){
 					updatedObj.setGender(gender);
 			}	
 			if(emailArr!=null){
@@ -93,12 +102,14 @@ public class ProfileServlet extends HttpServlet{
 					l.add(ob);
 				}
 	            updatedObj.setMobileTableObj(l);
-            }			        	
+            }		
+            System.out.println(dataObj+" "+updatedObj);
             boolean isUpdated=false;
-            isUpdated=dao.updateProfile(dataObj, updatedObj);
+            
+            isUpdated=dao.updateProfile(dataObj,updatedObj);
             
             //clear cache
-            LRUCache.remove(userid+"-"+"UserinfoTableModel");;
+            LRUCache.remove("userid"+request.getAttribute("userid"));
             
             System.out.println(" UPDATE STAT :"+isUpdated);
             if(isUpdated){
@@ -111,7 +122,7 @@ public class ProfileServlet extends HttpServlet{
 			session.setAttribute("updateerr","NOT UPDATED");
 		}
         System.out.println("ex");
-		response.sendRedirect("profilepage.jsp");
+		response.sendRedirect("/WebProject/profilepage.jsp");
 	}
 	
 //	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException,IOException{

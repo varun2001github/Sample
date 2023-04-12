@@ -19,7 +19,7 @@ import com.varun.Orm.Table;
 
 public class SessionTableApi{
 	private static final Logger logger=LoggerUtil.getLogger(SessionTableApi.class);
-	private static SessionTableModel sessionTableObj=null;
+	private SessionTableModel sessionTableObj=null;
 	private static String Table=SessionTableModel.class.getAnnotation(Table.class).name();
 	private static CriteriaBuilder cb=new CriteriaBuilder();
 	private OrmImp orm;
@@ -40,30 +40,31 @@ public class SessionTableApi{
     	sessionTableObj.setUser_id(userid);
     	sessionTableObj.setSession_id(sessionid);
     	sessionTableObj.setExpiry(Date.from(now.plus(500, ChronoUnit.MINUTES)).getTime());
-    	orm.Insert(sessionTableObj.getDataObject());
+    	orm.InsertQuery(sessionTableObj.getDataObject()).Insert();
     	return false;
     }
     
-    public Integer getIdBySession(String sessionid){
-        orm.SelectQuery("user_id").From(Table).Where(cb.addEquals("session_id",sessionid));
+    public SessionTableModel getObjectBySession(String sessionid){
+        orm.SelectAll().From(Table).Where(cb.addEquals("session_id",sessionid));
         List<DataObject> l=orm.getSelect();
+        SessionTableModel sessionObject=null;
         if(l.size()>0){
-            return (Integer)l.get(0).getDataMap().get("user_id");
+        	sessionObject=new SessionTableModel(l.get(0));
+            return sessionObject;
         }
         return null;
     }
     
-    public boolean checkIdWithSession(Integer userid,String sessionid){
-        orm.SelectQuery("user_id").From(Table)
-        .Where(cb.addEquals("session_id",sessionid))
-        .And(cb.addEquals("user_id",userid));
-        
-		List<DataObject> l=orm.getSelect();
-        if(l.size()>0){
-            return true;
-        }
-        return false;
-    }
+//    public boolean checkIdWithSession(String sessionid){
+//        orm.SelectQuery("user_id").From(Table)
+//        .Where(cb.addEquals("session_id",sessionid));
+//        
+//		List<DataObject> l=orm.getSelect();
+//        if(l.size()>0){
+//            return true;
+//        }
+//        return false;
+//    }
     public void deleteSession(String sessionid){
         orm.DeleteQuery(Table).Where(cb.addEquals("session_id",sessionid));
         orm.delete();

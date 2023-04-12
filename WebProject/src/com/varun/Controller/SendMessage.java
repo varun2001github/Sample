@@ -14,14 +14,13 @@ import javax.servlet.http.*;
 /**
  * Servlet implementation class sendMessage
  */
-@WebServlet("/sendmessage")
 public class SendMessage extends HttpServlet{
 	private static final long serialVersionUID = 1L;
 	private static final Logger logger=LoggerUtil.getLogger(SendMessage.class);
 
     public  void doPost(HttpServletRequest request, HttpServletResponse response){
 		  try{
-              ChatDao dao=new ChatDao();
+              ChatDao dao=new ChatDao(request);
 			  StringBuffer jb = new StringBuffer();
 			  String line = null;
 		      BufferedReader reader = request.getReader();
@@ -36,7 +35,7 @@ public class SendMessage extends HttpServlet{
 		      
 		      //send message data to dao 
 			  dao.sendMessage(senderid, recieverid, text, isgroup);
-			  response.sendRedirect("userpage.jsp");
+			  response.sendRedirect(request.getContextPath()+"/userpage.jsp");
 		  }catch(Exception e){
 			    logger.log(Level.WARNING,"Exception",e);
 		  } 

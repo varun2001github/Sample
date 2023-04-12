@@ -22,11 +22,11 @@
          <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/aes.js" integrity="sha256-/H4YS+7aYb9kJ5OKhFYPUjSJdrtV6AeyJOtTkw6X72o=" crossorigin="anonymous"></script>
          <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
        
-       <%  
+       <%  try{
            //<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
            System.out.println("-------------inside userpage------------------");
 	       String sessioninfo="";
-      	    UserDao dao=new UserDao();
+      	   UserDao dao=new UserDao();
 	       UserinfoTableModel dataObj=null;
 	       Integer userid=null;
 	       String username=null;
@@ -34,31 +34,41 @@
 	       
 	       List<EmailTableModel> emailList=null;
 	       List<MobileTableModel> mobileList=null;
-	       if(request.getAttribute("userid")!=null){
-	    	   
+	       if(request.getAttribute("userid")!=null && LRUCache.getThreadLocal()!=null){
+	    	   if(LRUCache.getThreadLocal()!=null){
+	    		   dataObj=LRUCache.getThreadLocal();
+      	    	}
 	    	    userid=(Integer)request.getAttribute("userid");
+	    	    dataObj=(UserinfoTableModel)LRUCache.get("userid"+userid);
 	    	    
-      	    	if(LRUCache.get(userid+"-"+"UserinfoTableModel")==null){
+	    	    if(dataObj==null){
+	    	    	dataObj=new UserinfoTableModel();
+	    	    }
+	    	    
+      	    	if(dataObj.getUser_name()==null){
       	    		 dataObj=dao.getUserById(userid);
 	      	    	 System.out.println("userpage userDataObject from db");
-	      	    	 LRUCache.setThreadLocal(Thread.currentThread().getName());
-	      	    	 LRUCache.put(userid+"-"+"UserinfoTableModel", dataObj);
-	  	    	}else{
-	      	    	 System.out.println("userpage userDataObject from cache");
-	      	    	 dataObj=(UserinfoTableModel)LRUCache.get(userid+"-"+"UserinfoTableModel");
-	  	    	}
-
-	    	  // System.out.println("up data obj from request attribute123123");
-	    	   //dataObj=(UserinfoTableModel)request.getAttribute("dataobj");
-	       }
-	       if(dataObj!=null){
-	            int flag=0;
-	            userid=dataObj.getUser_id();
-	            username=dataObj.getUser_name();
-	       }else{
-	    	   response.sendRedirect("log");
+	      	    	 LRUCache.put("userid"+userid,dataObj);
+      	    	}else{
+	  	    		 System.out.println("userpage userDataObject from cache "+LRUCache.getThreadLocal());
+	  	    		 if(LRUCache.getThreadLocal()!=null){
+		      	    	 System.out.println("userpage userDataObject from THreadlocal");
+	  	    			 dataObj=LRUCache.getThreadLocal(); 
+	  	    		 }else{
+		      	    	 dataObj=(UserinfoTableModel)LRUCache.get("userid"+userid);
+	  	    		 }
+	      	    }
 	       }
 	       
+	       if(dataObj!=null){
+	    	    System.out.println("up databject not null");
+	            int flag=0;
+	            username=dataObj.getUser_name();
+	       }else{
+	    	   System.out.println("up to logout");
+	    	   response.sendRedirect("servlet/log");
+	       }
+	       LRUCache.showCacheList();
            //request.setAttribute("dataobj",dataObj);
            //session.setAttribute("dataobj",dataObj);
            //response.setIntHeader("Refresh",1);
@@ -68,10 +78,12 @@
        <link rel="stylesheet" href="/WebServlet/src/main/webapp/webfiles/NewFile.css">       
     </head>
    <body>
-       <% response.setHeader("Cache-Control","no-cache,no-store,must-revalidate"); %>
+       <% 
+          response.setHeader("Cache-Control","no-cache,no-store,must-revalidate"); 
+       %>
        <div name="logout_container" style="display:flex;">
 	       <h1> Welcome to the page,</h1><h1> <%out.println(username); %> </h1>  
-	       <form action="Authentication?operation=logout" method="post" style="padding-left:135vh; padding-top:50px;">
+	       <form action="servlet/Authentication/logout" method="post" style="padding-left:135vh; padding-top:50px;">
 	          <button type="submit" style="height:30px;width:60px;">Logout</button>
 	          <a href="profilepage.jsp">PROFILE</a> 
 	       </form>           
@@ -107,7 +119,10 @@
 	           var createGroupObj = document.getElementById("create_group");
 	           
 	           function closeGroupCreation(){
-	        	   createGroupObj.innerHTML="";
+	        	   createGroupObj.style.display="none";
+	           }
+	           function operGroupCreation(){
+	        	   createGroupObj.style.display="block";
 	           }
 		     <% 
 		        EncryptionHandler handler=new EncryptionHandler();
@@ -116,13 +131,20 @@
 		        out.println("var uid="+userid+";");%>
 		        $(document).ready(function(){
 		           	$("#cg").click(function(){
-		           		 <% out.println("$.get(\"GroupFormation?uid="+userid+"\",function(data){");%>
+		           		console.log(document.getElementById("create_grp_header"));
+		           		var createGroupContainer=document.getElementById("create_grp_header").innerHTML;
+		           		console.log(createGroupContainer);
+		           		if(createGroupContainer!=""){
+		           			operGroupCreation();
+		           		}else{
+		           			console.log("servlet called");
+		           			<% out.println("$.get(\"servlet/GroupFormation?uid="+userid+"\",function(data){");%>
 		           		     $("#create_grp_header").html("CREATE GROUP");
 		           			 $("#users_for_group").html(data);
-		           		 <% out.println("})");%> 
+		           		    <% out.println("})");%> 
+		           		}
 		          	})  
 		        }); 
-                    
                     
 		        	$(document).ready(function(){
 		            	/* setInterval(function(){
@@ -130,7 +152,7 @@
 		           		 
 					     },3000);  */
 					     $.ajax({
-		               		 url:"chatlist", 
+		               		 url:"servlet/chatlist", 
 		               		 type:"POST",
 		               		 data:JSON.stringify({userid:uid}),
 		               		 success: function(result){
@@ -164,7 +186,7 @@
 			           	         ).toString(CryptoJS.enc.Utf8);
 			           		console.log(decrypted); */
 		        			$.ajax({
-			               		 url:"ShowMessages", 
+			               		 url:"servlet/ShowMessages", 
 			               		 type:"POST",
 			               		 headers:{"auth":"secret"},
 			               		 datatype:"json",
@@ -183,15 +205,22 @@
 		        			console.log(text+reciever);
 		        			$("#chat_message").val('');
 		        			$.ajax({
-			               		 url:"sendmessage", 
+			               		 url:"servlet/sendmessage", 
 			               		 type:"POST",
 			               		 data:JSON.stringify({senderid:sid,recieverid:rid,groupyn:isgroup,text:text}),
 			               		 success: function(result){
+
 			               		  chat(sid,rid,isgroup,this.receivername);	
 			               	     }
 			              	});
                         });
 		        	}
 			</script>
+			<%
+			   System.out.println("up  nxt");
+		       }catch(Exception e){
+		    	   e.printStackTrace();
+		       }
+			%>
    </body>
  </html>

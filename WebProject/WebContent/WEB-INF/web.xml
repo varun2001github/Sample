@@ -5,8 +5,129 @@
      <welcome-file-list>  
      <welcome-file>login.jsp</welcome-file>  
    </welcome-file-list> 
-     
-  
+    
+    
+    <servlet>
+        <servlet-name>authServlet</servlet-name>
+         <servlet-class>com.varun.Controller.AuthenticationServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>authServlet</servlet-name>
+        <url-pattern>/servlet/Authentication/*</url-pattern>
+    </servlet-mapping>
+    
+    <servlet>
+        <servlet-name>chatListServlet</servlet-name>
+         <servlet-class>com.varun.Controller.ChatList</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>chatListServlet</servlet-name>
+        <url-pattern>/servlet/chatlist</url-pattern>
+    </servlet-mapping>
+    
+     <servlet>
+        <servlet-name>GroupFormationServlet</servlet-name>
+         <servlet-class>com.varun.Controller.GroupFormation</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>GroupFormationServlet</servlet-name>
+        <url-pattern>/servlet/GroupFormation</url-pattern>
+    </servlet-mapping>
+    
+    <servlet>
+        <servlet-name>ProfileEditServlet</servlet-name>
+         <servlet-class>com.varun.Controller.ProfileServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ProfileEditServlet</servlet-name>
+        <url-pattern>/servlet/editprofile</url-pattern>
+    </servlet-mapping>
+    
+    <servlet>
+         <servlet-name>MessageSendServlet</servlet-name>
+         <servlet-class>com.varun.Controller.SendMessage</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>MessageSendServlet</servlet-name>
+        <url-pattern>/servlet/sendmessage</url-pattern>
+    </servlet-mapping>
+    
+    <servlet>
+         <servlet-name>ShowMessagesServlet</servlet-name>
+         <servlet-class>com.varun.Controller.ShowMessages</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ShowMessagesServlet</servlet-name>
+        <url-pattern>/servlet/ShowMessages</url-pattern>
+    </servlet-mapping>
+    
+    <servlet>
+         <servlet-name>WeatherServlet</servlet-name>
+         <servlet-class>com.varun.Controller.WeatherServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>WeatherServlet</servlet-name>
+        <url-pattern>/servlet/WeatherServlet</url-pattern>
+    </servlet-mapping>
+    
+    <!--  --> 
+   <filter>
+         <filter-name>Filter1</filter-name>
+         <filter-class>com.varun.Filter.LoginPageFilter</filter-class>
+	</filter>
+	
+	<filter-mapping>
+	    <filter-name>Filter1</filter-name>
+	    <url-pattern>/login.jsp</url-pattern>
+	</filter-mapping>
+	
+	<filter>
+         <filter-name>sessionAuth</filter-name>
+         <filter-class>com.varun.Filter.SessionAuthFilter</filter-class>
+	</filter>
+	
+	<filter-mapping>
+	    <filter-name>sessionAuth</filter-name>
+	    <url-pattern>/servlet/sendmessage</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+	    <filter-name>sessionAuth</filter-name>
+	    <url-pattern>/profilepage.jsp</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+	    <filter-name>sessionAuth</filter-name>
+	    <url-pattern>/servlet/editprofile</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+	    <filter-name>sessionAuth</filter-name>
+	    <url-pattern>/userpage.jsp</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+	    <filter-name>sessionAuth</filter-name>
+	    <url-pattern>/servlet/ShowMessages</url-pattern>   
+	</filter-mapping>
+	<filter-mapping>
+	    <filter-name>sessionAuth</filter-name>
+	    <url-pattern>/servlet/chatlist</url-pattern>
+	</filter-mapping>
+    <filter-mapping>
+	    <filter-name>sessionAuth</filter-name>
+	    <url-pattern>/servlet/Authentication/logout</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+	    <filter-name>sessionAuth</filter-name>
+	    <url-pattern>/servlet/Authentication/passchange</url-pattern>
+	</filter-mapping>
+	<!-- 
+
+	
+	
+	<filter-mapping> <url-pattern>/servlet?operation=*</url-pattern>
+	    <filter-name>sessionAuth</filter-name>
+	    <url-pattern>/servlet/chatlist</url-pattern>
+	</filter-mapping>
+	 -->
+	
   <!-- Jersey Servlet configurations 
     <servlet>
 	    <servlet-name>Jersey REST Service</servlet-name>

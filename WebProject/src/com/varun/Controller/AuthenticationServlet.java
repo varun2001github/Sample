@@ -1,6 +1,7 @@
 package com.varun.Controller;
 
 import java.io.IOException;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
@@ -18,6 +19,7 @@ import javax.servlet.http.HttpSession;
 import org.json.JSONObject;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.varun.Dao.LRUCache;
 import com.varun.Dao.UserDao;
 import com.varun.Logger.LoggerUtil;
 import com.varun.Model.UserinfoTableModel;
@@ -27,7 +29,6 @@ import com.varun.Security.SessionidGenerator;
 /**
  * Servlet implementation class AuthenticationServlet
  */
-@WebServlet("/Authentication")
 public class AuthenticationServlet extends HttpServlet{
 	private static final long serialVersionUID = 1L;
 	private static final Logger logger=LoggerUtil.getLogger(AuthenticationServlet.class);
@@ -42,10 +43,10 @@ public class AuthenticationServlet extends HttpServlet{
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
-	protected void doPost(HttpServletRequest request,HttpServletResponse response) throws ServletException, IOException {
+	protected void doPost(HttpServletRequest request,HttpServletResponse response) throws ServletException, IOException{
 		// TODO Auto-generated method stub
-		String operation=(String)request.getParameter("operation");
-		System.out.println(operation);
+		System.out.println("authentication serv called");
+		String operation=request.getPathInfo().substring(1);
 		switch(operation){
 		  case "login":
 			  Login(request,response);
@@ -67,7 +68,7 @@ public class AuthenticationServlet extends HttpServlet{
 	}
 	//login
 	private void Login(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		System.out.println("Getting here...."); 
+		System.out.println("Getting here....login"); 
 		HttpSession session=request.getSession();
 		UserinfoTableModel userDataObj=null;
 		try{      
@@ -93,64 +94,57 @@ public class AuthenticationServlet extends HttpServlet{
 				  if(loginidmatch && passmatch){
 				   		logger.log(Level.INFO,"credentials regex valid ");
 			        	userDataObj=dao.validate(userId,pass);
-			        	System.out.println("dao ret"+userDataObj.getUser_id());
+			        	System.out.println("dao ret"+userDataObj);
 						if(userDataObj!=null){
+							
 								long passCreatedTime=userDataObj.getPassTableObj().getCreated_time().longValue();
 								long usedDays = TimeUnit.MILLISECONDS.toDays(System.currentTimeMillis()-passCreatedTime);
 								System.out.println("used days "+usedDays);
 								
+								//add to cache
+								LRUCache.put("userid"+userDataObj.getUser_id(), userDataObj);
+
 								//if login valid
 								if(usedDays<60){
+									request.setAttribute("userid",userDataObj.getUser_id());
 									
+									//for auditing
+									dao=new UserDao(request);
 									//delete expired sessions of user
 									dao.deleteExpiredSessions(userDataObj.getUser_id());
 									
 									//create session
 									String sessionid=SessionidGenerator.Generate();
 									dao.createSession(userDataObj.getUser_id(), sessionid);
-									
+																		
 							    	//session id cookie
 							    	Cookie c1=new Cookie("sessionid",sessionid);
 								    c1.setHttpOnly(true);
 									c1.setMaxAge(800);
 									c1.setSecure(true);
+									c1.setPath("/");
 								    response.addCookie(c1);
-								    
-								    //Converting the user Object to JSONString
-									JSONObject js=new JSONObject();
-									js.put("userid",userDataObj.getUser_id());
-									js.put("username",userDataObj.getUser_name());
-								    ObjectMapper mapper = new ObjectMapper();
-								    String jsonString =js.toString();
-//									JSONObject js=new JSONObject(jsonString);
-//							  		EncryptionHandler eh=new EncryptionHandler();
-//							    	Cookie c2=new Cookie("userObject",eh.encrypt(js));
-								    String encodedJson = URLEncoder.encode(jsonString, "UTF-8");
-							    	Cookie c2=new Cookie("userdata",encodedJson);
-							    	c2.setHttpOnly(true);
-									c2.setSecure(true);
-									c2.setMaxAge(800);
-								    response.addCookie(c2);
-							    	session.setAttribute("dataobj", userDataObj);
-								    response.sendRedirect("userpage.jsp");
+								    session.setAttribute("dataobj", userDataObj);
+							    	System.out.println("___--   "+request.getContextPath());
+							    	response.sendRedirect(request.getContextPath()+"/userpage.jsp");
 									
 								}else{
 									  //pass expired
 								      session.setAttribute("userid",userDataObj.getUser_id());
 							    	  response.sendRedirect("passchange.jsp");
 								} 
-						  }else {
+						  }else{
 							  logger.log(Level.INFO,"credentials regex valid");
 						      session.setAttribute("logerror","Invalid loginid or password");
-				              response.sendRedirect("login.jsp");
+				              response.sendRedirect("/WebProject/login.jsp");
 						  }
 					   
 				  }else if(!loginidmatch){
 						session.setAttribute("logerror","Invalid loginid");
-						response.sendRedirect("login.jsp");
+						response.sendRedirect("/WebProject/login.jsp");
 				  }else if(!passmatch){
 						session.setAttribute("logerror","Invalid password");
-						response.sendRedirect("login.jsp");
+						response.sendRedirect("/WebProject/login.jsp");
 				  }
 		  }catch(NumberFormatException e){
 		        logger.log(Level.WARNING,"NumberFormatException",e);
@@ -164,44 +158,44 @@ public class AuthenticationServlet extends HttpServlet{
 	}
     
 	//logout
-	private void Logout(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		
+	private void Logout(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
+		System.out.println("log out called");
+
 		try {
-			  CookieEncrypt en=new CookieEncrypt();
-	          System.out.println("logout servlet"+request.getAttribute("userid")+" sid"+request.getAttribute("sessionid"));
-	          UserDao dao=new UserDao();
-//		      String userid=(String)request.getAttribute("userid"); 
+	          UserDao dao=new UserDao(request);
+	          String sessionId=null;
 		      Cookie[] cookies=request.getCookies();
 		      if(cookies!=null){
 			      for(Cookie c:cookies){
-			    	  if(c.getName().equals("userdata")){
-			    		  c.setMaxAge(0);
-			    		  response.addCookie(c);
-			    	  }
-				      if(c.getName().equals("sessionid")){
-				       		dao.sessionInvalidate(c.getValue());
+			    	  if(c.getName().equals("sessionid")){
+			    		    sessionId=c.getValue();
+				       		dao.sessionInvalidate(sessionId);
+					       	LRUCache.remove(sessionId);
 				       		c.setMaxAge(0);
 				       		response.addCookie(c);
-				       		System.out.println("session deleted frm cookie");
 				      }
 			      }
 		      }
-	          
+	       	  LRUCache.showCacheList();
 		      if(request.getAttribute("responseerr")!=null && !request.getAttribute("responseerr").equals("")){
 		    	  int res=(int)request.getAttribute("responseerr");
 		    	  response.sendError(res);
 		      }else{
-	              response.sendRedirect("login.jsp");
+	              response.sendRedirect(request.getContextPath()+"/login.jsp");
 		      }
 		}catch(NumberFormatException e){
+			e.printStackTrace();
 		    logger.log(Level.WARNING,"NumberFormatException",e);
 		}catch(Exception e){
+			e.printStackTrace();
 		    logger.log(Level.WARNING,"Exception",e);
 	    }
+
     }
 		
 	//register
 	private void Register(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		System.out.println("Getting here....register"); 
 		    HttpSession session=request.getSession();
 	        int flag=1;
 	        String email=null;
@@ -210,21 +204,17 @@ public class AuthenticationServlet extends HttpServlet{
 	        String name=null;
 	        System.out.println("registering");
 			try {   
-		        System.out.println("registering1");
 			        email=request.getParameter("email");
 	                try{
 						mobile=Long.parseLong(request.getParameter("mobile"));
-				        System.out.println("registering2");
 					}catch(NumberFormatException e){
 						flag=0;
                         e.printStackTrace();
 						logger.log(Level.WARNING,"NumberFormatException and redirected back",e);
 					    session.setAttribute("regerror","Invalid mobile");
-						response.sendRedirect("register.jsp");
+						response.sendRedirect(request.getContextPath()+"/register.jsp");
 					}
-	                System.out.println(flag);
 	                if(flag==1){
-	    		        System.out.println("registering3");
 					    pass=request.getParameter("password");
 						name=request.getParameter("name");
 						//patterns
@@ -236,19 +226,18 @@ public class AuthenticationServlet extends HttpServlet{
 				        boolean emailmatch=emailpat.matcher(email).matches();
 				        boolean mobilematch=mobilepat.matcher(mobile+"").matches();
 				        boolean passmatch=passpat.matcher(pass).matches();
-						System.out.println("reg in");
 				        if(emailmatch && mobilematch && passmatch){
-				        	System.out.print("pattern matched");
+				        	System.out.print("reg in pattern matched "+name+mobile+email+pass);
 							try{
-								UserDao dao=new UserDao();
+								UserDao dao=new UserDao(request);
 								boolean updated=dao.registerUser(name,email,mobile,pass);
 			
 								if(updated) {
 									session.setAttribute("logerror","Successfully registered");
-								    response.sendRedirect("login.jsp");
+								    response.sendRedirect(request.getContextPath()+"/login.jsp");
 								}else {
 									session.setAttribute("regerror","CREDENTIALS ALREADY EXISTS OR INVALID,PLEASE CHANGE");
-								    response.sendRedirect("register.jsp");
+								    response.sendRedirect(request.getContextPath()+"/register.jsp");
 								}
 							}catch (Exception e){
 								// TODO Auto-generated catch block
@@ -257,16 +246,16 @@ public class AuthenticationServlet extends HttpServlet{
 						}else if(!emailmatch){
 							System.out.println("emailmatch");
 							session.setAttribute("regerror","Invalid email");
-							response.sendRedirect("register.jsp");
+							response.sendRedirect(request.getContextPath()+"/register.jsp");
 			//				response.sendRedirect("register.jsp?error=Invalid email");
 						}else if(!mobilematch){
 							System.out.println("mobilematch");
 	                        session.setAttribute("regerror","Invalid mobile number");
-							response.sendRedirect("register.jsp");
+							response.sendRedirect(request.getContextPath()+"/register.jsp");
 						}else if(!passmatch){
 							System.out.println("passmatch");
 							session.setAttribute("regerror","Invalid password ");
-							response.sendRedirect("register.jsp");
+							response.sendRedirect(request.getContextPath()+"/register.jsp");
 						}else {
 							System.out.println("not reg");
 						}
@@ -300,19 +289,37 @@ public class AuthenticationServlet extends HttpServlet{
 	    			boolean isAdded=dao.addNewPass(uid,oldpass,newpass);
 	    			if(isAdded==false){
 	    				session.setAttribute("passchangeerr","Invalid password or already exists,try again");
-	    				response.sendRedirect("passchange.jsp");
+	    				response.sendRedirect(request.getContextPath()+"/passchange.jsp");
 	    			}else{
 	    				session.setAttribute("logerror","Password created successfully");
-	    				response.sendRedirect("login.jsp");
+	    				response.sendRedirect(request.getContextPath()+"/login.jsp");
 	    			}
     			}else{
     				session.setAttribute("passchangeerr","Invalid password or already exists,try again");
-    				response.sendRedirect("passchange.jsp");
+    				response.sendRedirect(request.getContextPath()+"/passchange.jsp");
     			}
 			
 		}catch(Exception e){
 			logger.log(Level.WARNING,"Exception",e);
 		    session.setAttribute("logerror","session expired,try login again");
-		    response.sendRedirect("login.jsp");	    }
-	    }
+		    response.sendRedirect(request.getContextPath()+"/login.jsp");	    
+		}
+	 }
 }
+
+
+//Converting the user Object to JSONString
+//JSONObject js=new JSONObject();
+//js.put("userid",userDataObj.getUser_id());
+//js.put("username",userDataObj.getUser_name());
+//ObjectMapper mapper = new ObjectMapper();
+//String jsonString =js.toString();
+////JSONObject js=new JSONObject(jsonString);
+////EncryptionHandler eh=new EncryptionHandler();
+////Cookie c2=new Cookie("userObject",eh.encrypt(js));
+//String encodedJson = URLEncoder.encode(jsonString, "UTF-8");
+//Cookie c2=new Cookie("userdata",encodedJson);
+//c2.setHttpOnly(true);
+//c2.setSecure(true);
+//c2.setMaxAge(800);
+//response.addCookie(c2);

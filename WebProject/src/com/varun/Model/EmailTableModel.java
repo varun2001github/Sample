@@ -69,7 +69,7 @@ public class EmailTableModel{
 //		return this.map;
 //	}
 //	
-	public DataObject getDataObject() {
+	public DataObject getDataObject(){
 		setVariablesInMap();
 		return new DataObject(map);
 	}

@@ -46,10 +46,10 @@ public class GroupMemberTableApi {
             logger.log(Level.INFO,"method called");
         	memberObj.setGroup_id(groupId);
     		memberObj.setMember_id(adminid);
-    		ormObj.Insert(memberObj.getDataObject());
+    		ormObj.InsertQuery(memberObj.getDataObject()).Insert();
     		for(String memberId:members){
     			memberObj.setMember_id(Integer.parseInt(memberId));
-    			ormObj.Insert(memberObj.getDataObject());
+    			ormObj.InsertQuery(memberObj.getDataObject()).Insert();
     		}
        	 }catch(Exception e){
     	        logger.log(Level.WARNING,"unexpected",e);

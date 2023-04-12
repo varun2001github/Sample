@@ -51,21 +51,20 @@ public class MobileTableApi {
     	mobileObject.setUser_id(uid);
     	mobileObject.setMobileno(mobile);
     	System.out.println("mob ins pass"+mobileObject.getCreated_time());
-    	Integer isInserted=ormObj.Insert(mobileObject.getDataObject());
+    	Integer isInserted=ormObj.InsertQuery(mobileObject.getDataObject()).Insert();
     	if(isInserted!=null){
     		return true;
     	}
     	return false;
     }
     
-    public boolean updateMobile(Integer userid,Long oldMobileno,Long  newMobileno){
+    public boolean updateMobile(Integer userid,MobileTableModel oldMobileObject,MobileTableModel  newMobileObject){
     	System.out.println("mob upd");
     	try{
        	    CriteriaBuilder cb=new CriteriaBuilder();
     		logger.log(Level.INFO,"method called");
-            mobileObject=new MobileTableModel();
-    		mobileObject.setMobileno(newMobileno);
-        	ormObj.UpdateQuery(mobileObject.getDataObject()).Where(cb.addEquals("mobileno",oldMobileno)).And(cb.addEquals("user_id",userid));
+
+        	ormObj.UpdateQuery(oldMobileObject.getDataObject(),newMobileObject.getDataObject()).Where(cb.addEquals("mobileno",oldMobileObject.getMobileno())).And(cb.addEquals("user_id",userid));
         	boolean isInserted=ormObj.update();
         	return isInserted;
     	 }catch(Exception e){

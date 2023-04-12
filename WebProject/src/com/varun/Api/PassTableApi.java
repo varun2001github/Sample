@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.varun.Logger.LoggerUtil;
 import com.varun.Model.DataObject;
 import com.varun.Model.EmailTableModel;
@@ -50,7 +51,7 @@ public class PassTableApi {
     	//query formation
     	try{
             logger.log(Level.INFO,"orm select query called");
-    		orm.SelectQuery("pass_salt","pass_hash","pass_status","created_time").From(Table)
+    		orm.SelectAll().From(Table)
         	.Where(c.addEquals("user_id",uid));
         	List<DataObject> dataList=orm.getSelect();
         	List<PasswordTableModel> selectList=null;
@@ -70,15 +71,15 @@ public class PassTableApi {
     public boolean addPass(Integer userid,String passSalt,String passHash){
     	passObject=new PasswordTableModel(userid,passSalt,passHash);
     	System.out.println("API :"+passObject.getUser_id());
-    	Integer returned=orm.Insert(passObject.getDataObject());
+    	Integer returned=orm.InsertQuery(passObject.getDataObject()).Insert();
     	//if 0->inserted,if null->not inserted, or return gen id
     	if(returned!=null){
     		return true;
     	}
     	return false;
     }
-    public boolean updatePassById(PasswordTableModel obj,Integer uid){
-    	boolean returned=orm.UpdateQuery(obj.getDataObject()).Where(c.addEquals("user_id",uid)).update();
+    public boolean updatePassById(PasswordTableModel oldObj,PasswordTableModel newObj,Integer uid) throws JsonProcessingException{
+    	boolean returned=orm.UpdateQuery(oldObj.getDataObject(),newObj.getDataObject()).Where(c.addEquals("user_id",uid)).update();
     	if(returned){
     		return true;
     	}

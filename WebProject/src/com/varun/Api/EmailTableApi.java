@@ -25,30 +25,46 @@ public class EmailTableApi {
 	        logger.log(Level.WARNING,"constructor",e);
 		}
 	}
+	
     public void closeOrmConnection(){
     	ormObj.close();
 	}
+    
     public Integer getIdByEmail(String email){
          logger.log(Level.INFO,"method called");
+         
+         if(email==null) {
+        	 return null;
+         }else if(email.trim().isEmpty() || email.length()>30 || !email.matches("^[A-Za-z0-9.]+@[A-Za-z0-9]{2,}\\.[a-zA-Z]+$") ) {
+        	 return null;
+         }
+         
          try{
         	 CriteriaBuilder cb=new CriteriaBuilder();
         	 ormObj.SelectQuery("user_id").From(Table).Where(cb.addEquals("emailid",email));
         	 List<DataObject> dataList=ormObj.getSelect();
          	 List<EmailTableModel> l=null;
-         	 if(dataList.size()>0) {
+         	 if(dataList.size()>0){
              	l=new ArrayList<EmailTableModel>();
              	for(DataObject ob:dataList){
              		l.add(new EmailTableModel(ob));
              	}
+            	return l.get(0).getUser_id();
          	 }
-         	 return l.get(0).getUser_id();
      	 }catch(Exception e){
  	        logger.log(Level.WARNING,"unexpected",e);
      	 }
     	return null;
     }
     
-    public boolean checkEmail(String email){
+    public Boolean checkEmail(String email){
+    	
+    	 if(email==null){
+    		return false;
+    	 }else if(email.trim().isEmpty() || email.length()>30 || !email.matches("^[A-Za-z0-9.]+@[A-Za-z0-9]{2,}\\.[a-zA-Z]+$")){
+    		 return false;
+    	 }
+    	 
     	 try{
     		logger.log(Level.INFO,"method called");
        	    CriteriaBuilder cb=new CriteriaBuilder();
@@ -63,13 +79,21 @@ public class EmailTableApi {
          return false;
     }
     
-    public boolean addEmail(Integer uid,String email){
+    public Boolean addEmail(Integer uid,String email){
+    	
+    	if(email==null || uid==null || uid<=0){
+    		 return false;
+    	}else if(email.trim().isEmpty() || email.length()>30 || uid<=0 ||
+    		    !email.matches("^[A-Za-z0-9.]+@[A-Za-z0-9]{2,}\\.[a-zA-Z]+$")){
+    		 return false;
+    	}
+    	
     	try{
     		logger.log(Level.INFO,"method called");
     		emailObject=new EmailTableModel();
         	emailObject.setUser_id(uid);
         	emailObject.setEmailid(email);
-        	Integer isInserted=ormObj.Insert(emailObject.getDataObject());
+        	Integer isInserted=ormObj.InsertQuery(emailObject.getDataObject()).Insert();
         	if(isInserted!=null){
         		return true;
         	}
@@ -79,26 +103,45 @@ public class EmailTableApi {
          return false;
     }
     
-    public boolean updateEmail(Integer userid,String oldEmail,String newEmail){
-    	System.out.println("em upd");
+    public boolean updateEmail(Integer userid,EmailTableModel oldEmail,EmailTableModel newEmail){
+    	
+    	if(userid==null || userid<=0 || oldEmail==null || newEmail==null){
+    		return false;
+    	}else if(oldEmail.getEmailid()==null|| newEmail.getEmailid()==null){
+    		 return false;
+    	}else if(oldEmail.getEmailid().length()>30 ||
+    			 newEmail.getEmailid().length()>30 ||
+    			 oldEmail.getEmailid().trim().isEmpty() || 
+    			 newEmail.getEmailid().trim().isEmpty() ||
+    			 !newEmail.getEmailid().matches("^[A-Za-z0-9.]+@[A-Za-z0-9]{2,}\\.[a-zA-Z]+$")) {
+    		//max length in DB column is 100
+    		return false;
+    	}
+    	
+    	System.out.println("em upd entered ");
     	try{
     		logger.log(Level.INFO,"method called");
        	    CriteriaBuilder cb=new CriteriaBuilder();
-    		emailObject=new EmailTableModel();
-        	emailObject.setEmailid(newEmail);
-        	ormObj.UpdateQuery(emailObject.getDataObject())
-        	.Where(cb.addEquals("emailid",oldEmail))
+        	ormObj.UpdateQuery(oldEmail.getDataObject(),newEmail.getDataObject())
+        	.Where(cb.addEquals("emailid",oldEmail.getEmailid()))
         	.And(cb.addEquals("user_id",userid));
         	
         	boolean isUpdated=ormObj.update();
+        	System.out.println("Update status :"+isUpdated);
         	return isUpdated;
     	 }catch(Exception e){
+    		 e.printStackTrace();
 	        logger.log(Level.WARNING,"unexpected",e);
     	 }
          return false;
     }
     
     public List<EmailTableModel> getEmailById(Integer id){
+    	 
+    	 if(id==null || id<=0){
+       	    return null;
+         }
+    	
     	 logger.log(Level.INFO,"method called");
          try{
 	       	 CriteriaBuilder cb=new CriteriaBuilder();

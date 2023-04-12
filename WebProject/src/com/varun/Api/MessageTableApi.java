@@ -29,7 +29,7 @@ public class MessageTableApi{
         	 CriteriaBuilder cbNested=new CriteriaBuilder();
     		 ormObj.SelectQuery("senderid","text","chattime").From(Table)
     		 .Where(cb.addNestedCondition(cbNested.addEquals("senderid",senderid).AndEquals("recieverid",recieverid)))
-    		 .Or(cb.addNestedCondition(cbNested.addEquals("senderid",recieverid).AndEquals("recieverid",senderid)));
+    		 .Or(cb.addNestedCondition(cbNested.addEquals("senderid",recieverid).AndEquals("recieverid",senderid))).OrderBy("chattime");
     	
     	   	List<DataObject> dataList=ormObj.getSelect();
        	    List<MessagesModel> l=null;
@@ -77,7 +77,7 @@ public class MessageTableApi{
      		messageObj.setRecieverid(recieverid);
      		messageObj.setText(text);
      		messageObj.setChattime(System.currentTimeMillis());
-     		Integer isInserted=ormObj.Insert(messageObj.getDataObject());
+     		Integer isInserted=ormObj.InsertQuery(messageObj.getDataObject()).Insert();
      		if(isInserted!=null) {
      			return true;
      		}
@@ -94,7 +94,7 @@ public class MessageTableApi{
     		messageObj.setGroup_id(groupid);
     		messageObj.setText(text);
     		messageObj.setChattime(System.currentTimeMillis());
-    		Integer isInserted=ormObj.Insert(messageObj.getDataObject());
+    		Integer isInserted=ormObj.InsertQuery(messageObj.getDataObject()).Insert();
     		if(isInserted!=null) {
     			return true;
     		}

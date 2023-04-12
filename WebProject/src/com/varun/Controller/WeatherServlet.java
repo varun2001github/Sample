@@ -14,7 +14,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.json.JSONObject;
 
-@WebServlet("/WeatherServlet")
+import com.varun.Dao.LRUCache;
+
 public class WeatherServlet extends HttpServlet{
 	private static final long serialVersionUID = 1L;
 
@@ -40,11 +41,11 @@ public class WeatherServlet extends HttpServlet{
            strBuf.append(output);
         br.close();
         JSONObject json=new JSONObject(strBuf.toString());
-//        System.out.println(json.toString());
+//      System.out.println(json.toString());
         JSONObject nestedJson=new JSONObject(json.get("current").toString());
         
         //sending JSP response
-        out.println("<div id=\"weather-report\" style=\"padding-left:20%;\">\n" + 
+        out.println("<div id=\"weather-report\" style=\"padding-left:20%;\">\n"+ 
         		"		         <div style=\"background:#F5FFFA;width:360px;height:220px;border-radius:20px;\">\n" + 
         		"			             <div id=\"profile-weather\" style=\"width:60px;height:60px;padding-left:15%;\" >\n" + 
         		"					              <div style=\"display:flex;height:60%;\">\n" + 
@@ -53,7 +54,7 @@ public class WeatherServlet extends HttpServlet{
         		"					                       <h1 style=\"padding-left:18%;height:10px;\" class=\"temperature\">"+nestedJson.get("temperature")+"&deg;</h1>\n" + 
         		"					                       <h2 style=\"width:50px;height:10px;\" class=\"description\">"+nestedJson.get("symbolPhrase")+"</h2>\n" + 
         		"					                   </div>\n" + 
-        		"					        	  </div>\n" + 
+        		"					        	  </div>\n"+ 
         		"					        	  <div style=\"padding-top:100%;width:70px;height:40px;\">\n" + 
         		"						        	      <div style=\"display:flex;\">\n" + 
         		"							        	           <div style=\"width:40px;height:30px\">\n" + 

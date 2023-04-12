@@ -12,37 +12,65 @@
        <%  
            System.out.println("----------Inside profilepage------------");
 	       String sessioninfo="";
-     	    UserDao dao=new UserDao();
+     	   UserDao dao=new UserDao();
 	       UserinfoTableModel dataObj=null;
 	       Integer userid=null;
 	       String username=null;
 	       String email=null;
 	       String country=null;
 	       String gender=null;
+	       System.out.println(" pp tl "+LRUCache.getThreadLocal());
 	       List<EmailTableModel> emailList=null;
 	       List<MobileTableModel> mobileList=null;
-	       if(request.getAttribute("userid")!=null){
-	    	   
+	       if(request.getAttribute("userid")!=null && LRUCache.getThreadLocal()!=null){
 	    	    userid=(Integer)request.getAttribute("userid");
 	    	    
-     	    	if(LRUCache.get(userid+"-"+"UserinfoTableModel")==null){
+     	    	//fetch user object
+	    	    if(LRUCache.getThreadLocal()!=null){
+	      	    	 System.out.println("profilepage userDataObject from ThreadLocal");
+     	    		 dataObj=LRUCache.getThreadLocal();
+     	    	}else if(LRUCache.get("userid"+userid)==null){
+	      	    	 System.out.println("profilepage userDataObject from Cache");
+	      	    	 dataObj=(UserinfoTableModel)LRUCache.get("userid"+userid);
+     	    	}else{
      	    		 dataObj=dao.getUserById(userid);
-	      	    	 System.out.println("userpage userDataObject from db");
-	      	    	 LRUCache.put(userid+"-"+"UserinfoTableModel", dataObj);
-	  	    	}else{
-	      	    	 System.out.println("userpage userDataObject from cache");
-	      	    	 dataObj=(UserinfoTableModel)LRUCache.get(userid+"-"+"UserinfoTableModel");
-	  	    	}
+	      	    	 System.out.println("profilepage userDataObject from db");
+	      	    	 LRUCache.put("userid"+userid, dataObj);
+     	    	}
+
+     	    	
+     	    	//fetch email objects
+     	    	if(dataObj.getEmailTableObj()==null){
+	      	    	System.out.println("profilepage email from db");
+     	    		emailList=dao.getEmail(userid);
+     	    		dataObj.setEmailTableObj(emailList);
+     	    		LRUCache.put("userid"+userid, dataObj);
+     	    	}else{
+	      	    	System.out.println("profilepage email from cache/TL object");
+     	    		emailList=dataObj.getEmailTableObj();
+     	    	}
+     	    	
+     	    	//fetch mobile objects
+     	    	if(dataObj.getMobileTableObj()==null){
+	      	    	System.out.println("profilepage mobile from db");
+     	    		mobileList=dao.getMobile(userid);
+     	    		dataObj.setMobileTableObj(mobileList);
+     	    		LRUCache.put("userid"+userid, dataObj);
+     	    	}else{
+	      	    	System.out.println("profilepage mobile from cache/TL object");
+     	    		mobileList=dataObj.getMobileTableObj();
+     	    	}
+     	    	
      	    	int flag=0;
 	            userid=dataObj.getUser_id();
 	            username=dataObj.getUser_name();
 	            country=dataObj.getCountry();
 	            gender=dataObj.getGender();
-	    	  
+	    	    
 	       }else{
 	    	   System.out.println("dataobj null");
 	       }
- //   	   System.out.println(username);
+           //System.out.println(username);
 	       request.setAttribute("dataobj",dataObj);
            //response.setIntHeader("Refresh",1);
            //response.setHeader("Expires","0");
@@ -57,7 +85,7 @@
   </div>
   <div style="padding-left:20%;display:flex;" id="profile_details">
 
-        <form id="user_profile_form" action="editprofile" method="post" autocomplete="off">
+        <form id="user_profile_form" action="servlet/editprofile" method="post" autocomplete="off">
            <%  
 		      if(session.getAttribute("updateerr")!=null && session.getAttribute("updateerr")!=""){
 			         out.println("<h3 style=\"color:red\">"+session.getAttribute("updateerr")+"</h3>");
@@ -71,8 +99,6 @@
            <%    
                  out.println("<label>EMAIL</label><br>");    
 		         if(dataObj!=null){
-	 		         emailList=dataObj.getEmailTableObj();
-			         mobileList=dataObj.getMobileTableObj();   
 			         //System.out.println("em mob ret frm db"+emailList.size());
 		             //System.out.println(mobileList.size());
 		        	 for(EmailTableModel emailData:emailList){
@@ -135,15 +161,16 @@
          var x = document.getElementById("weather-");
          
          if (navigator.geolocation){
+       	      console.log("nav accepted");
          	  navigator.geolocation.getCurrentPosition(showPosition);
          }else{
-        	  console.log("not sup");
+        	  console.log("nav not accepted");
          	  x.innerHTML = "Geolocation is not supported by this browser.";
          }
          
          function showPosition(position){
          	  $.ajax({
-         	  		 url:"WeatherServlet?latitude="+position.coords.latitude+"&longitude="+position.coords.longitude,
+         	  		 url:"servlet/WeatherServlet?latitude="+position.coords.latitude+"&longitude="+position.coords.longitude,
          	  		 type:"GET",
          	  		 success: function(result){
          	  			$("#profile-weather").html(result);

@@ -20,27 +20,6 @@ import com.varun.Orm.Table;
 @Table(name="userinfo")
 public class UserinfoTableModel{
 	
-	//constructor
-	public UserinfoTableModel(DataObject ob){
-		this.map=ob.getDataMap();
-		setMapInVariables();
-	}
-	public UserinfoTableModel(){
-	}
-	
-	public UserinfoTableModel(UserinfoTableModel copyObj){
-		this.user_id = copyObj.getUser_id();
-		this.user_name = copyObj.getUser_name();
-		this.gender = copyObj.getGender();;
-		this.country =copyObj.getCountry();
-		this.picfile = copyObj.getPicfile();;
-		this.created_time =copyObj.getCreated_time();
-		this.modif_time = copyObj.getModif_time();
-		this.passTableObj = copyObj.getPassTableObj();
-		this.emailTableObjs = copyObj.getEmailTableObj();
-		this.mobileTableObjs = copyObj.getMobileTableObj();
-	}
-	
 	private static final Logger logger=LoggerUtil.getLogger(ChatList.class);
 	
 	private HashMap<String,Object> map=new HashMap<String,Object>();
@@ -59,7 +38,23 @@ public class UserinfoTableModel{
     
     private Long modif_time=null;
     
-    public enum DbColumn {
+    private PasswordTableModel passTableObj=null;
+    
+	private List<EmailTableModel> emailTableObjs=null;
+	
+    private List<MobileTableModel> mobileTableObjs=null;
+
+	private List<UserinfoTableModel> chatList=null;
+    
+    private List<GroupInfoModel> groupChatList=null;
+    
+    private List<MessagesModel> messages=null;
+    
+    private List<GroupMessagesModel> groupMessages=null;
+    
+    private SessionTableModel sessionObject=null;
+    
+    public enum DbColumn{
     	user_id,
     	user_name,
     	gender,
@@ -67,9 +62,29 @@ public class UserinfoTableModel{
     	picfile,
     	created_time,
     	modif_time;
-    	
 	}
 	
+	//constructor
+	public UserinfoTableModel(DataObject ob){
+		this.map=ob.getDataMap();
+		setMapInVariables();
+	}
+	
+	public UserinfoTableModel(){
+	}
+	
+	public UserinfoTableModel(UserinfoTableModel copyObj){
+		this.user_id = copyObj.getUser_id();
+		this.user_name = copyObj.getUser_name();
+		this.gender = copyObj.getGender();;
+		this.country =copyObj.getCountry();
+		this.picfile = copyObj.getPicfile();;
+		this.created_time =copyObj.getCreated_time();
+		this.modif_time = copyObj.getModif_time();
+		this.passTableObj = copyObj.getPassTableObj();
+		this.emailTableObjs = copyObj.getEmailTableObj();
+		this.mobileTableObjs = copyObj.getMobileTableObj();
+	}
 	/////
 	
 	private void setMapInVariables(){
@@ -84,6 +99,7 @@ public class UserinfoTableModel{
 	
 	private void setVariablesInMap(){
 		map.put("Table","userinfo");
+		map.put("primary_key",this.user_id);
 		map.put(DbColumn.user_id.name(), this.user_id);
 		map.put(DbColumn.user_name.name(), this.user_name);
 		map.put(DbColumn.gender.name(), this.gender);
@@ -99,12 +115,6 @@ public class UserinfoTableModel{
 	}
 //
     //for using in insert,update
-    	
-    private PasswordTableModel passTableObj=null;
-    
-	private List<EmailTableModel> emailTableObjs=null;
-	
-    private List<MobileTableModel> mobileTableObjs=null;
     
     
     //column variables getter setters
@@ -214,5 +224,61 @@ public class UserinfoTableModel{
 	public void setPassTableObj(PasswordTableModel passTableObj){
     	logger.log(Level.INFO,"method");
 		this.passTableObj = passTableObj;
+	}
+	
+    public List<EmailTableModel> getEmailTableObjs() {
+		return emailTableObjs;
+	}
+
+	public void setEmailTableObjs(List<EmailTableModel> emailTableObjs) {
+		this.emailTableObjs = emailTableObjs;
+	}
+
+	public List<MobileTableModel> getMobileTableObjs() {
+		return mobileTableObjs;
+	}
+
+	public void setMobileTableObjs(List<MobileTableModel> mobileTableObjs) {
+		this.mobileTableObjs = mobileTableObjs;
+	}
+
+	public List<UserinfoTableModel> getChatList() {
+		return chatList;
+	}
+
+	public void setChatList(List<UserinfoTableModel> chatList) {
+		this.chatList = chatList;
+	}
+
+	public List<GroupInfoModel> getGroupChatList() {
+		return groupChatList;
+	}
+
+	public void setGroupChatList(List<GroupInfoModel> groupChatList) {
+		this.groupChatList = groupChatList;
+	}
+
+	public List<MessagesModel> getMessages() {
+		return messages;
+	}
+
+	public void setMessages(List<MessagesModel> messages) {
+		this.messages = messages;
+	}
+
+	public List<GroupMessagesModel> getGroupMessages() {
+		return groupMessages;
+	}
+
+	public void setGroupMessages(List<GroupMessagesModel> groupMessages) {
+		this.groupMessages = groupMessages;
+	}
+
+	public SessionTableModel getSessionObject() {
+		return sessionObject;
+	}
+
+	public void setSessionObject(SessionTableModel sessionObject) {
+		this.sessionObject = sessionObject;
 	}
 }

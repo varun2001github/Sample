@@ -10,6 +10,7 @@ import com.varun.Model.DataObject;
 import com.varun.Model.EmailTableModel;
 import com.varun.Model.GroupInfoModel;
 import com.varun.Model.GroupMembersModel;
+import com.varun.Model.GroupMessagesModel;
 import com.varun.Model.UserinfoTableModel;
 import com.varun.Orm.CriteriaBuilder;
 import com.varun.Orm.OrmImp;
@@ -25,6 +26,7 @@ public class GroupTableApi{
 	public GroupTableApi(OrmImp obj){
 		ormObj=obj;
 	}
+	
     public void closeOrmConnection(){
     	ormObj.close();
 	}
@@ -55,7 +57,7 @@ public class GroupTableApi{
         try{
         	grpObj.setGroup_name(groupname);
     		grpObj.setAdmin_id(adminid);
-    		Integer grpId=ormObj.Insert(grpObj.getDataObject());
+    		Integer grpId=ormObj.InsertQuery(grpObj.getDataObject()).Insert();
     		return grpId;
 	   	}catch(Exception e){
 		     logger.log(Level.WARNING,"unexpected",e);
@@ -63,4 +65,13 @@ public class GroupTableApi{
 		return null;
 		
 	}
+	 public static void main(String args[]){
+		  GroupTableApi go=new GroupTableApi(new OrmImp());
+		   List<GroupInfoModel> ob=go.fetchChatList(1);
+		   if(ob!=null) {
+			   for(GroupInfoModel g:ob){
+				   System.out.println(g.getGroup_name()+g.getGroup_id());
+			   } 
+		   }
+	  }
 }

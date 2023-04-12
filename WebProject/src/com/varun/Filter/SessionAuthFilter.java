@@ -23,19 +23,20 @@ import com.varun.Controller.ChatList;
 import com.varun.Dao.LRUCache;
 import com.varun.Dao.UserDao;
 import com.varun.Logger.LoggerUtil;
+import com.varun.Model.SessionTableModel;
 import com.varun.Model.UserinfoTableModel;
 
 /**
  * Servlet Filter implementation class SessionFilter "/profilepage.jsp"
  */
-@WebFilter(filterName = "MyFilter", urlPatterns = {"/sendmessage","/profilepage.jsp","/editprofile","/userpage.jsp","/ShowMessages","/chatlist"})
-public class SessionAuthFilter implements Filter {
+//@WebFilter(filterName = "MyFilter", urlPatterns = {"/sendmessage","/profilepage.jsp","/editprofile","/userpage.jsp","/ShowMessages","/chatlist"})
+public class SessionAuthFilter implements Filter{
 	private static final Logger logger=LoggerUtil.getLogger(ChatList.class);
 
     /**
      * Default constructor. 
      */
-    public SessionAuthFilter() {
+    public SessionAuthFilter(){
         // TODO Auto-generated constructor stub
     }
 
@@ -48,67 +49,87 @@ public class SessionAuthFilter implements Filter {
 
 	/**
 	 * @see Filter#doFilter(ServletRequest, ServletResponse, FilterChain)
-	 */
-	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+	*/
+	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException{
 		// TODO Auto-generated method stub
 		// place your code here
+		System.out.println("session auth filter");
         logger.log(Level.INFO,"Servlet Filter");
-        String sessionid="";
-        Integer userid=null;
-        String username=null;
-        int sessionFlag=0,dataobjFlag=0;
-        boolean isSessionValid=false;
-		HttpServletRequest httpRequest = (HttpServletRequest)request;
-		HttpServletResponse httpResponse = (HttpServletResponse)response;
-		HttpSession session=httpRequest.getSession();
-		UserinfoTableModel userObj =null;
+        String sessionid=null;
+        int redirectFlag=0;
+		HttpServletRequest httpRequest =(HttpServletRequest)request;
+		HttpServletResponse httpResponse =(HttpServletResponse)response;
+        System.out.println("sess auth filter"+httpRequest.getRequestURL());
 		try{
 			Cookie[] cookies=httpRequest.getCookies();
 			if(cookies!=null){
-			       for(Cookie c:cookies){
-			    	    //fetch session id from cookie
-				       	if(c.getName().equals("userdata")){
-				       		dataobjFlag=1;
-				       		String encodedString=c.getValue();
-				            String jsonString = URLDecoder.decode(encodedString, "UTF-8");
-							JSONObject js=new JSONObject(jsonString);
-                            userid=js.getInt("userid");
-                            username=js.getString("username");
-                        }
-				       	if(c.getName().equals("sessionid")){
-				       		sessionFlag=1;
+			        for(Cookie c:cookies){
+			    	   if(c.getName().equals("sessionid")){
 				       		sessionid=c.getValue();
-                        }
+				       		System.out.println("cookie avl"+sessionid);
+		                }
 				    }
 			       
-			        if(sessionFlag==1 && dataobjFlag==1){
-			       	    UserDao dao=new UserDao();
-			       	    userObj=new UserinfoTableModel();
-			       	   
-			       	    isSessionValid=dao.checkSession(userid,sessionid);
-			       	    if(isSessionValid && userObj!=null){
-			       	    	httpRequest.setAttribute("userid",userid);
+			        if(sessionid!=null){
+			        	UserDao dao=new UserDao();
+			        	UserinfoTableModel userModel=null;
+			        	SessionTableModel sessionObject=null;
+			        	
+			        	if(userModel==null){
+			        		userModel=new UserinfoTableModel();
+			        	}
+			        	
+                        //Get Session Object 
+			        	
+			       	    if(LRUCache.get(sessionid)!=null){
+			       	    	System.out.println("---session validate from cache---");
+			       	    	sessionObject=(SessionTableModel)LRUCache.get(sessionid);
+			       	    }else{
+			       	    	System.out.println("---session validate from DB---");
+			       	    	sessionObject=dao.getSessionObject(sessionid);
+			       	    	LRUCache.put(sessionid,sessionObject);
+			       	    }
+			       	    
+			       	    //if session valid
+			       	    if(sessionObject!=null){
+							System.out.println("cookie ses valid");
+
+			       	    	//add sessionObject to cache
+			       	    	LRUCache.put(sessionid,sessionObject);
+			       	    	
+                            //get basic user object including Username
+			       	    	if(LRUCache.get("userid"+sessionObject.getUser_id())!=null){
+				       	    	System.out.println("filter ud frm cache");
+			       	    		userModel=(UserinfoTableModel)LRUCache.get("userid"+sessionObject.getUser_id());
+			       	    	}else{
+				       	    	System.out.println("filter ud frm db");
+			       	    		userModel=dao.getUserById(sessionObject.getUser_id());
+			       	    		LRUCache.put("userid"+sessionObject.getUser_id(),userModel);
+			       	    	}
+			       	    	LRUCache.setThreadLocal(userModel);
+			       	    	httpRequest.setAttribute("userid",sessionObject.getUser_id());
 			       	    	httpRequest.setAttribute("sessionid",sessionid);
+			       	    	redirectFlag=1;
 		            		chain.doFilter(request, response);
 		            	}else{
-		       			    System.out.println("logout1");
-			       	    	RequestDispatcher rd = httpRequest.getRequestDispatcher("/Authentication?operation=logout");
+		            		redirectFlag=1;
+			       	    	RequestDispatcher rd = httpRequest.getRequestDispatcher("/servlet/Authentication/logout");
 			      			rd.forward(request, response);
 			       	    }
 					}
+			}else{
+				System.out.println("cookie not avl");
 			}
+			
 		 }catch(Exception e){
  	        logger.log(Level.WARNING,"unexpected",e);
      	 }
-		 if(sessionFlag==0 || dataobjFlag==0){
-    	    RequestDispatcher rd = httpRequest.getRequestDispatcher("/Authentication?operation=logout");
-  			try {
-				rd.forward(request, response);
-			}catch (ServletException | IOException e){
-				// TODO Auto-generated catch block
-	 	        logger.log(Level.WARNING,"servlet",e);
-			}
-         }
+		if(redirectFlag==0) {
+			RequestDispatcher rd = httpRequest.getRequestDispatcher("/servlet/Authentication/logout");
+			rd.forward(request, response);
+		}
+	
+		 
 	}
 
 	/**

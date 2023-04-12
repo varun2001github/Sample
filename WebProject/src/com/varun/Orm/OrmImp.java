@@ -4,6 +4,9 @@ import java.sql.*;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.varun.Controller.ChatList;
 import com.varun.Logger.LoggerUtil;
 import com.varun.Model.*;
@@ -13,36 +16,50 @@ public class OrmImp{
 	private Connection con=null;
 	private static PreparedStatement stmt;
 	private String query="";
-//	private O obj=null;
-	private static DbConnectionSource conSource=new DbConnectionSource();
-
 	private static final Logger logger=LoggerUtil.getLogger(ChatList.class);
+	
+	//audit
+	private AuditTableModel auditModelObject=null;
+	private int insertAuditFlag=0,deleteAuditFlag=0;
+	private OrmImp auditOrm=null;
+	private String deleteAuditTable=null;
 	public OrmImp(){
-        try{
+		try{
 			con=DbConnectionSource.getConnection();
 	        logger.log(Level.INFO,"ORM Db con from datasource");
-		}catch (Exception e){
+		}catch(Exception e){
+			// TODO Auto-generated catch block
+	        logger.log(Level.WARNING,"db con exception"+e);
+	        e.printStackTrace();
+	    }
+	}
+	
+    public OrmImp(AuditTableModel auditModelObject){
+    	this.auditModelObject=auditModelObject;
+    	try{
+			con=DbConnectionSource.getConnection();
+	        logger.log(Level.INFO,"ORM Db con from datasource");
+		}catch(Exception e){
 			// TODO Auto-generated catch block
 	        logger.log(Level.WARNING,"db con exception"+e);
 	    }
-	}
-
+    }
+    
 	public void close(){
 		try{
 			this.con.close();
 			stmt.close();
 	        logger.log(Level.INFO,"ORM Db con closed");
-		}catch (SQLException e){
+		}catch(SQLException e){
 			// TODO Auto-generated catch block
 	        logger.log(Level.WARNING,"ORM Db con not closed "+e);
 		}
 	}
 	
 	public void beginTransaction(){
-		try {
+		try{
 			con.setAutoCommit(false);
 		}catch(SQLException e){
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			logger.log(Level.WARNING,e+"");
 		}
@@ -56,8 +73,8 @@ public class OrmImp{
 		}catch (SQLException e){
 			try{
 				con.rollback();
+				con.setAutoCommit(true);
 			}catch (SQLException e1){
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 				logger.log(Level.WARNING,e1+"");
 			}
@@ -65,46 +82,67 @@ public class OrmImp{
 			logger.log(Level.WARNING,e+"");
 			return false;
 		}
+		
 	}
 	
-	public OrmImp UpdateQuery(DataObject obj){
-		 String query="UPDATE "+obj.getDataMap().get("Table")+" SET ",keyval="";
+	
+	public void rollback(){
+		try{
+			con.rollback();
+		}catch (SQLException e){
+			e.printStackTrace();
+			logger.log(Level.WARNING,e+"");
+		}
+	}
+	
+	public OrmImp UpdateQuery(DataObject oldObj,DataObject newObj) throws JsonProcessingException {
+		 String tableName=(String)newObj.getDataMap().get("Table");
+		 String query="UPDATE "+tableName+" SET ",keyval="";
 	     int counter=0;
 	     String key="";
 	     Object value=null;
+	     HashMap<String, Object> oldObjectMap=oldObj.getDataMap();
+	     
+	     HashMap<String, Object> oldMapAudit=new HashMap<>();
+	     HashMap<String, Object> newMapAudit=new HashMap<>();
+	     
+	     //for audit
+	     insertAuditFlag=1;
 	     //iterating map and creating query
-	     for (Map.Entry<String,Object> mapElement : obj.getDataMap().entrySet()){
-		            key = mapElement.getKey();
-		 			value =mapElement.getValue();
-		 			if(value!=null && key!="Table"){
-		 				//if value not null 
-		   				if(counter!=0){
-		   						 keyval+=",";							 
-		   				}
-		   				keyval+=key+"=";
-		   				if(value.getClass().getTypeName().endsWith("String")){
-		   					  keyval+="'"+(String)value+"'";
-		   				}else{
-		   					  keyval+=value;
-		   				}
-		   				counter++;
-		 			}
+	     for(Map.Entry<String,Object> mapElement : newObj.getDataMap().entrySet()){
+	    	        
+	            key = mapElement.getKey();
+	 			value =mapElement.getValue();
+	 			if(value!=null && key!="Table" && !value.equals(oldObjectMap.get(key))){
+	 				//if value not null 
+	   				if(counter!=0){
+	   						 keyval+=",";							 
+	   				}
+	   				keyval+=key+"=";
+	   				if(value.getClass().getTypeName().endsWith("String")){
+	   					  keyval+="'"+(String)value+"'";
+	   				}else{
+	   					  keyval+=value;
+	   				}
+	   				if(!tableName.equals("audit_table")){
+	   					oldMapAudit.put(key, oldObjectMap.get(key));
+	   					newMapAudit.put(key, newObj.getDataMap().get(key));
+	   				}
+	   				counter++;
+	 			}
 	     }
+	     // audit object		   				
+	 	 if(!tableName.equals("audit_table")){
+			auditModelObject.setAudits(tableName,"UPDATE",new ObjectMapper().writeValueAsString(oldMapAudit),new ObjectMapper().writeValueAsString(newMapAudit), System.currentTimeMillis());
+		 }
+	 	 
 	     query+=keyval;
 		 this.query=query;
-//		 System.out.println(query);
          logger.log(Level.INFO,"Update Query created "+query);
 		 return this;
 	}
-	
-    public OrmImp DeleteQuery(String table){
-    	String query="";
-    	query+="DELETE FROM "+table;
-    	this.query=query;
-        logger.log(Level.INFO,"Deljava.sql.SQLException: Connection is null.eteQuery created "+query);
-    	return this;
-    }
     
+
     public OrmImp SelectQuery(String... columns){
     	 int counter=0;
       	 query+="SELECT ";
@@ -115,16 +153,13 @@ public class OrmImp{
    		      query+=(column);
    			  counter=1;
          }
-//      	 System.out.println(query);
+//       System.out.println(query);
          logger.log(Level.INFO,"SelectQuery(...) "+query);
       	 return this;
     }
     
     public OrmImp SelectAll(){
-//    	System.out.println("select query is: "+query);
-//    	String table=obj.getClass().getAnnotation(Table.class).name();
    	    query+="SELECT * ";
-//   	    System.out.println(query);
         logger.log(Level.INFO,"SelectAll quer :"+query);
       	return this;
     }
@@ -136,7 +171,7 @@ public class OrmImp{
 			stmt = con.prepareStatement(query,ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY);
 			ResultSet rs=stmt.executeQuery();
 			if(rs.next()){
-		        logger.log(Level.INFO,"result set avl");
+		        logger.log(Level.INFO,"result set avl") ;
 				ResultSetMetaData meta = rs.getMetaData();
 			    rs.beforeFirst();
 			    int colcount=meta.getColumnCount(); 
@@ -172,13 +207,15 @@ public class OrmImp{
         return null;
 	}
     
-	public Integer Insert(DataObject obj){
-
-	    String query="INSERT INTO "+obj.getDataMap().get("Table"),col="(",val="(";
+	public OrmImp InsertQuery(DataObject obj){
+		String tableName=(String)obj.getDataMap().get("Table");
+	    String query="INSERT INTO "+tableName,col="(",val="(";
 	    int counter=0;
+	    HashMap<String, Object> newMapAudit=new HashMap<>();
         logger.log(Level.INFO,"Insert Query: "+query);
         String key="";
         Object value="";
+        
         for(Map.Entry<String,Object> mapElement : obj.getDataMap().entrySet()){
             key = mapElement.getKey();
             value =mapElement.getValue();
@@ -193,54 +230,93 @@ public class OrmImp{
 	  			}else{
 	  	      	   val+=value;
 	  			}
-	  			counter++;
+	  			
+	  		    // audit object
+   				if(!tableName.equals("audit_table")){
+	   					newMapAudit.put(key,value);
+	  			}
+                counter++;
             }
         }
-    	
+        
+        // audit object		   				
+	 	if(!tableName.equals("audit_table")){
+			try{
+				System.out.println("audit model obj: "+auditModelObject);
+				auditModelObject.setAudits(tableName,"INSERT",null,new ObjectMapper().writeValueAsString(newMapAudit), System.currentTimeMillis());
+			} catch (JsonProcessingException e){
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 		col+=")";val+=")";
 		query+=col+" VALUES "+val;
-//		System.out.println(query);
-        logger.log(Level.INFO,"Insert Query is "+query);
-        try{
+		this.query=query;
+        return this;
+    }
+	
+	public Integer Insert(){
+		logger.log(Level.INFO,"Insert Query is "+query);
+//	    System.out.println(query);
+		try{
             int rowsInserted;
 			Integer uid=null;
 			stmt = con.prepareStatement(query,Statement.RETURN_GENERATED_KEYS);
-			System.out.println("ins");
 			rowsInserted=stmt.executeUpdate();
 			ResultSet id=stmt.getGeneratedKeys();
             this.query="";
             if(rowsInserted>0){
+            		
+            	//Audit
+    			if(insertAuditFlag==0){
+    					insertAuditFlag=1;
+    	    			this.InsertQuery(auditModelObject.getDataObject()).Insert();
+    			}else if(insertAuditFlag==1){
+	    				insertAuditFlag=0;
+	                	return 0;
+    			}
+    			
     	        logger.log(Level.INFO,"row inserted.No. of inserts "+rowsInserted);
             	if(id.next()){
-                	uid=id.getInt(1);
-        	        logger.log(Level.INFO,"New id generated id="+uid);
-                	return uid;
+	                	uid=id.getInt(1);
+	        	        logger.log(Level.INFO,"New id generated id="+uid);
+	                	return uid;
                 }else{
-                    logger.log(Level.INFO,"Inserted without Key gen return 0");
-                	return 0;
+	                    logger.log(Level.INFO,"Inserted without Key gen return 0");
+	                	return 0;
                 }
             }
     	    logger.log(Level.INFO,"No row inserted. No. of inserts "+rowsInserted);
-            
             
          }catch(SQLException e){
 			// TODO Auto-generated catch block
 		    logger.log(Level.WARNING," Sql ",e);
 		    System.out.println("not ins");
+		 }catch(Exception e) {
+			 e.printStackTrace();
 		 }
-         logger.log(Level.INFO,"Insert Query ret null");
-         return null;  	
-    }
+        logger.log(Level.INFO,"Insert Query ret null");
+		return  null;
+	}
 	
     public boolean update(){
          logger.log(Level.INFO,"update() called. Update Query is "+query);
 
     	 try{
 	 		stmt = con.prepareStatement(query);
-			stmt.executeUpdate();
-			 System.out.println(query + " Updated");
+			int rowsAffected=stmt.executeUpdate();
             this.query="";
-			return true;
+
+    		//Audit
+            if(auditModelObject!=null){
+    			this.InsertQuery(auditModelObject.getDataObject()).Insert();
+            }else {
+    		    logger.log(Level.WARNING," AUDIT object null");
+            }
+            
+			if(rowsAffected>0) {
+				return true;
+			}
 		 }catch (SQLException e){
 			// TODO Auto-generated catch block
 		    logger.log(Level.WARNING," Sql ",e);
@@ -249,13 +325,58 @@ public class OrmImp{
 	     return false;
     }
     
+	
+    public OrmImp DeleteQuery(String table){
+    	String query="";
+    	query+="DELETE FROM "+table;
+    	
+    	if(!table.equals("audit_table")){
+			auditOrm=new OrmImp();
+    		deleteAuditFlag=1;
+        	auditOrm.SelectAll().From(table);
+    	}
+    	deleteAuditTable=table;
+    	this.query=query;
+        logger.log(Level.INFO,"Query created "+query);
+    	return this;
+    }
+    
     public boolean delete(){
-        logger.log(Level.INFO,"delete() called.delete Query is "+query);
-       	try{
+         logger.log(Level.INFO,"delete() called.delete Query is "+query);
+         System.out.println("-----del query-------"+query);
+         List<DataObject> deleteAuditList=null;
+       	 try{
+       		 //audit
+       		if(deleteAuditFlag==1 && deleteAuditTable!=null){
+            	System.out.println("---------------del sel aud---"+auditOrm.getQuery());
+                logger.log(Level.INFO,"audit delete Query is "+auditOrm.getQuery());
+            	deleteAuditList=auditOrm.getSelect();
+            	System.out.println(" delete data objs size "+deleteAuditList.size());
+            	
+            }
+
 	 		stmt = con.prepareStatement(query);
 			stmt.execute();
             this.query="";
-			return true;
+            
+            if(deleteAuditFlag==1 && deleteAuditList!=null){
+        		for(DataObject dataObject:deleteAuditList) {
+        			HashMap<String, Object> deleteAuditMap=dataObject.getDataMap();
+    				try{
+    					auditModelObject.setAudits(deleteAuditTable,"DELETE",new ObjectMapper().writeValueAsString(deleteAuditMap),null, System.currentTimeMillis());
+    				}catch(JsonProcessingException e){
+    					// TODO Auto-generated catch block
+    					e.printStackTrace();
+    				}
+
+                    //Audit
+					insertAuditFlag=1;
+        			this.InsertQuery(auditModelObject.getDataObject()).Insert();
+        		}
+        	}
+			deleteAuditFlag=0;
+
+            return true;
 		 }catch (SQLException e){
 			// TODO Auto-generated catch block
 		        logger.log(Level.WARNING," Sql ",e);
@@ -272,21 +393,41 @@ public class OrmImp{
     public String getQuery(){
     	return query;
     }
+    
 	public OrmImp Where(CriteriaBuilder cr){
-    	query+=" WHERE "+cr.getCriteria();
-        logger.log(Level.INFO," WHERE concat "+cr.getCriteria());
+		String criteria=cr.getCriteria();
+    	if(deleteAuditFlag==1) {
+      	    System.out.println("d audit where"+criteria);
+        	auditOrm.Where(new CriteriaBuilder(criteria));
+    	}
+    	query+=" WHERE "+criteria;
+
+        logger.log(Level.INFO," WHERE concat "+criteria);
         return this;
     }
     
     public OrmImp And(CriteriaBuilder cr){
-		query+=" AND "+cr.getCriteria();
-        logger.log(Level.INFO," AND concat "+cr.getCriteria());
+		String criteria=cr.getCriteria();
+
+    	if(deleteAuditFlag==1) {
+     	   System.out.println("d audit and"+criteria);
+        	auditOrm.And(new CriteriaBuilder(criteria));
+    	}
+		query+=" AND "+criteria;
+
+        logger.log(Level.INFO," AND concat "+criteria);
       	return this;
     }
     
     public OrmImp Or(CriteriaBuilder cr){
-		query+=" OR "+cr.getCriteria();
-        logger.log(Level.INFO," OR concat "+cr.getCriteria());
+		String criteria=cr.getCriteria();
+    	if(deleteAuditFlag==1) {
+    	   
+    	   auditOrm.Or(new CriteriaBuilder(criteria));
+    	}
+		query+=" OR "+criteria;
+
+        logger.log(Level.INFO," OR concat "+criteria);
       	return this;
     }
     public OrmImp From(String table){
@@ -294,5 +435,9 @@ public class OrmImp{
         logger.log(Level.INFO," FROM concat "+table);
     	return this;
     }
-
+    public OrmImp OrderBy(String column){
+    	query+=" ORDER BY "+column;
+        logger.log(Level.INFO," OrderBy concat "+column);
+    	return this;
+    }
 }

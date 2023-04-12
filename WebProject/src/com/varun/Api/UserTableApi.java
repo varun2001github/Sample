@@ -16,6 +16,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Application;
 import javax.ws.rs.ApplicationPath;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.varun.Logger.LoggerUtil;
 import com.varun.Model.DataObject;
 import com.varun.Model.EmailTableModel;
@@ -52,20 +53,18 @@ public class UserTableApi{
     	orm.SelectAll().From(Table)
     	.Where(c.addEquals("user_id",id));
     	
-    	System.out.println(orm.getQuery());
 	    logger.log(Level.INFO," query generated ");
 	    List<DataObject> dataList=orm.getSelect();
     	if(dataList.size()>0){
-    		System.out.println("avl");
    	       logger.log(Level.INFO,"select list available");
     	   return new UserinfoTableModel(dataList.get(0));
     	}
     	return null;
     }
     
-    public boolean updateUserinfo(UserinfoTableModel obj,Integer userid){
+    public boolean updateUserinfo(UserinfoTableModel oldObj,UserinfoTableModel newObj) throws JsonProcessingException{
 	    logger.log(Level.INFO,"METHOD CALLED");
-    	orm.UpdateQuery(obj.getDataObject()).Where(c.addEquals("user_id",userid));
+    	orm.UpdateQuery(oldObj.getDataObject(),newObj.getDataObject()).Where(c.addEquals("user_id",oldObj.getUser_id()));
         boolean isUpdated=orm.update();
 	    logger.log(Level.INFO,"object updated");
     	return isUpdated;
@@ -74,7 +73,7 @@ public class UserTableApi{
     public Integer addUser(String username){
     	userObject=new UserinfoTableModel();
     	userObject.setUser_name(username);
-    	Integer id=orm.Insert(userObject.getDataObject());
+    	Integer id=orm.InsertQuery(userObject.getDataObject()).Insert();
 	    logger.log(Level.INFO,"object inserted");
     	return id;
     }
@@ -84,7 +83,7 @@ public class UserTableApi{
     	System.out.println(orm.getQuery());
     	List<DataObject> dataList=orm.getSelect();
     	List<UserinfoTableModel> l=null;
-    	if(dataList.size()>0) {
+    	if(dataList.size()>0){
         	l=new ArrayList<UserinfoTableModel>();
         	for(DataObject ob:dataList){
         		l.add(new UserinfoTableModel(ob));
