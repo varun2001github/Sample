@@ -85,7 +85,7 @@
   </div>
   <div style="padding-left:20%;display:flex;" id="profile_details">
 
-        <form id="user_profile_form" action="servlet/editprofile" method="post" autocomplete="off">
+        <form id="user_profile_form" action="/ChatProject/servlet/editprofile" method="post" autocomplete="off">
            <%  
 		      if(session.getAttribute("updateerr")!=null && session.getAttribute("updateerr")!=""){
 			         out.println("<h3 style=\"color:red\">"+session.getAttribute("updateerr")+"</h3>");

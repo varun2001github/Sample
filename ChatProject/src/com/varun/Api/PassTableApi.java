@@ -59,15 +59,17 @@ public class PassTableApi {
     		CriteriaBuilder criteria=new CriteriaBuilder();
             logger.log(Level.INFO,"orm select query called");
             
-            orm.SelectQuery("pass_salt","pass_hash").From(passModel)
-    		.InnerJoin(emailModel,criteria.joinCondition("user_pass.user_id","email.user_id"))
-    		.InnerJoin(mobileModel,criteria.joinCondition("user_pass.user_id","mobile.user_id"))
-        	.Where(criteria.addEquals("pass_status",1));
+            orm.SelectQuery("user_pass.user_id","pass_salt","pass_hash","user_pass.created_time").From(passModel);
             
-            if(loginid.matches("[0-9]+")){
-            	orm.And(criteria.addEquals("mobileno",Integer.parseInt(loginid)));
+    		if(loginid.matches("[0-9]+")){
+            	orm.InnerJoin(mobileModel,criteria.joinCondition("user_pass.user_id","mobile.user_id"))
+            	.Where(criteria.addEquals("pass_status",1))
+            	.And(criteria.addEquals("mobileno",Integer.parseInt(loginid)));
             }else{
-            	orm.And(criteria.addEquals("emailid",loginid));
+            	
+        		orm.InnerJoin(emailModel,criteria.joinCondition("user_pass.user_id","email.user_id"))
+            	.Where(criteria.addEquals("pass_status",1))
+            	.And(criteria.addEquals("emailid",loginid));
             }
             
         	List<DataObject> selectList=orm.getSelect();

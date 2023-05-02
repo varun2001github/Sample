@@ -26,10 +26,11 @@
 	    <mkdir dir="${build.dir}/classes"/>
 		<javac srcdir="src"
 		       destdir="${build.dir}/classes"
-		       classpathref="classpath" includeantruntime="false" failonerror="true"/>
-	 	<copy todir="${web.dir}/WEB-INF/classes">
+		       classpathref="classpath" includeantruntime="false" failonerror="true" debug="true"/>
+	 	<!--<copy todir="${web.dir}/WEB-INF/classes">
 	 	  <fileset dir="${build.dir}/classes"/>
 	 	</copy>
+	 	-->
      </target>
 
 	<target name="junit" depends="build">             <!-- Junit test /> -->

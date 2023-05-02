@@ -59,7 +59,6 @@ public class UserDao{
 		try{
 			//System.out.print(quer2);
 			PasswordTableModel passObj=passApi.getPassByloginid(loginId);
-
 			if(passObj!=null){
 				String hash=temp+passObj.getPass_salt()+"$"+passObj.getPass_hash();
 				isvalid=argon2.verify(hash,password);
@@ -69,6 +68,7 @@ public class UserDao{
             //if use and pass matching,then 
 
 			if(isvalid){	
+				userid=passObj.getUser_id();
 				userDataObj=userApi.getUserById(userid);
 				//password policy check- 30days
 			    if(userDataObj!=null){
@@ -204,26 +204,29 @@ public class UserDao{
 		MobileTableApi mobileApi=new MobileTableApi(ormObj);
 
 		boolean isUpdated=false;
-		System.out.println("p Dao bef");
 		if(newDataObj.getUser_name()!=null || 
 		   newDataObj.getCountry() !=null || 
 				newDataObj.getGender()!=null){
 			           System.out.println("ud up"+newDataObj.getUser_name());
 			           isUpdated=userApi.updateUserinfo(oldDataObj,newDataObj);
 		}
-		System.out.println("p Dao after");
+        logger.log(Level.INFO,"p Dao after");
 		for(int i=0;i<oldDataObj.getEmailTableObj().size();i++){
 			    //if old email not equal to new
 				if(!oldDataObj.getEmailTableObj().get(i).getEmailid().equals(newDataObj.getEmailTableObj().get(i).getEmailid())){
 			            System.out.println("em up");
+			            logger.log(Level.INFO,"p Dao em before");
 			            isUpdated=emailApi.updateEmail(oldDataObj.getEmailTableObj().get(i),newDataObj.getEmailTableObj().get(i));
+			            logger.log(Level.INFO,"p Dao em after");
 				}
 		}
 		for(int i=0;i<oldDataObj.getMobileTableObj().size();i++){
 		        //if old mobile not equal to new
 				if(!oldDataObj.getMobileTableObj().get(i).getMobileno().equals(newDataObj.getMobileTableObj().get(i).getMobileno())) {
 		            System.out.println("mobile up");
+		            logger.log(Level.INFO,"p Dao mobile before");
 		            isUpdated=mobileApi.updateMobile(oldDataObj.getMobileTableObj().get(i),newDataObj.getMobileTableObj().get(i));
+		            logger.log(Level.INFO,"p Dao mobile after");
 				}
 		}
 		ormObj.close();

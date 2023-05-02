@@ -64,7 +64,9 @@ public class MobileTableApi {
        	    CriteriaBuilder cb=new CriteriaBuilder();
     		logger.log(Level.INFO,"method called");
 
-        	ormObj.UpdateQuery(oldMobileObject.getDataObject(),newMobileObject.getDataObject()).Where(cb.addEquals("mobileno",oldMobileObject.getMobileno())).And(cb.addEquals("user_id",oldMobileObject.getUser_id()));
+        	ormObj.UpdateQuery(oldMobileObject.getDataObject(),newMobileObject.getDataObject())
+        	.Where(cb.addEquals("mobileno",oldMobileObject.getMobileno()))
+        	.And(cb.addEquals("user_id",oldMobileObject.getUser_id()));
         	boolean isInserted=ormObj.update();
         	return isInserted;
     	 }catch(Exception e){
@@ -77,7 +79,7 @@ public class MobileTableApi {
     	 logger.log(Level.INFO,"method called");
          try{
 		   	CriteriaBuilder cb=new CriteriaBuilder();
-		   	ormObj.SelectQuery("mobileno").From(Table).Where(cb.addEquals("user_id",id));
+		   	ormObj.SelectQuery("user_id","mobileno").From(Table).Where(cb.addEquals("user_id",id));
 		   	List<DataObject> dataList=ormObj.getSelect();
 	    	List<MobileTableModel> ModelList=null;
 	    	if(dataList.size()>0) {

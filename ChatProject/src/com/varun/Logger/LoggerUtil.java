@@ -1,6 +1,7 @@
 package com.varun.Logger;
 
 import java.io.*;
+import java.util.logging.Level;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
@@ -25,9 +26,9 @@ public class LoggerUtil {
     }
     
     public static Logger getLogger(Class<?> clazz){
-    	if(manager==null) {
+    	if(manager==null){
     		createManager();
     	}
-    	return Logger.getLogger(clazz.getName());
+	    return Logger.getLogger("Chat Logger");
     }
 }

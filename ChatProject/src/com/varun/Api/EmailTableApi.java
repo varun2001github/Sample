@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import com.varun.Controller.ChatList;
 import com.varun.Logger.LoggerUtil;
 import com.varun.Model.DataObject;
 import com.varun.Model.EmailTableModel;
@@ -13,7 +15,7 @@ import com.varun.Orm.Table;
 
 public class EmailTableApi {
 	private OrmImp ormObj=null;
-	private static final Logger logger=LoggerUtil.getLogger(EmailTableApi.class);
+	private static final Logger logger=LoggerUtil.getLogger(ChatList.class);
 	private EmailTableModel emailObject=new EmailTableModel();
 	private String Table=EmailTableModel.class.getAnnotation(Table.class).name();
 
@@ -104,6 +106,8 @@ public class EmailTableApi {
     }
     
     public boolean updateEmail(EmailTableModel oldEmail,EmailTableModel newEmail){
+    	System.out.println("before updateEmail");
+		logger.log(Level.INFO,"method called");
     	if(oldEmail==null || newEmail==null){
     		return false;
     	}else if(oldEmail.getEmailid()==null|| newEmail.getEmailid()==null || oldEmail.getUser_id()==null || oldEmail.getUser_id()<=0 ){
@@ -117,14 +121,15 @@ public class EmailTableApi {
     		//max length in DB column is 100
     		return false;
     	}
-    	
+    	System.out.println("after updateEmail");
     	try{
     		logger.log(Level.INFO,"method called");
+    		System.out.println("query creating");
        	    CriteriaBuilder cb=new CriteriaBuilder();
         	ormObj.UpdateQuery(oldEmail.getDataObject(),newEmail.getDataObject())
         	.Where(cb.addEquals("emailid",oldEmail.getEmailid()))
         	.And(cb.addEquals("user_id",oldEmail.getUser_id()));
-        	
+            logger.log(Level.INFO,"Email up query"+ormObj.getQuery());
         	boolean isUpdated=ormObj.update();
         	return isUpdated;
     	 }catch(Exception e){
@@ -143,7 +148,7 @@ public class EmailTableApi {
     	 logger.log(Level.INFO,"method called");
          try{
 	       	 CriteriaBuilder cb=new CriteriaBuilder();
-	       	 ormObj.SelectQuery("emailid").From(Table).Where(cb.addEquals("user_id",id));
+	       	 ormObj.SelectQuery("user_id","emailid").From(Table).Where(cb.addEquals("user_id",id));
 	       	 List<DataObject> dataList=ormObj.getSelect();
         	 List<EmailTableModel> l=null;
         	 if(dataList.size()>0){

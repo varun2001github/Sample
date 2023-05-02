@@ -9,6 +9,8 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -20,6 +22,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.jasper.tagplugins.jstl.core.Url;
 
 import com.varun.Dao.*;
+import com.varun.Logger.LoggerUtil;
 import com.varun.Model.EmailTableModel;
 import com.varun.Model.MobileTableModel;
 import com.varun.Model.UserinfoTableModel;
@@ -29,6 +32,7 @@ import com.varun.Model.UserinfoTableModel;
  */
 public class ProfileServlet extends HttpServlet{
 	private PrintWriter out=null;
+	private static final Logger logger=LoggerUtil.getLogger(ChatList.class);
 	private static final long serialVersionUID = 1L;
 	 List<EmailTableModel> emailList=null;
      List<MobileTableModel> mobileList=null;
@@ -44,9 +48,9 @@ public class ProfileServlet extends HttpServlet{
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-// TODO Auto-generated method stub
-//		String userid=request.getParameter("uid");
-//		String username=request.getParameter("username");
+	// TODO Auto-generated method stub
+	//		String userid=request.getParameter("uid");
+	//		String username=request.getParameter("username");
 		
 		Integer userId=null;
 		String sessionId=null;
@@ -103,9 +107,9 @@ public class ProfileServlet extends HttpServlet{
 				}
 	            updatedObj.setMobileTableObj(l);
             }		
-            System.out.println(dataObj+" "+updatedObj);
+//          System.out.println(dataObj+" "+updatedObj);
             boolean isUpdated=false;
-            
+            logger.log(Level.INFO,"updateProfile called ----------------------------------");
             isUpdated=dao.updateProfile(dataObj,updatedObj);
             
             //clear cache
@@ -121,8 +125,7 @@ public class ProfileServlet extends HttpServlet{
 			e.printStackTrace();
 			session.setAttribute("updateerr","NOT UPDATED");
 		}
-        System.out.println("ex");
-		response.sendRedirect("/WebProject/profilepage.jsp");
+		response.sendRedirect("/ChatProject/profilepage.jsp");
 	}
 	
 //	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException,IOException{

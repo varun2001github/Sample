@@ -17,6 +17,7 @@ import javax.ws.rs.core.Application;
 import javax.ws.rs.ApplicationPath;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.varun.Controller.ChatList;
 import com.varun.Logger.LoggerUtil;
 import com.varun.Model.DataObject;
 import com.varun.Model.EmailTableModel;
@@ -26,7 +27,7 @@ import com.varun.Orm.*;
 @Path("/UserApi")
 public class UserTableApi{
 	//logger 
-	private static final Logger logger=LoggerUtil.getLogger(UserTableApi.class);
+	private static final Logger logger=LoggerUtil.getLogger(ChatList.class);
 	private static UserinfoTableModel userObject=null;
 	private CriteriaBuilder c=new CriteriaBuilder();
 	private OrmImp orm;
@@ -48,7 +49,10 @@ public class UserTableApi{
     public String getUser(){
     	return "varun";
     }
+    
     public UserinfoTableModel getUserById(Integer id){
+	    logger.log(Level.INFO,"id passed "+id);
+
     	//query formation
     	orm.SelectAll().From(Table)
     	.Where(c.addEquals("user_id",id));

@@ -1,5 +1,6 @@
 package com.varun.Orm;
 
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import com.varun.Controller.ChatList;
 import com.varun.Logger.LoggerUtil;
@@ -33,7 +34,7 @@ public class CriteriaBuilder{
 	    	return this;
 	    }
 	    public <T> CriteriaBuilder addEquals(String column,T value){
-
+	   		logger.log(Level.INFO," Add equals "+column+" "+value);
 	    	if(!value.getClass().getSimpleName().equals("String")) {
 	    		condition+=column+"="+value+" ";
 	 	    }else {

@@ -46,6 +46,7 @@ public class AuthenticationServlet extends HttpServlet{
 	protected void doPost(HttpServletRequest request,HttpServletResponse response) throws ServletException, IOException{
 		// TODO Auto-generated method stub
 		System.out.println("authentication serv called");
+   		logger.log(Level.INFO," login servlet");
 		String operation=request.getPathInfo().substring(1);
 		switch(operation){
 		  case "login":
@@ -136,15 +137,17 @@ public class AuthenticationServlet extends HttpServlet{
 						  }else{
 							  logger.log(Level.INFO,"credentials regex valid");
 						      session.setAttribute("logerror","Invalid loginid or password");
-				              response.sendRedirect("/WebProject/login.jsp");
+				              response.sendRedirect(request.getContextPath()+"/login.jsp");
 						  }
 					   
 				  }else if(!loginidmatch){
+					    logger.log(Level.INFO,"Invalid loginid");
 						session.setAttribute("logerror","Invalid loginid");
-						response.sendRedirect("/WebProject/login.jsp");
+						response.sendRedirect(request.getContextPath()+"/login.jsp");
 				  }else if(!passmatch){
+					    logger.log(Level.INFO,"Invalid password");
 						session.setAttribute("logerror","Invalid password");
-						response.sendRedirect("/WebProject/login.jsp");
+						response.sendRedirect(request.getContextPath()+"/login.jsp");
 				  }
 		  }catch(NumberFormatException e){
 		        logger.log(Level.WARNING,"NumberFormatException",e);
