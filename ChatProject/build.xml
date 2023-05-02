@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project basedir="." default="build" name="ChatProject">
+     <property environment="env"/>
+	 <property name="tomcatlib.dir" value="/home/local/ZOHOCORP/varun-pt6303/Downloads/apache-tomcat-8.5.85/lib"/>
+	 <property name="project.dir" value="/home/local/ZOHOCORP/varun-pt6303/ZIDE Workspace/WebProject"/>
+     <property name="src.dir" value="src"/>
+     <property name="build.dir" value="build"/>
+     <property name="web.dir" value="WebContent"/>
+     <property name="build.junit" value="build/classes/com/varun/JUnitTest"/>
+	 <property name="lib.dir" value="WebContent/WEB-INF/lib"/>
+	 <property name="web.xml" value="WebContent/WEB-INF/web.xml"/>
+	 <property name="war.dir" value="/home/local/ZOHOCORP/varun-pt6303/ZIDE Workspace/apache-tomcat-8.5.85/webapps"/>
+	 
+	 <path id="classpath">              <!-- class path for adding jars and other dependencies-->
+		 <fileset dir="${tomcatlib.dir}">
+			<include name="*.jar"/>
+		 </fileset>
+	 	 <fileset dir="${lib.dir}">
+ 			<include name="*.jar"/>
+ 		 </fileset>    	
+	 	 <pathElement path="${build.dir}/classes"/>
+	 	 <pathElement path="${src.dir}/classes"/>
+	 </path>
+	
+	 <target name="build">             <!-- COMPILING SOURCE CODE /> -->
+	    <mkdir dir="${build.dir}/classes"/>
+		<javac srcdir="src"
+		       destdir="${build.dir}/classes"
+		       classpathref="classpath" includeantruntime="false" failonerror="true"/>
+	 	<copy todir="${web.dir}/WEB-INF/classes">
+	 	  <fileset dir="${build.dir}/classes"/>
+	 	</copy>
+     </target>
+
+	<target name="junit" depends="build">             <!-- Junit test /> -->
+		<junitlauncher printSummary="true" haltOnFailure="true">
+			  <classpath>
+			    	<path refid="classpath"/>
+			  </classpath>
+			  <test name="com.varun.JUnitTest.EmailsApiTest" />
+		</junitlauncher>
+	 </target>
+
+	 <target name="buildDeleteAndUpdate" depends="build,junit">  <!-- DELETE AND CREATE WAR FILE -->
+	    <delete file="${build.dir}/ChatProject.war"/>
+		<war destfile="${build.dir}/ChatProject.war" needxmlfile="false" webxml="${web.xml}" >
+		    <fileset dir ="${web.dir}">
+		       <include name ="**/*.jsp"/>
+		    </fileset>
+         	<classes dir="${build.dir}/classes">
+         	    <exclude name="com/varun/JUnitTest/**"/>
+         	</classes>
+        	<lib dir="${lib.dir}"/>
+        </war>
+	 	<copy file="${build.dir}/ChatProject.war" todir="${war.dir}"/>
+	 </target>
+	
+	 <target name="buildUpdate" depends="build">   <!-- CREATE OR UPDATE WAR FILE -->
+	   <war destfile="${build.dir}/ChatProject.war" needxmlfile="false" webxml="${web.xml}" update="true" >
+		    <fileset dir ="${web.dir}">
+		       <include name ="**/*.jsp"/>
+		    </fileset>
+         	<classes dir="${build.dir}/classes">
+         	    <exclude name="com/varun/JUnitTest/**"/>
+         	</classes>
+       	    <lib dir="${lib.dir}"/>
+       </war>
+	 	<copy file="${build.dir}/ChatProject.war" todir="${war.dir}"/>
+	 </target>
+	
+</project>
