@@ -31,13 +31,13 @@
 	</target>
 	
 	 <target name="build" depends="protoc">             <!-- COMPILING SOURCE CODE /> -->
-	 	<delete dir="${build.dir}"/>
 	 	<mkdir dir="${build.dir}/classes"/>
 		<javac srcdir="src"
 		       destdir="${build.dir}/classes"
 		       classpathref="classpath" includeantruntime="false" failonerror="true" debug="true"/>
         
 	 	<!--
+	 	<delete dir="${build.dir}"/>
 		 	 <copy todir="${web.dir}/WEB-INF/classes">
 		 	   <fileset dir="${build.dir}/classes"/>
 		 	 </copy>

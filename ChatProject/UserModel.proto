@@ -24,7 +24,6 @@ message SessionTableModel{
        int32 user_id = 1;
        string session_id = 2;
        int64 Expiry = 3;
-       repeated string seslis=4;
 }
 
 message PasswordTableModel{

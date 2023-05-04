@@ -3912,31 +3912,6 @@ public final class UserModel {
      * @return The expiry.
      */
     long getExpiry();
-
-    /**
-     * <code>repeated string seslis = 4;</code>
-     * @return A list containing the seslis.
-     */
-    java.util.List<java.lang.String>
-        getSeslisList();
-    /**
-     * <code>repeated string seslis = 4;</code>
-     * @return The count of seslis.
-     */
-    int getSeslisCount();
-    /**
-     * <code>repeated string seslis = 4;</code>
-     * @param index The index of the element to return.
-     * @return The seslis at the given index.
-     */
-    java.lang.String getSeslis(int index);
-    /**
-     * <code>repeated string seslis = 4;</code>
-     * @param index The index of the value to return.
-     * @return The bytes of the seslis at the given index.
-     */
-    com.google.protobuf.ByteString
-        getSeslisBytes(int index);
   }
   /**
    * Protobuf type {@code Model.SessionTableModel}
@@ -3952,7 +3927,6 @@ public final class UserModel {
     }
     private SessionTableModel() {
       sessionId_ = "";
-      seslis_ = com.google.protobuf.LazyStringArrayList.EMPTY;
     }
 
     @java.lang.Override
@@ -3975,7 +3949,6 @@ public final class UserModel {
       if (extensionRegistry == null) {
         throw new java.lang.NullPointerException();
       }
-      int mutable_bitField0_ = 0;
       com.google.protobuf.UnknownFieldSet.Builder unknownFields =
           com.google.protobuf.UnknownFieldSet.newBuilder();
       try {
@@ -4002,15 +3975,6 @@ public final class UserModel {
               expiry_ = input.readInt64();
               break;
             }
-            case 34: {
-              java.lang.String s = input.readStringRequireUtf8();
-              if (!((mutable_bitField0_ & 0x00000001) != 0)) {
-                seslis_ = new com.google.protobuf.LazyStringArrayList();
-                mutable_bitField0_ |= 0x00000001;
-              }
-              seslis_.add(s);
-              break;
-            }
             default: {
               if (!parseUnknownField(
                   input, unknownFields, extensionRegistry, tag)) {
@@ -4026,9 +3990,6 @@ public final class UserModel {
         throw new com.google.protobuf.InvalidProtocolBufferException(
             e).setUnfinishedMessage(this);
       } finally {
-        if (((mutable_bitField0_ & 0x00000001) != 0)) {
-          seslis_ = seslis_.getUnmodifiableView();
-        }
         this.unknownFields = unknownFields.build();
         makeExtensionsImmutable();
       }
@@ -4106,41 +4067,6 @@ public final class UserModel {
       return expiry_;
     }
 
-    public static final int SESLIS_FIELD_NUMBER = 4;
-    private com.google.protobuf.LazyStringList seslis_;
-    /**
-     * <code>repeated string seslis = 4;</code>
-     * @return A list containing the seslis.
-     */
-    public com.google.protobuf.ProtocolStringList
-        getSeslisList() {
-      return seslis_;
-    }
-    /**
-     * <code>repeated string seslis = 4;</code>
-     * @return The count of seslis.
-     */
-    public int getSeslisCount() {
-      return seslis_.size();
-    }
-    /**
-     * <code>repeated string seslis = 4;</code>
-     * @param index The index of the element to return.
-     * @return The seslis at the given index.
-     */
-    public java.lang.String getSeslis(int index) {
-      return seslis_.get(index);
-    }
-    /**
-     * <code>repeated string seslis = 4;</code>
-     * @param index The index of the value to return.
-     * @return The bytes of the seslis at the given index.
-     */
-    public com.google.protobuf.ByteString
-        getSeslisBytes(int index) {
-      return seslis_.getByteString(index);
-    }
-
     private byte memoizedIsInitialized = -1;
     @java.lang.Override
     public final boolean isInitialized() {
@@ -4164,9 +4090,6 @@ public final class UserModel {
       if (expiry_ != 0L) {
         output.writeInt64(3, expiry_);
       }
-      for (int i = 0; i < seslis_.size(); i++) {
-        com.google.protobuf.GeneratedMessageV3.writeString(output, 4, seslis_.getRaw(i));
-      }
       unknownFields.writeTo(output);
     }
 
@@ -4186,14 +4109,6 @@ public final class UserModel {
       if (expiry_ != 0L) {
         size += com.google.protobuf.CodedOutputStream
           .computeInt64Size(3, expiry_);
-      }
-      {
-        int dataSize = 0;
-        for (int i = 0; i < seslis_.size(); i++) {
-          dataSize += computeStringSizeNoTag(seslis_.getRaw(i));
-        }
-        size += dataSize;
-        size += 1 * getSeslisList().size();
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -4216,8 +4131,6 @@ public final class UserModel {
           .equals(other.getSessionId())) return false;
       if (getExpiry()
           != other.getExpiry()) return false;
-      if (!getSeslisList()
-          .equals(other.getSeslisList())) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -4236,10 +4149,6 @@ public final class UserModel {
       hash = (37 * hash) + EXPIRY_FIELD_NUMBER;
       hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
           getExpiry());
-      if (getSeslisCount() > 0) {
-        hash = (37 * hash) + SESLIS_FIELD_NUMBER;
-        hash = (53 * hash) + getSeslisList().hashCode();
-      }
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -4379,8 +4288,6 @@ public final class UserModel {
 
         expiry_ = 0L;
 
-        seslis_ = com.google.protobuf.LazyStringArrayList.EMPTY;
-        bitField0_ = (bitField0_ & ~0x00000001);
         return this;
       }
 
@@ -4407,15 +4314,9 @@ public final class UserModel {
       @java.lang.Override
       public com.varun.ProtoModel.UserModel.SessionTableModel buildPartial() {
         com.varun.ProtoModel.UserModel.SessionTableModel result = new com.varun.ProtoModel.UserModel.SessionTableModel(this);
-        int from_bitField0_ = bitField0_;
         result.userId_ = userId_;
         result.sessionId_ = sessionId_;
         result.expiry_ = expiry_;
-        if (((bitField0_ & 0x00000001) != 0)) {
-          seslis_ = seslis_.getUnmodifiableView();
-          bitField0_ = (bitField0_ & ~0x00000001);
-        }
-        result.seslis_ = seslis_;
         onBuilt();
         return result;
       }
@@ -4474,16 +4375,6 @@ public final class UserModel {
         if (other.getExpiry() != 0L) {
           setExpiry(other.getExpiry());
         }
-        if (!other.seslis_.isEmpty()) {
-          if (seslis_.isEmpty()) {
-            seslis_ = other.seslis_;
-            bitField0_ = (bitField0_ & ~0x00000001);
-          } else {
-            ensureSeslisIsMutable();
-            seslis_.addAll(other.seslis_);
-          }
-          onChanged();
-        }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
         return this;
@@ -4512,7 +4403,6 @@ public final class UserModel {
         }
         return this;
       }
-      private int bitField0_;
 
       private int userId_ ;
       /**
@@ -4648,116 +4538,6 @@ public final class UserModel {
       public Builder clearExpiry() {
         
         expiry_ = 0L;
-        onChanged();
-        return this;
-      }
-
-      private com.google.protobuf.LazyStringList seslis_ = com.google.protobuf.LazyStringArrayList.EMPTY;
-      private void ensureSeslisIsMutable() {
-        if (!((bitField0_ & 0x00000001) != 0)) {
-          seslis_ = new com.google.protobuf.LazyStringArrayList(seslis_);
-          bitField0_ |= 0x00000001;
-         }
-      }
-      /**
-       * <code>repeated string seslis = 4;</code>
-       * @return A list containing the seslis.
-       */
-      public com.google.protobuf.ProtocolStringList
-          getSeslisList() {
-        return seslis_.getUnmodifiableView();
-      }
-      /**
-       * <code>repeated string seslis = 4;</code>
-       * @return The count of seslis.
-       */
-      public int getSeslisCount() {
-        return seslis_.size();
-      }
-      /**
-       * <code>repeated string seslis = 4;</code>
-       * @param index The index of the element to return.
-       * @return The seslis at the given index.
-       */
-      public java.lang.String getSeslis(int index) {
-        return seslis_.get(index);
-      }
-      /**
-       * <code>repeated string seslis = 4;</code>
-       * @param index The index of the value to return.
-       * @return The bytes of the seslis at the given index.
-       */
-      public com.google.protobuf.ByteString
-          getSeslisBytes(int index) {
-        return seslis_.getByteString(index);
-      }
-      /**
-       * <code>repeated string seslis = 4;</code>
-       * @param index The index to set the value at.
-       * @param value The seslis to set.
-       * @return This builder for chaining.
-       */
-      public Builder setSeslis(
-          int index, java.lang.String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  ensureSeslisIsMutable();
-        seslis_.set(index, value);
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>repeated string seslis = 4;</code>
-       * @param value The seslis to add.
-       * @return This builder for chaining.
-       */
-      public Builder addSeslis(
-          java.lang.String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  ensureSeslisIsMutable();
-        seslis_.add(value);
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>repeated string seslis = 4;</code>
-       * @param values The seslis to add.
-       * @return This builder for chaining.
-       */
-      public Builder addAllSeslis(
-          java.lang.Iterable<java.lang.String> values) {
-        ensureSeslisIsMutable();
-        com.google.protobuf.AbstractMessageLite.Builder.addAll(
-            values, seslis_);
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>repeated string seslis = 4;</code>
-       * @return This builder for chaining.
-       */
-      public Builder clearSeslis() {
-        seslis_ = com.google.protobuf.LazyStringArrayList.EMPTY;
-        bitField0_ = (bitField0_ & ~0x00000001);
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>repeated string seslis = 4;</code>
-       * @param value The bytes of the seslis to add.
-       * @return This builder for chaining.
-       */
-      public Builder addSeslisBytes(
-          com.google.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  checkByteStringIsUtf8(value);
-        ensureSeslisIsMutable();
-        seslis_.add(value);
         onChanged();
         return this;
       }
@@ -10115,29 +9895,28 @@ public final class UserModel {
       "rinfoTableModel\022,\n\rgroupChatList\030\r \003(\0132\025" +
       ".Model.GroupInfoModel\022&\n\010messages\030\016 \003(\0132" +
       "\024.Model.MessagesModel\0220\n\rgroupMessages\030\017" +
-      " \003(\0132\031.Model.GroupMessagesModel\"X\n\021Sessi" +
+      " \003(\0132\031.Model.GroupMessagesModel\"H\n\021Sessi" +
       "onTableModel\022\017\n\007user_id\030\001 \001(\005\022\022\n\nsession" +
-      "_id\030\002 \001(\t\022\016\n\006Expiry\030\003 \001(\003\022\016\n\006seslis\030\004 \003(" +
-      "\t\"v\n\022PasswordTableModel\022\017\n\007user_id\030\001 \001(\005" +
-      "\022\021\n\tpass_salt\030\002 \001(\t\022\021\n\tpass_hash\030\003 \001(\t\022\023" +
-      "\n\013pass_status\030\004 \001(\005\022\024\n\014created_time\030\005 \001(" +
-      "\003\"\206\001\n\017EmailTableModel\022\017\n\007user_id\030\001 \001(\005\022\017" +
-      "\n\007emailid\030\002 \001(\t\022\022\n\nis_primary\030\003 \001(\003\022\023\n\013i" +
-      "s_verified\030\004 \001(\003\022\024\n\014created_time\030\005 \001(\003\022\022" +
-      "\n\nmodif_time\030\006 \001(\003\"\210\001\n\020MobileTableModel\022" +
-      "\017\n\007user_id\030\001 \001(\005\022\020\n\010mobileno\030\002 \001(\005\022\022\n\nis" +
-      "_primary\030\003 \001(\005\022\023\n\013is_verified\030\004 \001(\005\022\024\n\014c" +
-      "reated_time\030\005 \001(\003\022\022\n\nmodif_time\030\006 \001(\003\"r\n" +
-      "\016GroupInfoModel\022\020\n\010group_id\030\001 \001(\005\022\022\n\ngro" +
-      "up_name\030\002 \001(\t\022\020\n\010admin_id\030\003 \001(\005\022\024\n\014creat" +
-      "ed_time\030\004 \001(\003\022\022\n\nmodif_time\030\005 \001(\003\"f\n\rMes" +
-      "sagesModel\022\017\n\007chat_id\030\001 \001(\005\022\020\n\010senderid\030" +
-      "\002 \001(\005\022\022\n\nrecieverid\030\003 \001(\005\022\014\n\004text\030\004 \001(\t\022" +
-      "\020\n\010chattime\030\005 \001(\003\"p\n\022GroupMessagesModel\022" +
-      "\024\n\014groupchat_id\030\001 \001(\005\022\020\n\010senderid\030\002 \001(\005\022" +
-      "\022\n\nrecieverid\030\003 \001(\005\022\014\n\004text\030\004 \001(\t\022\020\n\010cha" +
-      "ttime\030\005 \001(\003B\026\n\024com.varun.ProtoModelb\006pro" +
-      "to3"
+      "_id\030\002 \001(\t\022\016\n\006Expiry\030\003 \001(\003\"v\n\022PasswordTab" +
+      "leModel\022\017\n\007user_id\030\001 \001(\005\022\021\n\tpass_salt\030\002 " +
+      "\001(\t\022\021\n\tpass_hash\030\003 \001(\t\022\023\n\013pass_status\030\004 " +
+      "\001(\005\022\024\n\014created_time\030\005 \001(\003\"\206\001\n\017EmailTable" +
+      "Model\022\017\n\007user_id\030\001 \001(\005\022\017\n\007emailid\030\002 \001(\t\022" +
+      "\022\n\nis_primary\030\003 \001(\003\022\023\n\013is_verified\030\004 \001(\003" +
+      "\022\024\n\014created_time\030\005 \001(\003\022\022\n\nmodif_time\030\006 \001" +
+      "(\003\"\210\001\n\020MobileTableModel\022\017\n\007user_id\030\001 \001(\005" +
+      "\022\020\n\010mobileno\030\002 \001(\005\022\022\n\nis_primary\030\003 \001(\005\022\023" +
+      "\n\013is_verified\030\004 \001(\005\022\024\n\014created_time\030\005 \001(" +
+      "\003\022\022\n\nmodif_time\030\006 \001(\003\"r\n\016GroupInfoModel\022" +
+      "\020\n\010group_id\030\001 \001(\005\022\022\n\ngroup_name\030\002 \001(\t\022\020\n" +
+      "\010admin_id\030\003 \001(\005\022\024\n\014created_time\030\004 \001(\003\022\022\n" +
+      "\nmodif_time\030\005 \001(\003\"f\n\rMessagesModel\022\017\n\007ch" +
+      "at_id\030\001 \001(\005\022\020\n\010senderid\030\002 \001(\005\022\022\n\nrecieve" +
+      "rid\030\003 \001(\005\022\014\n\004text\030\004 \001(\t\022\020\n\010chattime\030\005 \001(" +
+      "\003\"p\n\022GroupMessagesModel\022\024\n\014groupchat_id\030" +
+      "\001 \001(\005\022\020\n\010senderid\030\002 \001(\005\022\022\n\nrecieverid\030\003 " +
+      "\001(\005\022\014\n\004text\030\004 \001(\t\022\020\n\010chattime\030\005 \001(\003B\026\n\024c" +
+      "om.varun.ProtoModelb\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -10154,7 +9933,7 @@ public final class UserModel {
     internal_static_Model_SessionTableModel_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_Model_SessionTableModel_descriptor,
-        new java.lang.String[] { "UserId", "SessionId", "Expiry", "Seslis", });
+        new java.lang.String[] { "UserId", "SessionId", "Expiry", });
     internal_static_Model_PasswordTableModel_descriptor =
       getDescriptor().getMessageTypes().get(2);
     internal_static_Model_PasswordTableModel_fieldAccessorTable = new
