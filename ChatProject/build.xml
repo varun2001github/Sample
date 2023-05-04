@@ -22,17 +22,28 @@
 	 	 <pathElement path="${src.dir}/classes"/>
 	 </path>
 	
-	 <target name="build">             <!-- COMPILING SOURCE CODE /> -->
-	    <mkdir dir="${build.dir}/classes"/>
+	<target name="protoc">
+	 	<delete file="${src.dir}/com/varun/ProtoModel/UserModel.java"/>
+		<exec executable="protoc" failonerror="true">
+	        	 <arg value="--java_out=src"/>
+	        	 <arg value="UserModel.proto"/>
+		</exec>
+	</target>
+	
+	 <target name="build" depends="protoc">             <!-- COMPILING SOURCE CODE /> -->
+	 	<delete dir="${build.dir}"/>
+	 	<mkdir dir="${build.dir}/classes"/>
 		<javac srcdir="src"
 		       destdir="${build.dir}/classes"
 		       classpathref="classpath" includeantruntime="false" failonerror="true" debug="true"/>
-	 	<!--<copy todir="${web.dir}/WEB-INF/classes">
-	 	  <fileset dir="${build.dir}/classes"/>
-	 	</copy>
+        
+	 	<!--
+		 	 <copy todir="${web.dir}/WEB-INF/classes">
+		 	   <fileset dir="${build.dir}/classes"/>
+		 	 </copy>
 	 	-->
      </target>
-
+	
 	<target name="junit" depends="build">             <!-- Junit test /> -->
 		<junitlauncher printSummary="true" haltOnFailure="true">
 			  <classpath>

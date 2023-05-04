@@ -19,7 +19,7 @@ import com.varun.Orm.Table;
 public class GroupTableApi{
 	private GroupInfoModel grpObj=null;
 	private static OrmImp ormObj;
-	private static Logger logger=LoggerUtil.getLogger(GroupTableApi.class);
+	private static final Logger logger=Logger.getLogger(GroupTableApi.class.getName());
 	private CriteriaBuilder cb=new CriteriaBuilder();
 	private String Table=GroupInfoModel.class.getAnnotation(Table.class).name();
 	
@@ -38,7 +38,7 @@ public class GroupTableApi{
             System.out.println(ormObj.getQuery());
 	       	List<DataObject> dataList=ormObj.getSelect();
 	       	List<GroupInfoModel> l=null;
-	       	if(dataList.size()>0) {
+	       	if(dataList.size()>0){
 	           	l=new ArrayList<GroupInfoModel>();
 	           	for(DataObject ob:dataList){
 	           		l.add(new GroupInfoModel(ob));

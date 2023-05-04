@@ -16,7 +16,7 @@ import javax.servlet.http.*;
  */
 public class SendMessage extends HttpServlet{
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger=LoggerUtil.getLogger(SendMessage.class);
+	private static final Logger logger=Logger.getLogger(SendMessage.class.getName());
 
     public  void doPost(HttpServletRequest request, HttpServletResponse response){
 		  try{

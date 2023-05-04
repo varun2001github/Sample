@@ -30,7 +30,7 @@ import javax.servlet.http.HttpSession;
  */
 public class ChatList extends HttpServlet{
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger=LoggerUtil.getLogger(ChatList.class);
+	private static final Logger logger=Logger.getLogger(ChatList.class.getName());
 
    
     public  void service(HttpServletRequest request, HttpServletResponse response){
@@ -50,6 +50,7 @@ public class ChatList extends HttpServlet{
 				  while ((line = reader.readLine()) != null){
 				      jb.append(line);
 				  }
+				  
 				  JSONObject jsonObject =  HTTP.toJSONObject(jb.toString());
 				  String payload=(String) jsonObject.get("Method");
 			      JSONObject jsondata=new JSONObject(payload);

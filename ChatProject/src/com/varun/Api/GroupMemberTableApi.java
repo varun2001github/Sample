@@ -12,7 +12,7 @@ import com.varun.Orm.Table;
 
 public class GroupMemberTableApi {
 	private OrmImp ormObj;
-	private static final Logger logger=LoggerUtil.getLogger(GroupMemberTableApi.class);
+	private static final Logger logger=Logger.getLogger(GroupMemberTableApi.class.getName());
 	private GroupMembersModel memberObj=null;
 	private CriteriaBuilder cb=new CriteriaBuilder();
 	private String Table=GroupMembersModel.class.getAnnotation(Table.class).name();

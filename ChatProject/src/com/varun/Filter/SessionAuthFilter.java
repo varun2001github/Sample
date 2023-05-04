@@ -20,6 +20,7 @@ import javax.servlet.http.HttpSession;
 
 import org.json.JSONObject;
 import com.varun.Controller.ChatList;
+import com.varun.Dao.ChatDao;
 import com.varun.Dao.LRUCache;
 import com.varun.Dao.UserDao;
 import com.varun.Logger.LoggerUtil;
@@ -31,7 +32,7 @@ import com.varun.Model.UserinfoTableModel;
  */
 //@WebFilter(filterName = "MyFilter", urlPatterns = {"/sendmessage","/profilepage.jsp","/editprofile","/userpage.jsp","/ShowMessages","/chatlist"})
 public class SessionAuthFilter implements Filter{
-	private static final Logger logger=LoggerUtil.getLogger(ChatList.class);
+	private static final Logger logger=Logger.getLogger(SessionAuthFilter.class.getName());
 
     /**
      * Default constructor. 

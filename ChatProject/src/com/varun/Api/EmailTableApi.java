@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.varun.Controller.AuthenticationServlet;
 import com.varun.Controller.ChatList;
 import com.varun.Logger.LoggerUtil;
 import com.varun.Model.DataObject;
@@ -15,7 +16,7 @@ import com.varun.Orm.Table;
 
 public class EmailTableApi {
 	private OrmImp ormObj=null;
-	private static final Logger logger=LoggerUtil.getLogger(ChatList.class);
+	private static final Logger logger=Logger.getLogger(EmailTableApi.class.getName());
 	private EmailTableModel emailObject=new EmailTableModel();
 	private String Table=EmailTableModel.class.getAnnotation(Table.class).name();
 

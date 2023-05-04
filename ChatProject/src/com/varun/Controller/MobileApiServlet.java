@@ -2,6 +2,7 @@ package com.varun.Controller;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.logging.Logger;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -24,6 +25,7 @@ public class MobileApiServlet extends HttpServlet{
 	
 	private static final long serialVersionUID = 1L;
 	private OrmImp ormObj=null;
+	private static final Logger logger=Logger.getLogger(MobileApiServlet.class.getName());
     /**
      * @see HttpServlet#HttpServlet()
      */

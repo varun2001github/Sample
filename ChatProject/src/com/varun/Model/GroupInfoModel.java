@@ -12,7 +12,7 @@ import com.varun.Orm.Table;
 @Table(name="group_info")
 public class GroupInfoModel{
 	
-	private static final Logger logger=LoggerUtil.getLogger(ChatList.class);
+	private static final Logger logger=Logger.getLogger(GroupInfoModel.class.getName());
 	
 	private HashMap<String,Object> map=new HashMap<String,Object>();
     

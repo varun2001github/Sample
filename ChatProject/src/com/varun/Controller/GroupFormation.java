@@ -24,7 +24,7 @@ public class GroupFormation extends HttpServlet{
 	private PrintWriter out=null;
 	private int userid=0;
 	private String groupName="";
-	private static final Logger logger=LoggerUtil.getLogger(GroupFormation.class);
+	private static final Logger logger=Logger.getLogger(GroupFormation.class.getName());
 	private ChatDao dao=null;
 	
 	public GroupFormation() {

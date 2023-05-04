@@ -31,7 +31,7 @@ import com.varun.Security.SessionidGenerator;
  */
 public class AuthenticationServlet extends HttpServlet{
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger=LoggerUtil.getLogger(AuthenticationServlet.class);
+	private static final Logger logger=Logger.getLogger(AuthenticationServlet.class.getName());
        
     /**
      * @see HttpServlet#HttpServlet()

@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.function.Function;
 import java.util.logging.Logger;
 import com.varun.Controller.ChatList;
+import com.varun.Filter.SessionAuthFilter;
 import com.varun.Logger.LoggerUtil;
 import com.varun.Model.GroupInfoModel.DbColumn;
 import com.varun.Orm.CommonMethod;
@@ -12,7 +13,7 @@ import com.varun.Orm.Table;
 @Table(name="email")
 public class EmailTableModel implements CommonMethod{
 	
-	private static final Logger logger=LoggerUtil.getLogger(ChatList.class);
+	private static final Logger logger=Logger.getLogger(EmailTableModel.class.getName());
 
 	private HashMap<String,Object> map=new HashMap<String,Object>();
 	

@@ -18,7 +18,7 @@ import com.varun.Orm.Table;
 @Table(name="userinfo")
 public class UserinfoTableModel{
 	
-	private static final Logger logger=LoggerUtil.getLogger(ChatList.class);
+    private static final Logger logger=Logger.getLogger(UserinfoTableModel.class.getName());
 	
 	private HashMap<String,Object> map=new HashMap<String,Object>();
 
@@ -36,6 +36,8 @@ public class UserinfoTableModel{
     
     private Long modif_time=null;
     
+    private SessionTableModel sessionObject=null;
+    
     private PasswordTableModel passTableObj=null;
     
 	private List<EmailTableModel> emailTableObjs=null;
@@ -50,7 +52,6 @@ public class UserinfoTableModel{
     
     private List<GroupMessagesModel> groupMessages=null;
     
-    private SessionTableModel sessionObject=null;
     
     public enum DbColumn{
     	user_id,
@@ -74,9 +75,9 @@ public class UserinfoTableModel{
 	public UserinfoTableModel(UserinfoTableModel copyObj){
 		this.user_id = copyObj.getUser_id();
 		this.user_name = copyObj.getUser_name();
-		this.gender = copyObj.getGender();;
+		this.gender = copyObj.getGender();
 		this.country =copyObj.getCountry();
-		this.picfile = copyObj.getPicfile();;
+		this.picfile = copyObj.getPicfile();
 		this.created_time =copyObj.getCreated_time();
 		this.modif_time = copyObj.getModif_time();
 		this.passTableObj = copyObj.getPassTableObj();

@@ -13,7 +13,7 @@ import com.varun.Orm.Table;
 @Table(name="group_members")
 public class GroupMembersModel{
 	
-	private static final Logger logger=LoggerUtil.getLogger(ChatList.class);
+	private static final Logger logger=Logger.getLogger(GroupMembersModel.class.getName());
 	
 	private HashMap<String,Object> map=new HashMap<String,Object>();
 

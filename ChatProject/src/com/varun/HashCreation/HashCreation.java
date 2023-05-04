@@ -25,7 +25,7 @@ public class HashCreation{
 		   }
 		   String m=String.valueOf(s);
 		   return new BigInteger(m,2);
-    }
+   }
    
    public static BigInteger lro(BigInteger v, int k){
 		   char[] s=v.toString(2).toCharArray();

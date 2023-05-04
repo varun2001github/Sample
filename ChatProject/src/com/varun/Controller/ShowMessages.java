@@ -28,7 +28,7 @@ import javax.servlet.http.*;
  */
 public class ShowMessages extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger=LoggerUtil.getLogger(ShowMessages.class);
+	private static final Logger logger=Logger.getLogger(ShowMessages.class.getName());
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */

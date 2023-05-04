@@ -18,7 +18,7 @@ import com.varun.Model.MobileTableModel;
 import com.varun.Model.PasswordTableModel;
 import com.varun.Model.UserinfoTableModel;
 public class MobileTableApi {
-	private static final Logger logger=LoggerUtil.getLogger(MobileTableApi.class);
+	private static final Logger logger=Logger.getLogger(MobileTableApi.class.getName());
 	private OrmImp ormObj;
 	private CriteriaBuilder cb=new CriteriaBuilder();
 	private static MobileTableModel mobileObject=null;

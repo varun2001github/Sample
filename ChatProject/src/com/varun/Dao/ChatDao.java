@@ -13,7 +13,7 @@ import com.varun.Model.*;
 import com.varun.Orm.OrmImp;
 
 public class ChatDao{
-	private static final Logger logger=LoggerUtil.getLogger(ChatList.class);
+	private static final Logger logger=Logger.getLogger(ChatDao.class.getName());
     private OrmImp ormObj=null;
 	private AuditTableModel auditModel=null;
 

@@ -16,7 +16,7 @@ public class OrmImp{
 	private Connection con=null;
 	private static PreparedStatement stmt;
 	private String query="";
-	private static final Logger logger=LoggerUtil.getLogger(ChatList.class);
+    private static final Logger logger=Logger.getLogger(OrmImp.class.getName());
 	
 	//audit
 	private AuditTableModel auditModelObject=null;

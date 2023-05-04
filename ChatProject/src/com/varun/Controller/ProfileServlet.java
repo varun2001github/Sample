@@ -32,7 +32,7 @@ import com.varun.Model.UserinfoTableModel;
  */
 public class ProfileServlet extends HttpServlet{
 	private PrintWriter out=null;
-	private static final Logger logger=LoggerUtil.getLogger(ChatList.class);
+	private static final Logger logger=Logger.getLogger(ProfileServlet.class.getName());
 	private static final long serialVersionUID = 1L;
 	 List<EmailTableModel> emailList=null;
      List<MobileTableModel> mobileList=null;
@@ -51,7 +51,7 @@ public class ProfileServlet extends HttpServlet{
 	// TODO Auto-generated method stub
 	//		String userid=request.getParameter("uid");
 	//		String username=request.getParameter("username");
-		
+        logger.log(Level.INFO,"updateProfile called ----------------------------------");
 		Integer userId=null;
 		String sessionId=null;
 		HttpSession session=request.getSession();
@@ -109,7 +109,6 @@ public class ProfileServlet extends HttpServlet{
             }		
 //          System.out.println(dataObj+" "+updatedObj);
             boolean isUpdated=false;
-            logger.log(Level.INFO,"updateProfile called ----------------------------------");
             isUpdated=dao.updateProfile(dataObj,updatedObj);
             
             //clear cache

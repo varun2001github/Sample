@@ -14,7 +14,7 @@ public class DbConnectionSource{
 	private static Connection con=null;
 	private static BasicDataSource dataSource=null;
     private static String  urlpath="jdbc:mysql://localhost/chatappDB";
-	private static final Logger logger=LoggerUtil.getLogger(ChatList.class);
+    private static final Logger logger=Logger.getLogger(DbConnectionSource.class.getName());
 	
 	public void createDataSource(){
 		// TODO Auto-generated constructor stub

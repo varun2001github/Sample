@@ -13,7 +13,6 @@
 <%@ page import="com.varun.Security.CookieEncrypt" %> 
 <%@ page import="javax.servlet.RequestDispatcher" %>
 <%@ page import="com.varun.Security.EncryptionHandler" %> 
-<%@ page import="com.varun.Logger.LoggerUtil"%>
 <%@ page import="java.util.logging.*"%>
 
 <html>
@@ -68,7 +67,7 @@
 	    	   System.out.println("up to logout");
 	    	   response.sendRedirect("servlet/log");
 	       }
-	       LRUCache.showCacheList();
+	       //LRUCache.showCacheList();
            //request.setAttribute("dataobj",dataObj);
            //session.setAttribute("dataobj",dataObj);
            //response.setIntHeader("Refresh",1);

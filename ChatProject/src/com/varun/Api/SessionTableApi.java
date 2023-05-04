@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.varun.Logger.LoggerUtil;
 import com.varun.Model.DataObject;
 import com.varun.Model.EmailTableModel;
 import com.varun.Model.SessionTableModel;
@@ -18,7 +17,7 @@ import com.varun.Orm.OrmImp;
 import com.varun.Orm.Table;
 
 public class SessionTableApi{
-	private static final Logger logger=LoggerUtil.getLogger(SessionTableApi.class);
+	private static final Logger logger=Logger.getLogger(SessionTableApi.class.getName());
 	private SessionTableModel sessionTableObj=null;
 	private static String Table=SessionTableModel.class.getAnnotation(Table.class).name();
 	private static CriteriaBuilder cb=new CriteriaBuilder();

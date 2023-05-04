@@ -33,7 +33,7 @@ import de.mkammerer.argon2.Argon2Factory.Argon2Types;
 
 public class UserDao{
 	private Argon2 argon2 = (Argon2) Argon2Factory.create(Argon2Types.ARGON2i);
-	private static final Logger logger=LoggerUtil.getLogger(ChatList.class);
+	private static final Logger logger=Logger.getLogger(UserDao.class.getName());
 	private AuditTableModel auditModel=null;
 	
 	public UserDao(){

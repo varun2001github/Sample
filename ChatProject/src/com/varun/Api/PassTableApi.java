@@ -19,7 +19,7 @@ import com.varun.Orm.Table;
 
 
 public class PassTableApi {
-	private static final Logger logger=LoggerUtil.getLogger(PassTableApi.class);
+	private static final Logger logger=Logger.getLogger(PassTableApi.class.getName());
 	private static PasswordTableModel passObject=null;
 	private static String Table=PasswordTableModel.class.getAnnotation(Table.class).name();
 	private static CriteriaBuilder c=new CriteriaBuilder();

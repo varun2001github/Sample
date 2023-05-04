@@ -4,11 +4,12 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import com.varun.Controller.ChatList;
 import com.varun.Logger.LoggerUtil;
+import com.varun.Model.UserinfoTableModel;
 
 
 public class CriteriaBuilder{
 	 String condition="";
-	 private static final Logger logger=LoggerUtil.getLogger(ChatList.class);
+	    private static final Logger logger=Logger.getLogger(CriteriaBuilder.class.getName());
 
 	    
 	    public CriteriaBuilder(String criteria) {

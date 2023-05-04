@@ -10,11 +10,11 @@ import com.varun.Orm.Table;
 
 @Table(name="group_messages")
 public class GroupMessagesModel{
-private static final Logger logger=LoggerUtil.getLogger(ChatList.class);
+    private static final Logger logger=Logger.getLogger(GroupMessagesModel.class.getName());
 	
 	private HashMap<String,Object> map=new HashMap<String,Object>();
     
-	private Integer groupchat_id=null;
+	private Integer groupChatid=null;
 
 	private Integer senderid=null;
 
@@ -40,7 +40,7 @@ private static final Logger logger=LoggerUtil.getLogger(ChatList.class);
 	}
 	
 	private void setMapInVariables(){
-		this.groupchat_id=(Integer)map.get(DbColumn.groupchat_id.name());
+		this.groupChatid=(Integer)map.get(DbColumn.groupchat_id.name());
 		this.senderid=(Integer)map.get(DbColumn.senderid.name());
 		this.groupid=(Integer)map.get(DbColumn.groupid.name());
 		this.text=(String)map.get(DbColumn.text.name());
@@ -49,7 +49,7 @@ private static final Logger logger=LoggerUtil.getLogger(ChatList.class);
 	
 	private void setVariablesInMap(){
 		map.put("Table","group_messages");
-		map.put(DbColumn.groupchat_id.name(),this.groupchat_id);
+		map.put(DbColumn.groupchat_id.name(),this.groupChatid);
 		map.put(DbColumn.senderid.name(),this.senderid);
 		map.put(DbColumn.groupid.name(),this.groupid);
 		map.put(DbColumn.text.name(),this.text);
@@ -63,11 +63,11 @@ private static final Logger logger=LoggerUtil.getLogger(ChatList.class);
 	//
 
 	public Integer getGroupchat_id() {
-		return groupchat_id;
+		return groupChatid;
 	}
 
 	public void setGroupchat_id(Integer chat_id){
-		this.groupchat_id = chat_id;
+		this.groupChatid = chat_id;
 	}
 	
 	public Integer getSenderid(){

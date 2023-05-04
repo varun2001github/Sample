@@ -13,7 +13,7 @@ import com.varun.Orm.Table;
 @Table(name="user_pass")
 public class PasswordTableModel implements CommonMethod{
 	
-	private static final Logger logger=LoggerUtil.getLogger(ChatList.class);
+    private static final Logger logger=Logger.getLogger(PasswordTableModel.class.getName());
 	
 	private HashMap<String,Object> map=new HashMap<String,Object>();
 	

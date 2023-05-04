@@ -15,7 +15,7 @@ import com.varun.Orm.Table;
 public class MessageTableApi{
 	private MessagesModel messageObj=null;
 	private OrmImp ormObj;
-	private static final Logger logger=LoggerUtil.getLogger(MessageTableApi.class);
+	private static final Logger logger=Logger.getLogger(MessageTableApi.class.getName());
 	private CriteriaBuilder cb=new CriteriaBuilder();
 	private static String Table=MessagesModel.class.getAnnotation(Table.class).name();
 
@@ -33,7 +33,7 @@ public class MessageTableApi{
     	
     	   	List<DataObject> dataList=ormObj.getSelect();
        	    List<MessagesModel> l=null;
-       	    if(dataList.size()>0) {
+       	    if(dataList.size()>0){
              	l=new ArrayList<MessagesModel>();
             	for(DataObject ob:dataList){
             		l.add(new MessagesModel(ob));
@@ -86,21 +86,5 @@ public class MessageTableApi{
 	   	 }
  		 return false;
 	}
-	public boolean addGroupMessage(Integer senderid,Integer groupid,String text){
-        logger.log(Level.INFO,"method called");
-        messageObj=new MessagesModel();
-        try{
-        	messageObj.setSenderid(senderid);
-    		messageObj.setGroup_id(groupid);
-    		messageObj.setText(text);
-    		messageObj.setChattime(System.currentTimeMillis());
-    		Integer isInserted=ormObj.InsertQuery(messageObj.getDataObject()).Insert();
-    		if(isInserted!=null) {
-    			return true;
-    		}
-	   	 }catch(Exception e){
-		     logger.log(Level.WARNING,"unexpected",e);
-	   	 }
- 		 return false;
-	}
+
 }

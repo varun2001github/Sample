@@ -15,7 +15,7 @@ import com.varun.Orm.Table;
 public class groupMessageTableApi{
 	private MessagesModel messageObj=null;
 	private OrmImp ormObj=new OrmImp();
-	private static final Logger logger=LoggerUtil.getLogger(groupMessageTableApi.class);
+	private static final Logger logger=Logger.getLogger(groupMessageTableApi.class.getName());
 	private CriteriaBuilder cb=new CriteriaBuilder();
 	private static String Table=GroupMessagesModel.class.getAnnotation(Table.class).name();
 	public groupMessageTableApi(){

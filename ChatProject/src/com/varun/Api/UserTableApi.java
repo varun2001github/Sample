@@ -27,7 +27,7 @@ import com.varun.Orm.*;
 @Path("/UserApi")
 public class UserTableApi{
 	//logger 
-	private static final Logger logger=LoggerUtil.getLogger(ChatList.class);
+	private static final Logger logger=Logger.getLogger(UserTableApi.class.getName());
 	private static UserinfoTableModel userObject=null;
 	private CriteriaBuilder c=new CriteriaBuilder();
 	private OrmImp orm;

@@ -1,5 +1,4 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@ page import="com.varun.Logger.LoggerUtil"%>
 <%@ page import="java.util.logging.*"%>
 
 <!DOCTYPE html>
@@ -10,7 +9,7 @@
 </head>
 <body>
    <%    
-        Logger logger=LoggerUtil.getLogger(this.getClass());
+        Logger logger=Logger.getLogger(this.getClass().getName());
         if(session.getAttribute("user")!=null){
 	         response.sendRedirect("userpage.jsp");           
 	    }

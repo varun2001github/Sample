@@ -15,7 +15,7 @@ import com.varun.Orm.Table;
 @Table(name="mobile")
 public class MobileTableModel implements CommonMethod{
 	
-	private static final Logger logger=LoggerUtil.getLogger(ChatList.class);
+    private static final Logger logger=Logger.getLogger(MobileTableModel.class.getName());
 
 	private HashMap<String,Object> map=new HashMap<String,Object>();
 	

@@ -4,22 +4,28 @@
 <%@ page import="javax.servlet.http.Cookie" %>
 <%@ page import="java.util.*"%>
 <%@ page import="java.util.logging.*"%>
-<%@ page import="com.varun.Logger.LoggerUtil"%>
-<%@ page import="java.io.FileInputStream"%>
-<%@ page import="java.net.InetAddress"%>
-<%@ page import="java.net.UnknownHostException" %>
 <%@ page import="org.json.JSONObject" %>
-<%@ page import="java.net.URLDecoder" %>
 <%@ page import="com.varun.Dao.UserDao" %>
+<%@ page import="java.net.*"%>
+<%@ page import="java.io.*"%>
 <html>
    <head>      
      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>  
    </head>  
    <body>
-
+     <% 
+      StringBuffer jb = new StringBuffer();
+	  String line = null;
+	 
+	  BufferedReader reader = request.getReader();
+	  while ((line = reader.readLine()) != null) {
+	      jb.append(line);
+	  }
+      out.println(jb.toString()); 
+    %>
     <%  
-	    Logger logger=LoggerUtil.getLogger(this.getClass());
-        logger.log(Level.INFO,"logger init");
+	    Logger logger=Logger.getLogger(this.getClass().getName());
+        logger.log(Level.INFO,"logger init------------------");
     %>
     <div id=21 class="hnt">
 
