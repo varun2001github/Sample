@@ -8,72 +8,72 @@
 <html>
 <head>
        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script> 
-       <%  
-           System.out.println("----------Inside profilepage------------");
-	       String sessioninfo="";
-     	   UserDao dao=new UserDao();
-	       UserinfoTableModel dataObj=null;
-	       Integer userid=null;
-	       String username=null;
-	       String email=null;
-	       String country=null;
-	       String gender=null;
-	       System.out.println(" pp tl "+LRUCache.getThreadLocal());
-	       List<EmailTableModel> emailList=null;
-	       List<MobileTableModel> mobileList=null;
-	       if(request.getAttribute("userid")!=null && LRUCache.getThreadLocal()!=null){
-	    	    userid=(Integer)request.getAttribute("userid");
-	    	    
-     	    	//fetch user object
-	    	    if(LRUCache.getThreadLocal()!=null){
-	      	    	 System.out.println("profilepage userDataObject from ThreadLocal");
-     	    		 dataObj=LRUCache.getThreadLocal();
-     	    	}else if(LRUCache.get("userid"+userid)==null){
-	      	    	 System.out.println("profilepage userDataObject from Cache");
-	      	    	 dataObj=(UserinfoTableModel)LRUCache.get("userid"+userid);
-     	    	}else{
-     	    		 dataObj=dao.getUserById(userid);
-	      	    	 System.out.println("profilepage userDataObject from db");
-	      	    	 LRUCache.put("userid"+userid, dataObj);
-     	    	}
+       <%
+        	System.out.println("----------Inside profilepage------------");
+                        	       String sessioninfo="";
+                             	   UserDao dao=new UserDao();
+                        	       UserModel dataObj=null;
+                        	       Integer userid=null;
+                        	       String username=null;
+                        	       String email=null;
+                        	       String country=null;
+                        	       String gender=null;
+                        	       System.out.println(" pp tl "+LRUCache.getThreadLocal());
+                        	       List<EmailModel> emailList=null;
+                        	       List<MobileModel> mobileList=null;
+                        	       if(request.getAttribute("userid")!=null && LRUCache.getThreadLocal()!=null){
+                        	    	    userid=(Integer)request.getAttribute("userid");
+                        	    	    
+                             	    	//fetch user object
+                        	    	    if(LRUCache.getThreadLocal()!=null){
+                        	      	    	 System.out.println("profilepage userDataObject from ThreadLocal");
+                             	    		 dataObj=LRUCache.getThreadLocal();
+                             	    	}else if(LRUCache.get("userid"+userid)==null){
+                        	      	    	 System.out.println("profilepage userDataObject from Cache");
+                        	      	    	 dataObj=(UserModel)LRUCache.get("userid"+userid);
+                             	    	}else{
+                             	    		 dataObj=dao.getUserById(userid);
+                        	      	    	 System.out.println("profilepage userDataObject from db");
+                        	      	    	 LRUCache.put("userid"+userid, dataObj);
+                             	    	}
 
-     	    	
-     	    	//fetch email objects
-     	    	if(dataObj.getEmailTableObj()==null){
-	      	    	System.out.println("profilepage email from db");
-     	    		emailList=dao.getEmail(userid);
-     	    		dataObj.setEmailTableObj(emailList);
-     	    		LRUCache.put("userid"+userid, dataObj);
-     	    	}else{
-	      	    	System.out.println("profilepage email from cache/TL object");
-     	    		emailList=dataObj.getEmailTableObj();
-     	    	}
-     	    	
-     	    	//fetch mobile objects
-     	    	if(dataObj.getMobileTableObj()==null){
-	      	    	System.out.println("profilepage mobile from db");
-     	    		mobileList=dao.getMobile(userid);
-     	    		dataObj.setMobileTableObj(mobileList);
-     	    		LRUCache.put("userid"+userid, dataObj);
-     	    	}else{
-	      	    	System.out.println("profilepage mobile from cache/TL object");
-     	    		mobileList=dataObj.getMobileTableObj();
-     	    	}
-     	    	
-     	    	int flag=0;
-	            userid=dataObj.getUser_id();
-	            username=dataObj.getUser_name();
-	            country=dataObj.getCountry();
-	            gender=dataObj.getGender();
-	    	    
-	       }else{
-	    	   System.out.println("dataobj null");
-	       }
-           //System.out.println(username);
-	       request.setAttribute("dataobj",dataObj);
-           //response.setIntHeader("Refresh",1);
-           //response.setHeader("Expires","0");
-       %>
+                             	    	
+                             	    	//fetch email objects
+                             	    	if(dataObj.getEmailTableObj()==null){
+                        	      	    	System.out.println("profilepage email from db");
+                             	    		emailList=dao.getEmail(userid);
+                             	    		dataObj.setEmailTableObj(emailList);
+                             	    		LRUCache.put("userid"+userid, dataObj);
+                             	    	}else{
+                        	      	    	System.out.println("profilepage email from cache/TL object");
+                             	    		emailList=dataObj.getEmailTableObj();
+                             	    	}
+                             	    	
+                             	    	//fetch mobile objects
+                             	    	if(dataObj.getMobileTableObj()==null){
+                        	      	    	System.out.println("profilepage mobile from db");
+                             	    		mobileList=dao.getMobile(userid);
+                             	    		dataObj.setMobileTableObj(mobileList);
+                             	    		LRUCache.put("userid"+userid, dataObj);
+                             	    	}else{
+                        	      	    	System.out.println("profilepage mobile from cache/TL object");
+                             	    		mobileList=dataObj.getMobileTableObj();
+                             	    	}
+                             	    	
+                             	    	int flag=0;
+                        	            userid=dataObj.getUser_id();
+                        	            username=dataObj.getUser_name();
+                        	            country=dataObj.getCountry();
+                        	            gender=dataObj.getGender();
+                        	    	    
+                        	       }else{
+                        	    	   System.out.println("dataobj null");
+                        	       }
+                                   //System.out.println(username);
+                        	       request.setAttribute("dataobj",dataObj);
+                                   //response.setIntHeader("Refresh",1);
+                                   //response.setHeader("Expires","0");
+        %>
 	<meta charset="UTF-8">
 	<title>User profile</title>
 </head>
@@ -85,35 +85,41 @@
   <div style="padding-left:20%;display:flex;" id="profile_details">
 
         <form id="user_profile_form" action="/ChatProject/servlet/editprofile" method="post" autocomplete="off">
-           <%  
-		      if(session.getAttribute("updateerr")!=null && session.getAttribute("updateerr")!=""){
-			         out.println("<h3 style=\"color:red\">"+session.getAttribute("updateerr")+"</h3>");
-			         session.setAttribute("updateerr","");
-			  } 
+           <%
+           	if(session.getAttribute("updateerr")!=null && session.getAttribute("updateerr")!=""){
+                      	         out.println("<h3 style=\"color:red\">"+session.getAttribute("updateerr")+"</h3>");
+                      	         session.setAttribute("updateerr","");
+                      	  }
            %>
            <h2>PROFILE DETAILS</h2>
-           <label>NAME</label><br> <%out.println("<input name=\"username\" value=\""+ username +"\" disabled><br><br>"); %>
-           <label>GENDER</label><br> <%out.println("<input name=\"gender\" value=\""+gender+"\" disabled><br><br>"); %>
-           <label>COUNTRY </label><br> <%out.println("<input name=\"country\" value=\""+country+"\" disabled><br><br>"); %>
-           <%    
-                 out.println("<label>EMAIL</label><br>");    
-		         if(dataObj!=null){
-			         //System.out.println("em mob ret frm db"+emailList.size());
-		             //System.out.println(mobileList.size());
-		        	 for(EmailTableModel emailData:emailList){
-			              out.println("<input name=\"email[]\" value="+emailData.getEmailid()+" disabled><br>");
-				     }
-		         }else{
-			         out.println("<input name=\"email[]\" value=\"null\" disabled><br>");
-		         }
-		         out.println("<br><label>MOBILE</label><br>");    
-		         if(dataObj!=null){
-		             for(MobileTableModel mobileData:mobileList){
-			                out.println("<input name=\"mobile[]\" id=\"mobile\" value="+mobileData.getMobileno()+" disabled><br>");
-			         }
-		         }else{
-			         out.println("<input name=\"mobile[]\" id=\"mobile\" value=\"null\" disabled><br>");
-		         }
+           <label>NAME</label><br> <%
+ 	out.println("<input name=\"username\" value=\""+ username +"\" disabled><br><br>");
+ %>
+           <label>GENDER</label><br> <%
+ 	out.println("<input name=\"gender\" value=\""+gender+"\" disabled><br><br>");
+ %>
+           <label>COUNTRY </label><br> <%
+ 	out.println("<input name=\"country\" value=\""+country+"\" disabled><br><br>");
+ %>
+           <%
+           	out.println("<label>EMAIL</label><br>");    
+                      		         if(dataObj!=null){
+                      	         //System.out.println("em mob ret frm db"+emailList.size());
+                      		             //System.out.println(mobileList.size());
+                      		        	 for(EmailModel emailData:emailList){
+                      	              out.println("<input name=\"email[]\" value="+emailData.getEmailid()+" disabled><br>");
+                      		     }
+                      		         }else{
+                      	         out.println("<input name=\"email[]\" value=\"null\" disabled><br>");
+                      		         }
+                      		         out.println("<br><label>MOBILE</label><br>");    
+                      		         if(dataObj!=null){
+                      		             for(MobileModel mobileData:mobileList){
+                      	                out.println("<input name=\"mobile[]\" id=\"mobile\" value="+mobileData.getMobileno()+" disabled><br>");
+                      	         }
+                      		         }else{
+                      	         out.println("<input name=\"mobile[]\" id=\"mobile\" value=\"null\" disabled><br>");
+                      		         }
            %>
            <div id="save-btn" style="display:none"><button type="submit">save</button>&ensp;<button onClick="canceledit()">cancel</button></div>
            

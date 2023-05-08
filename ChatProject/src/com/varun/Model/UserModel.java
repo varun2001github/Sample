@@ -11,14 +11,14 @@ import com.varun.Api.MobileTableApi;
 import com.varun.Api.PassTableApi;
 import com.varun.Controller.ChatList;
 import com.varun.Logger.LoggerUtil;
-import com.varun.Model.EmailTableModel.DbColumn;
+import com.varun.Model.EmailModel.DbColumn;
 import com.varun.Orm.OrmImp;
 import com.varun.Orm.Table;
 
 @Table(name="userinfo")
-public class UserinfoTableModel{
+public class UserModel{
 	
-    private static final Logger logger=Logger.getLogger(UserinfoTableModel.class.getName());
+    private static final Logger logger=Logger.getLogger(UserModel.class.getName());
 	
 	private HashMap<String,Object> map=new HashMap<String,Object>();
 
@@ -36,22 +36,17 @@ public class UserinfoTableModel{
     
     private Long modif_time=null;
     
-    private SessionTableModel sessionObject=null;
+    private SessionModel sessionObject=null;
     
-    private PasswordTableModel passTableObj=null;
+    private PasswordModel passTableObj=null;
     
-	private List<EmailTableModel> emailTableObjs=null;
+	private List<EmailModel> emailTableObjs=null;
 	
-    private List<MobileTableModel> mobileTableObjs=null;
+    private List<MobileModel> mobileTableObjs=null;
 
-	private List<UserinfoTableModel> chatList=null;
+	private List<UserModel> chatList=null;
     
     private List<GroupInfoModel> groupChatList=null;
-    
-    private List<MessagesModel> messages=null;
-    
-    private List<GroupMessagesModel> groupMessages=null;
-    
     
     public enum DbColumn{
     	user_id,
@@ -64,15 +59,15 @@ public class UserinfoTableModel{
 	}
 	
 	//constructor
-	public UserinfoTableModel(DataObject ob){
+	public UserModel(DataObject ob){
 		this.map=ob.getDataMap();
 		setMapInVariables();
 	}
 	
-	public UserinfoTableModel(){
+	public UserModel(){
 	}
 	
-	public UserinfoTableModel(UserinfoTableModel copyObj){
+	public UserModel(UserModel copyObj){
 		this.user_id = copyObj.getUser_id();
 		this.user_name = copyObj.getUser_name();
 		this.gender = copyObj.getGender();
@@ -183,7 +178,7 @@ public class UserinfoTableModel{
 	}
 		
 	//Table object getter setters
-	public List<EmailTableModel> getEmailTableObj(){
+	public List<EmailModel> getEmailTableObj(){
     	logger.log(Level.INFO,"method"+this.emailTableObjs);
 		if(this.emailTableObjs==null && this.user_id!=null){
 			EmailTableApi EmailApiObj=new EmailTableApi(new OrmImp());
@@ -192,12 +187,12 @@ public class UserinfoTableModel{
 		return emailTableObjs;
 	}
 	
-	public void setEmailTableObj(List<EmailTableModel> emailTableObjs){
+	public void setEmailTableObj(List<EmailModel> emailTableObjs){
     	logger.log(Level.INFO,"method");
 		this.emailTableObjs = emailTableObjs;
 	}
 	
-	public List<MobileTableModel> getMobileTableObj(){
+	public List<MobileModel> getMobileTableObj(){
     	logger.log(Level.INFO,"method"+this.mobileTableObjs);
 		if(this.mobileTableObjs==null && this.user_id!=null){
 			MobileTableApi MobileApiObj=new MobileTableApi(new OrmImp());
@@ -206,12 +201,12 @@ public class UserinfoTableModel{
 		return mobileTableObjs;
 	}
 	
-	public void setMobileTableObj(List<MobileTableModel> mobileTableObjs){
+	public void setMobileTableObj(List<MobileModel> mobileTableObjs){
     	logger.log(Level.INFO,"method");
 		this.mobileTableObjs = mobileTableObjs;
 	}
 	
-	public PasswordTableModel getPassTableObj(){
+	public PasswordModel getPassTableObj(){
     	logger.log(Level.INFO,"method");
 		if(this.passTableObj==null  && this.user_id!=null){
 			PassTableApi PassApiObj=new PassTableApi(new OrmImp());
@@ -220,32 +215,32 @@ public class UserinfoTableModel{
 		return passTableObj;
 	}
 	
-	public void setPassTableObj(PasswordTableModel passTableObj){
+	public void setPassTableObj(PasswordModel passTableObj){
     	logger.log(Level.INFO,"method");
 		this.passTableObj = passTableObj;
 	}
 	
-    public List<EmailTableModel> getEmailTableObjs() {
+    public List<EmailModel> getEmailTableObjs() {
 		return emailTableObjs;
 	}
 
-	public void setEmailTableObjs(List<EmailTableModel> emailTableObjs) {
+	public void setEmailTableObjs(List<EmailModel> emailTableObjs) {
 		this.emailTableObjs = emailTableObjs;
 	}
 
-	public List<MobileTableModel> getMobileTableObjs() {
+	public List<MobileModel> getMobileTableObjs() {
 		return mobileTableObjs;
 	}
 
-	public void setMobileTableObjs(List<MobileTableModel> mobileTableObjs) {
+	public void setMobileTableObjs(List<MobileModel> mobileTableObjs) {
 		this.mobileTableObjs = mobileTableObjs;
 	}
 
-	public List<UserinfoTableModel> getChatList() {
+	public List<UserModel> getChatList() {
 		return chatList;
 	}
 
-	public void setChatList(List<UserinfoTableModel> chatList) {
+	public void setChatList(List<UserModel> chatList) {
 		this.chatList = chatList;
 	}
 
@@ -257,27 +252,11 @@ public class UserinfoTableModel{
 		this.groupChatList = groupChatList;
 	}
 
-	public List<MessagesModel> getMessages() {
-		return messages;
-	}
-
-	public void setMessages(List<MessagesModel> messages) {
-		this.messages = messages;
-	}
-
-	public List<GroupMessagesModel> getGroupMessages() {
-		return groupMessages;
-	}
-
-	public void setGroupMessages(List<GroupMessagesModel> groupMessages) {
-		this.groupMessages = groupMessages;
-	}
-
-	public SessionTableModel getSessionObject() {
+	public SessionModel getSessionObject() {
 		return sessionObject;
 	}
 
-	public void setSessionObject(SessionTableModel sessionObject) {
+	public void setSessionObject(SessionModel sessionObject) {
 		this.sessionObject = sessionObject;
 	}
 }

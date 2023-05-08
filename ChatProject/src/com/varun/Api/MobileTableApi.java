@@ -13,16 +13,16 @@ import java.util.logging.Logger;
 
 import com.varun.Logger.LoggerUtil;
 import com.varun.Model.DataObject;
-import com.varun.Model.EmailTableModel;
-import com.varun.Model.MobileTableModel;
-import com.varun.Model.PasswordTableModel;
-import com.varun.Model.UserinfoTableModel;
+import com.varun.Model.EmailModel;
+import com.varun.Model.MobileModel;
+import com.varun.Model.PasswordModel;
+import com.varun.Model.UserModel;
 public class MobileTableApi {
 	private static final Logger logger=Logger.getLogger(MobileTableApi.class.getName());
 	private OrmImp ormObj;
 	private CriteriaBuilder cb=new CriteriaBuilder();
-	private static MobileTableModel mobileObject=null;
-	private static String Table=MobileTableModel.class.getAnnotation(Table.class).name();
+	private static MobileModel mobileObject=null;
+	private static String Table=MobileModel.class.getAnnotation(Table.class).name();
 
 	public MobileTableApi(OrmImp obj){
 		this.ormObj=obj;
@@ -47,7 +47,7 @@ public class MobileTableApi {
     
     public boolean addMobile(Integer uid,Long mobile){
         logger.log(Level.INFO,"method called");
-        MobileTableModel mobileObject=new MobileTableModel();
+        MobileModel mobileObject=new MobileModel();
     	mobileObject.setUser_id(uid);
     	mobileObject.setMobileno(mobile);
     	System.out.println("mob ins pass"+mobileObject.getCreated_time());
@@ -58,7 +58,7 @@ public class MobileTableApi {
     	return false;
     }
     
-    public boolean updateMobile(MobileTableModel oldMobileObject,MobileTableModel  newMobileObject){
+    public boolean updateMobile(MobileModel oldMobileObject,MobileModel  newMobileObject){
     	System.out.println("mob upd");
     	try{
        	    CriteriaBuilder cb=new CriteriaBuilder();
@@ -75,17 +75,17 @@ public class MobileTableApi {
          return false;
     }
     
-    public List<MobileTableModel> getMobileById(Integer id){
+    public List<MobileModel> getMobileById(Integer id){
     	 logger.log(Level.INFO,"method called");
          try{
 		   	CriteriaBuilder cb=new CriteriaBuilder();
 		   	ormObj.SelectQuery("user_id","mobileno").From(Table).Where(cb.addEquals("user_id",id));
 		   	List<DataObject> dataList=ormObj.getSelect();
-	    	List<MobileTableModel> ModelList=null;
+	    	List<MobileModel> ModelList=null;
 	    	if(dataList.size()>0) {
-	    		ModelList=new ArrayList<MobileTableModel>();
+	    		ModelList=new ArrayList<MobileModel>();
 	        	for(DataObject ob:dataList){
-	        		ModelList.add(new MobileTableModel(ob));
+	        		ModelList.add(new MobileModel(ob));
 	        	}
 	    	}		
 	    	return ModelList;

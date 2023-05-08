@@ -6,14 +6,14 @@ import java.util.function.Function;
 import java.util.logging.Logger;
 import com.varun.Controller.ChatList;
 import com.varun.Logger.LoggerUtil;
-import com.varun.Model.UserinfoTableModel.DbColumn;
+import com.varun.Model.UserModel.DbColumn;
 import com.varun.Orm.CommonMethod;
 import com.varun.Orm.Table;
 
 @Table(name="user_pass")
-public class PasswordTableModel implements CommonMethod{
+public class PasswordModel implements CommonMethod{
 	
-    private static final Logger logger=Logger.getLogger(PasswordTableModel.class.getName());
+    private static final Logger logger=Logger.getLogger(PasswordModel.class.getName());
 	
 	private HashMap<String,Object> map=new HashMap<String,Object>();
 	
@@ -36,16 +36,16 @@ public class PasswordTableModel implements CommonMethod{
 	}    
 	
 	//constructor
-	public PasswordTableModel(DataObject ob){
+	public PasswordModel(DataObject ob){
 		this.map=ob.getDataMap();
 		setMapInVariables();
 	}
 
-	public PasswordTableModel(){
+	public PasswordModel(){
 
 	}
 	
-	public PasswordTableModel(Integer uid,String pass_salt,String pass_hash){
+	public PasswordModel(Integer uid,String pass_salt,String pass_hash){
     	this.user_id=uid;
     	this.pass_salt=pass_salt;
     	this.pass_hash=pass_hash;

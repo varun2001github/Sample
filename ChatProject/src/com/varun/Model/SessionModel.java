@@ -7,13 +7,13 @@ import java.util.logging.Logger;
 
 import com.varun.Controller.ChatList;
 import com.varun.Logger.LoggerUtil;
-import com.varun.Model.UserinfoTableModel.DbColumn;
+import com.varun.Model.UserModel.DbColumn;
 import com.varun.Orm.Table;
 
 @Table(name="session_info")
-public class SessionTableModel{
+public class SessionModel{
 	
-    private static final Logger logger=Logger.getLogger(SessionTableModel.class.getName());
+    private static final Logger logger=Logger.getLogger(SessionModel.class.getName());
 	
 	private HashMap<String,Object> map=new HashMap<String,Object>();
 
@@ -30,12 +30,12 @@ public class SessionTableModel{
 	}
 
 	//constructor
-	public SessionTableModel(DataObject ob){
+	public SessionModel(DataObject ob){
 		this.map=ob.getDataMap();
 		setMapInVariables();
 	}
 	
-	public SessionTableModel(){
+	public SessionModel(){
 	}
     	
 	//private methods

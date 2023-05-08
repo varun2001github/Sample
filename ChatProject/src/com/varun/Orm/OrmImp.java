@@ -19,12 +19,13 @@ public class OrmImp{
     private static final Logger logger=Logger.getLogger(OrmImp.class.getName());
 	
 	//audit
-	private AuditTableModel auditModelObject=null;
+	private AuditModel auditModelObject=null;
 	private int insertAuditFlag=0,deleteAuditFlag=0;
 	private OrmImp auditOrm=null;
 	private String deleteAuditTable=null;
 	
 	public OrmImp(){
+		this.auditModelObject=new AuditModel();
 		try{
 			con=DbConnectionSource.getConnection();
 	        logger.log(Level.INFO,"ORM Db con from datasource");
@@ -35,7 +36,7 @@ public class OrmImp{
 	    }
 	}
 	
-    public OrmImp(AuditTableModel auditModelObject){
+    public OrmImp(AuditModel auditModelObject){
     	this.auditModelObject=auditModelObject;
     	try{
 			con=DbConnectionSource.getConnection();
@@ -96,7 +97,7 @@ public class OrmImp{
 		}
 	}
 	
-	public OrmImp UpdateQuery(DataObject oldObj,DataObject newObj) throws JsonProcessingException {
+	public OrmImp UpdateQuery(DataObject oldObj,DataObject newObj){
 		 String tableName=(String)newObj.getDataMap().get("Table");
 		 String query="UPDATE "+tableName+" SET ",keyval="";
 	     int counter=0;
@@ -134,7 +135,12 @@ public class OrmImp{
 	     }
 	     // audit object		   				
 	 	 if(!tableName.equals("audit_table")){
-			auditModelObject.setAudits(tableName,"UPDATE",new ObjectMapper().writeValueAsString(oldMapAudit),new ObjectMapper().writeValueAsString(newMapAudit), System.currentTimeMillis());
+			try {
+				auditModelObject.setAudits(tableName,"UPDATE",new ObjectMapper().writeValueAsString(oldMapAudit),new ObjectMapper().writeValueAsString(newMapAudit), System.currentTimeMillis());
+			} catch (JsonProcessingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		 }
 	 	 
 	     query+=keyval;
@@ -220,7 +226,7 @@ public class OrmImp{
         for(Map.Entry<String,Object> mapElement : obj.getDataMap().entrySet()){
             key = mapElement.getKey();
             value =mapElement.getValue();
-            if(value!=null && key!="Table"){
+            if(value!=null && value!="" && value !="0" && value.equals(0)!=true && key!="Table" ){
             	if(counter!=0){
   			      col+=",";
   			      val+=",";

@@ -9,10 +9,10 @@ import java.util.logging.Logger;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.varun.Logger.LoggerUtil;
 import com.varun.Model.DataObject;
-import com.varun.Model.EmailTableModel;
-import com.varun.Model.MobileTableModel;
-import com.varun.Model.PasswordTableModel;
-import com.varun.Model.UserinfoTableModel;
+import com.varun.Model.EmailModel;
+import com.varun.Model.MobileModel;
+import com.varun.Model.PasswordModel;
+import com.varun.Model.UserModel;
 import com.varun.Orm.CriteriaBuilder;
 import com.varun.Orm.OrmImp;
 import com.varun.Orm.Table;
@@ -20,8 +20,8 @@ import com.varun.Orm.Table;
 
 public class PassTableApi {
 	private static final Logger logger=Logger.getLogger(PassTableApi.class.getName());
-	private static PasswordTableModel passObject=null;
-	private static String Table=PasswordTableModel.class.getAnnotation(Table.class).name();
+	private static PasswordModel passObject=null;
+	private static String Table=PasswordModel.class.getAnnotation(Table.class).name();
 	private static CriteriaBuilder c=new CriteriaBuilder();
 	private OrmImp orm;
     
@@ -29,7 +29,7 @@ public class PassTableApi {
 	   this.orm=obj;
     }
     
-    public PasswordTableModel getPassById(Integer uid){
+    public PasswordModel getPassById(Integer uid){
     	System.out.println(uid);
         logger.log(Level.INFO,"inside "+uid);
     	//query formation
@@ -40,7 +40,7 @@ public class PassTableApi {
         	List<DataObject> selectList=orm.getSelect();
             logger.log(Level.INFO,"got select list,list size="+selectList.size());
         	if(selectList.size()>0){
-            	return new PasswordTableModel(selectList.get(0));
+            	return new PasswordModel(selectList.get(0));
         	}
     	}catch(Exception e){
 	        logger.log(Level.WARNING,"unexpected",e);
@@ -48,14 +48,14 @@ public class PassTableApi {
     	return null;
     }
     
-    public PasswordTableModel getPassByloginid(String loginid){
+    public PasswordModel getPassByloginid(String loginid){
     	System.out.println(loginid);
         logger.log(Level.INFO,"inside "+loginid);
     	//query formation
     	try{
-    		PasswordTableModel passModel=new PasswordTableModel();
-    		EmailTableModel emailModel=new EmailTableModel();
-    		MobileTableModel mobileModel=new MobileTableModel();
+    		PasswordModel passModel=new PasswordModel();
+    		EmailModel emailModel=new EmailModel();
+    		MobileModel mobileModel=new MobileModel();
     		CriteriaBuilder criteria=new CriteriaBuilder();
             logger.log(Level.INFO,"orm select query called");
             
@@ -75,7 +75,7 @@ public class PassTableApi {
         	List<DataObject> selectList=orm.getSelect();
             logger.log(Level.INFO,"got select list,list size="+selectList.size());
         	if(selectList.size()>0){
-            	return new PasswordTableModel(selectList.get(0));
+            	return new PasswordModel(selectList.get(0));
         	}
     	}catch(Exception e){
 	        logger.log(Level.WARNING,"unexpected",e);
@@ -83,7 +83,7 @@ public class PassTableApi {
     	return null;
     }
     
-    public List<PasswordTableModel> getAllPassById(Integer uid){
+    public List<PasswordModel> getAllPassById(Integer uid){
         logger.log(Level.INFO,"inside "+uid);
     	//query formation
     	try{
@@ -91,11 +91,11 @@ public class PassTableApi {
     		orm.SelectAll().From(Table)
         	.Where(c.addEquals("user_id",uid));
         	List<DataObject> dataList=orm.getSelect();
-        	List<PasswordTableModel> selectList=null;
+        	List<PasswordModel> selectList=null;
         	if(dataList.size()>0) {
-        		selectList=new ArrayList<PasswordTableModel>();
+        		selectList=new ArrayList<PasswordModel>();
             	for(DataObject ob:dataList){
-            		selectList.add(new PasswordTableModel(ob));
+            		selectList.add(new PasswordModel(ob));
             	}
             	logger.log(Level.INFO,"got select lists,list size="+selectList.size());
                 return selectList;
@@ -107,7 +107,7 @@ public class PassTableApi {
     }
     
     public boolean addPass(Integer userid,String passSalt,String passHash){
-    	passObject=new PasswordTableModel(userid,passSalt,passHash);
+    	passObject=new PasswordModel(userid,passSalt,passHash);
     	System.out.println("API :"+passObject.getUser_id());
     	Integer returned=orm.InsertQuery(passObject.getDataObject()).Insert();
     	//if 0->inserted,if null->not inserted, or return gen id
@@ -117,7 +117,7 @@ public class PassTableApi {
     	return false;
     }
     
-    public boolean updatePassById(PasswordTableModel oldObj,PasswordTableModel newObj,Integer uid) throws JsonProcessingException{
+    public boolean updatePassById(PasswordModel oldObj,PasswordModel newObj,Integer uid) throws JsonProcessingException{
     	boolean returned=orm.UpdateQuery(oldObj.getDataObject(),newObj.getDataObject()).Where(c.addEquals("user_id",uid)).update();
     	if(returned){
     		return true;

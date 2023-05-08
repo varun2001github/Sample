@@ -21,58 +21,59 @@
          <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/aes.js" integrity="sha256-/H4YS+7aYb9kJ5OKhFYPUjSJdrtV6AeyJOtTkw6X72o=" crossorigin="anonymous"></script>
          <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
        
-       <%  try{
-           //<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-           System.out.println("-------------inside userpage------------------");
-	       String sessioninfo="";
-      	   UserDao dao=new UserDao();
-	       UserinfoTableModel dataObj=null;
-	       Integer userid=null;
-	       String username=null;
-	       String email=null;
-	       
-	       List<EmailTableModel> emailList=null;
-	       List<MobileTableModel> mobileList=null;
-	       if(request.getAttribute("userid")!=null && LRUCache.getThreadLocal()!=null){
-	    	   if(LRUCache.getThreadLocal()!=null){
-	    		   dataObj=LRUCache.getThreadLocal();
-      	    	}
-	    	    userid=(Integer)request.getAttribute("userid");
-	    	    dataObj=(UserinfoTableModel)LRUCache.get("userid"+userid);
-	    	    
-	    	    if(dataObj==null){
-	    	    	dataObj=new UserinfoTableModel();
-	    	    }
-	    	    
-      	    	if(dataObj.getUser_name()==null){
-      	    		 dataObj=dao.getUserById(userid);
-	      	    	 System.out.println("userpage userDataObject from db");
-	      	    	 LRUCache.put("userid"+userid,dataObj);
-      	    	}else{
-	  	    		 System.out.println("userpage userDataObject from cache "+LRUCache.getThreadLocal());
-	  	    		 if(LRUCache.getThreadLocal()!=null){
-		      	    	 System.out.println("userpage userDataObject from THreadlocal");
-	  	    			 dataObj=LRUCache.getThreadLocal(); 
-	  	    		 }else{
-		      	    	 dataObj=(UserinfoTableModel)LRUCache.get("userid"+userid);
-	  	    		 }
-	      	    }
-	       }
-	       
-	       if(dataObj!=null){
-	    	    System.out.println("up databject not null");
-	            int flag=0;
-	            username=dataObj.getUser_name();
-	       }else{
-	    	   System.out.println("up to logout");
-	    	   response.sendRedirect("servlet/log");
-	       }
-	       //LRUCache.showCacheList();
-           //request.setAttribute("dataobj",dataObj);
-           //session.setAttribute("dataobj",dataObj);
-           //response.setIntHeader("Refresh",1);
-           response.setHeader("Expires","0");
-       %>
+       <%
+              	try{
+                                                     //<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+                                                     System.out.println("-------------inside userpage------------------");
+                                          	       String sessioninfo="";
+                                                	   UserDao dao=new UserDao();
+                                          	       UserModel dataObj=null;
+                                          	       Integer userid=null;
+                                          	       String username=null;
+                                          	       String email=null;
+                                          	       
+                                          	       List<EmailModel> emailList=null;
+                                          	       List<MobileModel> mobileList=null;
+                                          	       if(request.getAttribute("userid")!=null && LRUCache.getThreadLocal()!=null){
+                                          	    	   if(LRUCache.getThreadLocal()!=null){
+                                          	    		   dataObj=LRUCache.getThreadLocal();
+                                                	    	}
+                                          	    	    userid=(Integer)request.getAttribute("userid");
+                                          	    	    dataObj=(UserModel)LRUCache.get("userid"+userid);
+                                          	    	    
+                                          	    	    if(dataObj==null){
+                                          	    	    	dataObj=new UserModel();
+                                          	    	    }
+                                          	    	    
+                                                	    	if(dataObj.getUser_name()==null){
+                                                	    		 dataObj=dao.getUserById(userid);
+                                          	      	    	 System.out.println("userpage userDataObject from db");
+                                          	      	    	 LRUCache.put("userid"+userid,dataObj);
+                                                	    	}else{
+                                          	  	    		 System.out.println("userpage userDataObject from cache "+LRUCache.getThreadLocal());
+                                          	  	    		 if(LRUCache.getThreadLocal()!=null){
+                                          		      	    	 System.out.println("userpage userDataObject from THreadlocal");
+                                          	  	    			 dataObj=LRUCache.getThreadLocal(); 
+                                          	  	    		 }else{
+                                          		      	    	 dataObj=(UserModel)LRUCache.get("userid"+userid);
+                                          	  	    		 }
+                                          	      	    }
+                                          	       }
+                                          	       
+                                          	       if(dataObj!=null){
+                                          	    	    System.out.println("up databject not null");
+                                          	            int flag=0;
+                                          	            username=dataObj.getUser_name();
+                                          	       }else{
+                                          	    	   System.out.println("up to logout");
+                                          	    	   response.sendRedirect("servlet/log");
+                                          	       }
+                                          	       //LRUCache.showCacheList();
+                                                     //request.setAttribute("dataobj",dataObj);
+                                                     //session.setAttribute("dataobj",dataObj);
+                                                     //response.setIntHeader("Refresh",1);
+                                                     response.setHeader("Expires","0");
+              %>
 
        <link rel="stylesheet" href="/WebServlet/src/main/webapp/webfiles/NewFile.css">       
     </head>

@@ -3,6 +3,8 @@ package com.varun.Model;
 import java.util.HashMap;
 import java.util.function.Function;
 import java.util.logging.Logger;
+
+//import com.ProtoModel.UserModel;
 import com.varun.Controller.ChatList;
 import com.varun.Filter.SessionAuthFilter;
 import com.varun.Logger.LoggerUtil;
@@ -11,11 +13,13 @@ import com.varun.Orm.CommonMethod;
 import com.varun.Orm.Table;
 
 @Table(name="email")
-public class EmailTableModel implements CommonMethod{
+public class EmailModel implements CommonMethod{
 	
-	private static final Logger logger=Logger.getLogger(EmailTableModel.class.getName());
+	private static final Logger logger=Logger.getLogger(EmailModel.class.getName());
 
 	private HashMap<String,Object> map=new HashMap<String,Object>();
+	
+//	private UserModel.EmailTableModel emailModel=null;
 	
 	private Integer user_id=null;
 	
@@ -29,7 +33,7 @@ public class EmailTableModel implements CommonMethod{
 
 	private Long modif_time=null;
 	
-	public static enum DbColumn{
+	public enum DbColumn {
 		user_id,
 		emailid,
 		is_primary,
@@ -39,20 +43,26 @@ public class EmailTableModel implements CommonMethod{
     }
   
 	//constructor
-	public EmailTableModel(DataObject ob){
+	public EmailModel(DataObject ob){
 		map=ob.getDataMap();
 		setMapInVariables();
 	}
-	public EmailTableModel(){
+	public EmailModel(){
 		
 	}
 	
-    public EmailTableModel(Integer user_id,String emailid,Integer is_primary,Integer is_verified){
+    public EmailModel(Integer user_id,String emailid,Integer is_primary,Integer is_verified){
+//    	emailModel=UserModel.EmailTableModel.newBuilder() 
+//    			   .setUserId(user_id)
+//    			   .setEmailid(emailid)
+//    			   .setIsPrimary(is_primary)
+//    			   .setIsVerified(is_verified).build();
     	this.user_id=user_id;
-		this.emailid=emailid;
-		this.is_primary=is_primary;
-		this.is_verified=is_verified;
-	}
+    	this.emailid=emailid;
+    	this.is_primary=is_primary;
+    	this.is_verified=is_verified;
+    }
+    
 	private void setMapInVariables(){
 		this.user_id=(Integer)map.get(DbColumn.user_id.name());
 		this.emailid=(String)map.get(DbColumn.emailid.name());

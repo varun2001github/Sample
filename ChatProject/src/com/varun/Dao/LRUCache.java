@@ -5,14 +5,14 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-import com.varun.Model.UserinfoTableModel;
+import com.varun.Model.UserModel;
 
 import java.util.concurrent.ConcurrentHashMap;
 
 public class LRUCache{
 	 protected static int MAX_SIZE=6;
  	
-     private static ThreadLocal<UserinfoTableModel> ThreadLocal = new ThreadLocal<>();
+     private static ThreadLocal<UserModel> ThreadLocal = new ThreadLocal<>();
      private static ConcurrentLinkedQueue<String> CacheList=new ConcurrentLinkedQueue<>();
      private static ConcurrentHashMap<String,Object> Map=new ConcurrentHashMap<>();
 
@@ -37,11 +37,11 @@ public class LRUCache{
     	 System.out.println(CacheList);
      }
      
-     public static void setThreadLocal(UserinfoTableModel obj){
+     public static void setThreadLocal(UserModel obj){
     	 ThreadLocal.set(obj);
      }
      
-     public static UserinfoTableModel getThreadLocal(){
+     public static UserModel getThreadLocal(){
     	 return ThreadLocal.get();
      }
      

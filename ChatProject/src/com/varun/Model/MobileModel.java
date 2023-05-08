@@ -8,14 +8,14 @@ import java.util.logging.Logger;
 
 import com.varun.Controller.ChatList;
 import com.varun.Logger.LoggerUtil;
-import com.varun.Model.PasswordTableModel.DbColumn;
+import com.varun.Model.PasswordModel.DbColumn;
 import com.varun.Orm.CommonMethod;
 import com.varun.Orm.Table;
 
 @Table(name="mobile")
-public class MobileTableModel implements CommonMethod{
+public class MobileModel implements CommonMethod{
 	
-    private static final Logger logger=Logger.getLogger(MobileTableModel.class.getName());
+    private static final Logger logger=Logger.getLogger(MobileModel.class.getName());
 
 	private HashMap<String,Object> map=new HashMap<String,Object>();
 	
@@ -42,11 +42,11 @@ public class MobileTableModel implements CommonMethod{
     }
 	
 	//constructor
-	public MobileTableModel(DataObject ob){
+	public MobileModel(DataObject ob){
 		this.map=ob.getDataMap();
 		setMapInVariables();
 	}
-	public MobileTableModel(){
+	public MobileModel(){
 
 	}
 	/////

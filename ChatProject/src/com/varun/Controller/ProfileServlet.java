@@ -23,9 +23,9 @@ import org.apache.jasper.tagplugins.jstl.core.Url;
 
 import com.varun.Dao.*;
 import com.varun.Logger.LoggerUtil;
-import com.varun.Model.EmailTableModel;
-import com.varun.Model.MobileTableModel;
-import com.varun.Model.UserinfoTableModel;
+import com.varun.Model.EmailModel;
+import com.varun.Model.MobileModel;
+import com.varun.Model.UserModel;
 
 /**
  * Servlet implementation class ProfileEdit
@@ -34,8 +34,8 @@ public class ProfileServlet extends HttpServlet{
 	private PrintWriter out=null;
 	private static final Logger logger=Logger.getLogger(ProfileServlet.class.getName());
 	private static final long serialVersionUID = 1L;
-	 List<EmailTableModel> emailList=null;
-     List<MobileTableModel> mobileList=null;
+	 List<EmailModel> emailList=null;
+     List<MobileModel> mobileList=null;
     /**
      * @see HttpServlet#HttpServlet()
      */
@@ -55,7 +55,7 @@ public class ProfileServlet extends HttpServlet{
 		Integer userId=null;
 		String sessionId=null;
 		HttpSession session=request.getSession();
-	    UserinfoTableModel dataObj=null;
+	    UserModel dataObj=null;
   	    UserDao dao=null;
 		if(request.getAttribute("userid")!=null){
 			userId=(Integer)request.getAttribute("userid");
@@ -64,7 +64,7 @@ public class ProfileServlet extends HttpServlet{
 			if(LRUCache.getThreadLocal()!=null){
 				dataObj=LRUCache.getThreadLocal();
 			}else if(LRUCache.get("userid"+userId)!=null){
-				dataObj=(UserinfoTableModel)LRUCache.get("userid"+userId);
+				dataObj=(UserModel)LRUCache.get("userid"+userId);
 			}else{
 				dataObj=dao.getUserById(userId);
 			}
@@ -73,7 +73,7 @@ public class ProfileServlet extends HttpServlet{
 			System.out.println("do null"+request.getAttribute("dataobj"));
 		}
 		
-	    UserinfoTableModel updatedObj=new UserinfoTableModel();
+	    UserModel updatedObj=new UserModel();
 		String name=request.getParameter("username");
 		String gender=request.getParameter("gender");
 		String country=request.getParameter("country");
@@ -90,18 +90,18 @@ public class ProfileServlet extends HttpServlet{
 					updatedObj.setGender(gender);
 			}	
 			if(emailArr!=null){
-				List<EmailTableModel> l=new ArrayList<EmailTableModel>();
+				List<EmailModel> l=new ArrayList<EmailModel>();
 				for(String email:emailArr){
-					EmailTableModel ob=new EmailTableModel();
+					EmailModel ob=new EmailModel();
 					ob.setEmailid(email);
 					l.add(ob);
 				}
 				updatedObj.setEmailTableObj(l);
 			}
 			if(mobileArr!=null){
-				List<MobileTableModel> l=new ArrayList<MobileTableModel>();
+				List<MobileModel> l=new ArrayList<MobileModel>();
 	            for(String mobile:mobileArr){
-					MobileTableModel ob=new MobileTableModel();
+					MobileModel ob=new MobileModel();
 					ob.setMobileno(Long.parseLong(mobile));
 					l.add(ob);
 				}

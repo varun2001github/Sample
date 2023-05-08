@@ -12,5 +12,6 @@
 	<classpathentry kind="lib" path="/home/local/ZOHOCORP/varun-pt6303/Downloads/apache-tomcat-8.5.85/bin/tomcat-juli.jar"/>
 	<classpathentry kind="lib" path="/home/local/ZOHOCORP/varun-pt6303/ZIDE Workspace/WebProject/WebContent/WEB-INF/lib/jta-1.1.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
+	<classpathentry kind="lib" path="/home/local/ZOHOCORP/varun-pt6303/ZIDE Workspace/ChatProject/WebContent/WEB-INF/lib/protoclasses.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>

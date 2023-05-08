@@ -37,12 +37,12 @@ public class GroupFormation extends HttpServlet{
 			    dao=new ChatDao(request);
 				userid=Integer.parseInt(request.getParameter("uid"));
 				out=response.getWriter();
-				List<UserinfoTableModel> l=null;
+				List<UserModel> l=null;
 				l=dao.fetchFrnds(userid);
 				if(l.size()>0){
 					out.println("<form action=\"/WebServlet/GroupFormation?uid="+userid+"\" method=\"post\">");
 					out.println("<input type=\"text\" placeholder=\"Group Name\" name=\"groupname\"><br>");
-					for(UserinfoTableModel u:l){
+					for(UserModel u:l){
 						out.println(" <input type=\"checkbox\" name=\"groupusers\" value="+u.getUser_id()+">");
 						out.println("<label for=\"names\">"+u.getUser_name()+"</label><br>");
 					}

@@ -4,9 +4,9 @@ package com.varun.Model;
 import java.util.HashMap;
 
 import com.varun.Model.DataObject;
-import com.varun.Model.EmailTableModel.DbColumn;
+import com.varun.Model.EmailModel.DbColumn;
 
-public class AuditTableModel{
+public class AuditModel{
 
 	private Integer user_id=null;
 	private String table_name=null;
@@ -31,18 +31,18 @@ public class AuditTableModel{
     }
   
 	//constructor
-	public AuditTableModel(DataObject ob){
+	public AuditModel(DataObject ob){
 		map=ob.getDataMap();
 		setMapInVariables();
 	}
 	
-	public AuditTableModel(AuditTableModel copyAudit){
+	public AuditModel(AuditModel copyAudit){
 		this.user_id=copyAudit.user_id;
 		this.session_id=copyAudit.session_id;
 		this.ip_address=copyAudit.ip_address;
 	}
 	
-	public AuditTableModel(){
+	public AuditModel(){
 		
 	}
 	
@@ -85,7 +85,7 @@ public class AuditTableModel{
 	   this.audit_time=audit_time;
     }
     
-    public AuditTableModel(Integer user_id,String session_id,String ip_address){
+    public AuditModel(Integer user_id,String session_id,String ip_address){
        this.user_id=user_id;
        this.session_id=session_id;
 	   this.ip_address=ip_address;

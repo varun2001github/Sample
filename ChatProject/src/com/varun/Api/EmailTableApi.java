@@ -9,7 +9,7 @@ import com.varun.Controller.AuthenticationServlet;
 import com.varun.Controller.ChatList;
 import com.varun.Logger.LoggerUtil;
 import com.varun.Model.DataObject;
-import com.varun.Model.EmailTableModel;
+import com.varun.Model.EmailModel;
 import com.varun.Orm.CriteriaBuilder;
 import com.varun.Orm.OrmImp;
 import com.varun.Orm.Table;
@@ -17,8 +17,8 @@ import com.varun.Orm.Table;
 public class EmailTableApi {
 	private OrmImp ormObj=null;
 	private static final Logger logger=Logger.getLogger(EmailTableApi.class.getName());
-	private EmailTableModel emailObject=new EmailTableModel();
-	private String Table=EmailTableModel.class.getAnnotation(Table.class).name();
+	private EmailModel emailObject=new EmailModel();
+	private String Table=EmailModel.class.getAnnotation(Table.class).name();
 
 	public EmailTableApi(OrmImp ob){
 		try {
@@ -46,11 +46,11 @@ public class EmailTableApi {
         	 CriteriaBuilder cb=new CriteriaBuilder();
         	 ormObj.SelectQuery("user_id").From(Table).Where(cb.addEquals("emailid",email));
         	 List<DataObject> dataList=ormObj.getSelect();
-         	 List<EmailTableModel> l=null;
+         	 List<EmailModel> l=null;
          	 if(dataList.size()>0){
-             	l=new ArrayList<EmailTableModel>();
+             	l=new ArrayList<EmailModel>();
              	for(DataObject ob:dataList){
-             		l.add(new EmailTableModel(ob));
+             		l.add(new EmailModel(ob));
              	}
             	return l.get(0).getUser_id();
          	 }
@@ -93,7 +93,7 @@ public class EmailTableApi {
     	
     	try{
     		logger.log(Level.INFO,"method called");
-    		emailObject=new EmailTableModel();
+    		emailObject=new EmailModel();
         	emailObject.setUser_id(uid);
         	emailObject.setEmailid(email);
         	Integer isInserted=ormObj.InsertQuery(emailObject.getDataObject()).Insert();
@@ -106,7 +106,7 @@ public class EmailTableApi {
          return false;
     }
     
-    public boolean updateEmail(EmailTableModel oldEmail,EmailTableModel newEmail){
+    public boolean updateEmail(EmailModel oldEmail,EmailModel newEmail){
     	System.out.println("before updateEmail");
 		logger.log(Level.INFO,"method called");
     	if(oldEmail==null || newEmail==null){
@@ -140,7 +140,7 @@ public class EmailTableApi {
          return false;
     }
     
-    public List<EmailTableModel> getEmailById(Integer id){
+    public List<EmailModel> getEmailById(Integer id){
     	 
     	 if(id==null || id<=0){
        	    return null;
@@ -151,11 +151,11 @@ public class EmailTableApi {
 	       	 CriteriaBuilder cb=new CriteriaBuilder();
 	       	 ormObj.SelectQuery("user_id","emailid").From(Table).Where(cb.addEquals("user_id",id));
 	       	 List<DataObject> dataList=ormObj.getSelect();
-        	 List<EmailTableModel> l=null;
+        	 List<EmailModel> l=null;
         	 if(dataList.size()>0){
-            	l=new ArrayList<EmailTableModel>();
+            	l=new ArrayList<EmailModel>();
             	for(DataObject ob:dataList){
-            		l.add(new EmailTableModel(ob));
+            		l.add(new EmailModel(ob));
             	}
         	 }
 	       	 return l;

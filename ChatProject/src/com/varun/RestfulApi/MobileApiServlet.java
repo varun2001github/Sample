@@ -15,7 +15,7 @@ import com.varun.Api.EmailTableApi;
 import com.varun.Api.MobileTableApi;
 import com.varun.Dao.UserDao;
 import com.varun.Model.DataObject;
-import com.varun.Model.MobileTableModel;
+import com.varun.Model.MobileModel;
 import com.varun.Orm.OrmImp;
 
 public class MobileApiServlet extends HttpServlet{
@@ -46,8 +46,8 @@ public class MobileApiServlet extends HttpServlet{
 			if(segments.length>1){
 				try{
 					Integer userId=Integer.parseInt(segments[1]);
-					List<MobileTableModel> emails=dao.getMobile(userId);
-					for(MobileTableModel object:emails){
+					List<MobileModel> emails=dao.getMobile(userId);
+					for(MobileModel object:emails){
 						jsonArray.put(object.getDataObject().getDataMap());
 					}
 				}catch(Exception e){

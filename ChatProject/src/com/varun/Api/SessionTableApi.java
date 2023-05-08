@@ -9,17 +9,17 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.varun.Model.DataObject;
-import com.varun.Model.EmailTableModel;
-import com.varun.Model.SessionTableModel;
-import com.varun.Model.UserinfoTableModel;
+import com.varun.Model.EmailModel;
+import com.varun.Model.SessionModel;
+import com.varun.Model.UserModel;
 import com.varun.Orm.CriteriaBuilder;
 import com.varun.Orm.OrmImp;
 import com.varun.Orm.Table;
 
 public class SessionTableApi{
 	private static final Logger logger=Logger.getLogger(SessionTableApi.class.getName());
-	private SessionTableModel sessionTableObj=null;
-	private static String Table=SessionTableModel.class.getAnnotation(Table.class).name();
+	private SessionModel sessionTableObj=null;
+	private static String Table=SessionModel.class.getAnnotation(Table.class).name();
 	private static CriteriaBuilder cb=new CriteriaBuilder();
 	private OrmImp orm;
     
@@ -27,28 +27,31 @@ public class SessionTableApi{
    	    try{
 			orm=obj;
    	    	logger.log(Level.INFO," constructor ");
-		}catch (Exception e){
+		}catch(Exception e){
 			// TODO Auto-generated catch block
    	    	logger.log(Level.WARNING," constructor ",e);
 		}
     }
     
     public boolean createSession(Integer userid,String sessionid){
-    	sessionTableObj=new SessionTableModel();
+    	sessionTableObj=new SessionModel();
     	Instant now = Instant.now();
     	sessionTableObj.setUser_id(userid);
     	sessionTableObj.setSession_id(sessionid);
     	sessionTableObj.setExpiry(Date.from(now.plus(500, ChronoUnit.MINUTES)).getTime());
-    	orm.InsertQuery(sessionTableObj.getDataObject()).Insert();
+    	Integer ins=orm.InsertQuery(sessionTableObj.getDataObject()).Insert();
+    	if(ins!=null){
+    		return true;
+    	}
     	return false;
     }
     
-    public SessionTableModel getObjectBySession(String sessionid){
+    public SessionModel getObjectBySession(String sessionid){
         orm.SelectAll().From(Table).Where(cb.addEquals("session_id",sessionid));
         List<DataObject> l=orm.getSelect();
-        SessionTableModel sessionObject=null;
+        SessionModel sessionObject=null;
         if(l.size()>0){
-        	sessionObject=new SessionTableModel(l.get(0));
+        	sessionObject=new SessionModel(l.get(0));
             return sessionObject;
         }
         return null;
@@ -64,6 +67,8 @@ public class SessionTableApi{
 //        }
 //        return false;
 //    }
+    //proto 
+    
     public void deleteSession(String sessionid){
         orm.DeleteQuery(Table).Where(cb.addEquals("session_id",sessionid));
         orm.delete();

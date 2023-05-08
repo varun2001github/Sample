@@ -1,32 +1,30 @@
 syntax = "proto3";
-package Model;
-option java_package = "com.varun.ProtoModel";
+package ProtoModel;
+option java_package = "com.ProtoModel";
 
-message UserinfoTableModel{
+message UserModel{
 	   int32 user_id = 1;
 	   string user_name = 2;
 	   string gender = 3;
 	   string country = 4;
 	   string picfile = 5;
 	   int64 created_time = 6;
-	   int64 modif_time = 7;
-	   SessionTableModel sessionObject=8;
-	   PasswordTableModel passTableObj=9;
-	   repeated EmailTableModel emailTableObj=10;
-	   repeated MobileTableModel mobileTableObjs=11;
-	   repeated UserinfoTableModel chatList=12;
+	   int64 modif_time =7;
+	   SessionModel sessionObject=8;
+	   PasswordModel passTableObj=9;
+	   repeated EmailModel emailTableObj=10;
+	   repeated MobileModel mobileTableObjs=11;
+	   repeated UserModel chatList=12;
 	   repeated GroupInfoModel groupChatList=13;
-	   repeated MessagesModel messages=14;
-	   repeated GroupMessagesModel groupMessages=15;
 } 
 
-message SessionTableModel{
+message SessionModel{
        int32 user_id = 1;
        string session_id = 2;
        int64 Expiry = 3;
 }
 
-message PasswordTableModel{
+message PasswordModel{
        int32 user_id = 1;
        string pass_salt = 2 ;
        string pass_hash = 3 ;
@@ -34,7 +32,7 @@ message PasswordTableModel{
        int64 created_time = 5 ;
 }
 
-message EmailTableModel{
+message EmailModel{
        int32 user_id = 1;
        string emailid = 2 ;
        int64 is_primary = 3;
@@ -43,7 +41,7 @@ message EmailTableModel{
        int64 modif_time = 6;
 }
 
-message MobileTableModel{
+message MobileModel{
        int32 user_id = 1;
        int32 mobileno = 2;
        int32 is_primary = 3;
@@ -60,19 +58,4 @@ message GroupInfoModel{
        int64 modif_time = 5;
 }
 
-message MessagesModel{
-       int32 chat_id = 1;
-       int32 senderid = 2;
-       int32 recieverid = 3;
-       string text = 4;
-       int64 chattime = 5;
-}
-
-message GroupMessagesModel{
-       int32 groupchat_id = 1;
-       int32 senderid = 2;
-       int32 recieverid = 3;
-       string text = 4;
-       int64 chattime = 5;
-}
 

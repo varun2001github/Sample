@@ -22,7 +22,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.varun.Dao.LRUCache;
 import com.varun.Dao.UserDao;
 import com.varun.Logger.LoggerUtil;
-import com.varun.Model.UserinfoTableModel;
+import com.varun.Model.UserModel;
 import com.varun.Security.CookieEncrypt;
 import com.varun.Security.SessionidGenerator;
 
@@ -71,7 +71,7 @@ public class AuthenticationServlet extends HttpServlet{
 	private void Login(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		System.out.println("Getting here....login"); 
 		HttpSession session=request.getSession();
-		UserinfoTableModel userDataObj=null;
+		UserModel userDataObj=null;
 		try{      
 		          UserDao dao=new UserDao();
 				  String userId=request.getParameter("name");

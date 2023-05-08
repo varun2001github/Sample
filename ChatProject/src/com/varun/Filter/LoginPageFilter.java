@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.varun.Dao.UserDao;
-import com.varun.Model.SessionTableModel;
+import com.varun.Model.SessionModel;
 
 /**
  * Servlet Filter implementation class LoginPageFilter
@@ -54,7 +54,7 @@ public class LoginPageFilter implements Filter{
 	        }
 	        if(sessionid!=null){
 	       	    UserDao dao=new UserDao();
-	        	SessionTableModel sessionObject=dao.getSessionObject(sessionid);
+	        	SessionModel sessionObject=dao.getSessionObject(sessionid);
 	       	    if(sessionObject!=null){
 	       	    	httpResponse.sendRedirect("/WebProject/userpage.jsp");
             	}

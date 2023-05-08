@@ -34,16 +34,16 @@ import de.mkammerer.argon2.Argon2Factory.Argon2Types;
 public class UserDao{
 	private Argon2 argon2 = (Argon2) Argon2Factory.create(Argon2Types.ARGON2i);
 	private static final Logger logger=Logger.getLogger(UserDao.class.getName());
-	private AuditTableModel auditModel=null;
+	private AuditModel auditModel=null;
 	
 	public UserDao(){
 	}
 	
     public UserDao(HttpServletRequest request){
-    	auditModel=new AuditTableModel((Integer)request.getAttribute("userid"),(String)request.getAttribute("sessionid"),request.getRemoteAddr());
+    	auditModel=new AuditModel((Integer)request.getAttribute("userid"),(String)request.getAttribute("sessionid"),request.getRemoteAddr());
 	}
 	
-	public UserinfoTableModel validate(String loginId,String password) throws ClassNotFoundException {
+	public UserModel validate(String loginId,String password) throws ClassNotFoundException {
         logger.log(Level.INFO,"method called");
 		Integer userid=null;
 		OrmImp ormObj=new OrmImp(auditModel);
@@ -52,13 +52,13 @@ public class UserDao{
 		PassTableApi passApi=new PassTableApi(ormObj);
 		EmailTableApi emailApi=new EmailTableApi(ormObj);
 		MobileTableApi mobileApi=new MobileTableApi(ormObj);
-		UserinfoTableModel userDataObj=null;
+		UserModel userDataObj=null;
 		boolean isvalid=false;
 		String temp="$argon2i$v=19$m=500,t=1,p=1$";
 		
 		try{
 			//System.out.print(quer2);
-			PasswordTableModel passObj=passApi.getPassByloginid(loginId);
+			PasswordModel passObj=passApi.getPassByloginid(loginId);
 			if(passObj!=null){
 				String hash=temp+passObj.getPass_salt()+"$"+passObj.getPass_hash();
 				isvalid=argon2.verify(hash,password);
@@ -142,32 +142,32 @@ public class UserDao{
 		return false;
 	}
 	
-	public List<EmailTableModel> getEmail(Integer userid){
+	public List<EmailModel> getEmail(Integer userid){
 		OrmImp ormObj=new OrmImp();
 		EmailTableApi emailApi=new EmailTableApi(ormObj);
 		return emailApi.getEmailById(userid);
 	}
 	
-	public List<MobileTableModel> getMobile(Integer userid){
+	public List<MobileModel> getMobile(Integer userid){
 		OrmImp ormObj=new OrmImp();
 		MobileTableApi mobileApi=new MobileTableApi(ormObj);
 		return mobileApi.getMobileById(userid);
 	}
 	
-	public SessionTableModel getSessionObject(String sessionid){
+	public SessionModel getSessionObject(String sessionid){
         logger.log(Level.INFO,"method called");
 		OrmImp ormObj=new OrmImp();
         SessionTableApi sessionApi=new SessionTableApi(ormObj);
-        SessionTableModel sessionObject=sessionApi.getObjectBySession(sessionid);
+        SessionModel sessionObject=sessionApi.getObjectBySession(sessionid);
 	    ormObj.close();
 	    return sessionObject;
 	}
 	
-	public UserinfoTableModel getUserById(Integer userId){
+	public UserModel getUserById(Integer userId){
         logger.log(Level.INFO,"method called");
 		OrmImp ormObj=new OrmImp();
 		UserTableApi userApi=new UserTableApi(ormObj);
-        UserinfoTableModel ud=userApi.getUserById(userId);
+        UserModel ud=userApi.getUserById(userId);
 	    ormObj.close();
 	    return ud;
 	}
@@ -197,7 +197,7 @@ public class UserDao{
         ormObj.close();
     }
 	
-	public boolean updateProfile(UserinfoTableModel oldDataObj,UserinfoTableModel newDataObj) throws JsonProcessingException{
+	public boolean updateProfile(UserModel oldDataObj,UserModel newDataObj) throws JsonProcessingException{
 		OrmImp ormObj=new OrmImp(auditModel);
 		UserTableApi userApi=new UserTableApi(ormObj);
 		EmailTableApi emailApi=new EmailTableApi(ormObj);
@@ -237,15 +237,15 @@ public class UserDao{
         logger.log(Level.INFO,"method called");
 		OrmImp ormObj=new OrmImp(auditModel);
 		PassTableApi passApi=new PassTableApi(ormObj);
-		PasswordTableModel oldPassobj=new PasswordTableModel();
+		PasswordModel oldPassobj=new PasswordModel();
 
 		String temp="$argon2i$v=19$m=500,t=1auditModel,p=1$";
 		boolean isdub=false,iscurpass=false;
 		String hash="";
 		
 		//check if new pass already exist
-		List<PasswordTableModel> passObjList=passApi.getAllPassById(id);
-		for(PasswordTableModel u:passObjList){
+		List<PasswordModel> passObjList=passApi.getAllPassById(id);
+		for(PasswordModel u:passObjList){
 			hash=temp+u.getPass_salt()+"$"+u.getPass_hash();
 			System.out.println(" new pass check "+argon2.verify(hash, newpass)+" ");
 			isdub=argon2.verify(hash,newpass);
@@ -255,7 +255,7 @@ public class UserDao{
 		}
 		//check if old pass is current pass
 		if(isdub==false){
-			for(PasswordTableModel u:passObjList){
+			for(PasswordModel u:passObjList){
 				//current pass in db
 				if(u.getPass_status()==1){
 					hash=temp+u.getPass_salt()+"$"+u.getPass_hash();
@@ -269,7 +269,7 @@ public class UserDao{
 			
 			//if both old and new pass entered is valid ,insert
 			if(iscurpass==true){
-				PasswordTableModel newPassobj=new PasswordTableModel();
+				PasswordModel newPassobj=new PasswordModel();
 			    String h=argon2.hash(1, 500, 1,newpass);
 			    newPassobj.setPass_status(0);
 				

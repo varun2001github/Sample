@@ -5,7 +5,7 @@ import java.util.function.Function;
 import java.util.logging.Logger;
 import com.varun.Controller.ChatList;
 import com.varun.Logger.LoggerUtil;
-import com.varun.Model.MobileTableModel.DbColumn;
+import com.varun.Model.MobileModel.DbColumn;
 import com.varun.Orm.Table;
 
 @Table(name="messages")

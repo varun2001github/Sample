@@ -31,56 +31,7 @@ public class PracticeMain {
 
 	public static void main(String[] args) throws IOException{
 		// TODO Auto-generated method stub
-//		Argon2 argon2 = (Argon2) Argon2Factory.create(Argon2Types.ARGON2i);
-//		String temp="$argon2i$v=19$m=500,t=1,p=1$";
-//		String hash=temp+"rLXb/sJmzAZxwc2sJZVjvA"+"$"+"5Bwbkg1IIJmL1RwofWcRDbMKP+nq/HTC5IUaAkqLHWM";
-//		boolean isvalid=argon2.verify(hash,"Pranav@123");
-//		System.out.println(isvalid);
-//		String lat="12.8356682";
-//		String lon="80.0606192";
-//		if(lat!=null && lon!=null){
-//			String WeatherUrl="https://pfa.foreca.com/api/v1/location/search/Barcelona?lang=en";
-//		    URL url=null;
-//			url = new URL(WeatherUrl);
-//		    HttpURLConnection con=null;
-//			con = (HttpURLConnection)url.openConnection();
-//		    con.setRequestMethod("POST");
-//		    con.addRequestProperty("Authorization","Bearer "+"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOlwvXC9wZmEuZm9yZWNhLmNvbVwvYXV0aG9yaXplXC90b2tlbiIsImlhdCI6MTY3ODE2ODE4NywiZXhwIjo5OTk5OTk5OTk5LCJuYmYiOjE2NzgxNjgxODcsImp0aSI6ImY3YzgwNGE5NGFjZDUxN2IiLCJzdWIiOiJ2YXJ1MTkzMjItZWUiLCJmbXQiOiJYRGNPaGpDNDArQUxqbFlUdGpiT2lBPT0ifQ.SPCRhPb0Ue1PuPDZoJ4TPUdr7Hm7rbROkeLHtxrlVCw");
-//		    StringBuilder strBuf = new StringBuilder();  
-//		    BufferedReader br=new BufferedReader(new InputStreamReader(con.getInputStream(),"utf-8"));
-//            String output = null;  
-//            while ((output = br.readLine()) != null)  
-//            strBuf.append(output);
-//            br.close();
-//            JSONObject ob=new JSONObject(strBuf.toString());
-//		    System.out.println(ob.toString());
-//	    }
-//		URL url = new URL("http://localhost:8081/RestProject/EmailApi/getEmail/2");
-//	    HttpURLConnection con = (HttpURLConnection)url.openConnection();
-//	    System.out.println(con.getResponseCode());
-		PasswordTableModel passModel=new PasswordTableModel();
-		EmailTableModel emailModel=new EmailTableModel();
-		MobileTableModel mobileModel=new MobileTableModel();
-		OrmImp orm=new OrmImp();
-		CriteriaBuilder criteria=new CriteriaBuilder();
-		String loginid="varunsashi@gmail.com";
-		
-		orm.SelectQuery("pass_salt","pass_hash").From(passModel)
-		.InnerJoin(emailModel,criteria.joinCondition("user_pass.user_id","email.user_id"))
-		.InnerJoin(mobileModel,criteria.joinCondition("user_pass.user_id","mobile.user_id"))
-    	.Where(criteria.addEquals("pass_status",1));
-        
-        if(loginid.matches("[0-9]+")){
-        	orm.And(criteria.addEquals("mobileno",Integer.parseInt(loginid)));
-        }else {
-        	orm.And(criteria.addEquals("emailid",loginid));
-        }
-        
-        System.out.println(orm.getQuery());
-        orm.clearQuery();
-        PassTableApi api=new PassTableApi(orm);
-        PasswordTableModel o=api.getPassByloginid(loginid);
-        System.out.println(o.getPass_salt());
+
 	}
 }
 

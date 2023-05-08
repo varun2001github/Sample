@@ -9,12 +9,12 @@ import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import com.varun.Api.EmailTableApi;
-import com.varun.Model.AuditTableModel;
-import com.varun.Model.EmailTableModel;
+import com.varun.Model.AuditModel;
+import com.varun.Model.EmailModel;
 import com.varun.Orm.OrmImp;
 
 public class EmailsApiTest{
-	private OrmImp orm=new OrmImp(new AuditTableModel());
+	private OrmImp orm=new OrmImp(new AuditModel());
 	private EmailTableApi emailApi=new EmailTableApi(orm);
     
 	@ParameterizedTest
@@ -43,7 +43,7 @@ public class EmailsApiTest{
 	
 	@ParameterizedTest
     @MethodSource("com.varun.JUnitTest.TestCase#updateEmailTestCase")
-	public void updateEmail(EmailTableModel oldEmail,EmailTableModel newEmail,Boolean expected){
+	public void updateEmail(EmailModel oldEmail,EmailModel newEmail,Boolean expected){
 		orm.beginTransaction();
 		assertEquals(expected,emailApi.updateEmail(oldEmail,newEmail));
 		orm.rollback();

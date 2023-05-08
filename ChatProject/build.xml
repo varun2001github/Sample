@@ -6,6 +6,8 @@
      <property name="src.dir" value="src"/>
      <property name="build.dir" value="build"/>
      <property name="web.dir" value="WebContent"/>
+     <property name="build.proto" value="build/classes/com/ProtoModel"/>
+    <property name="src.proto" value="src/com/ProtoModel"/>
      <property name="build.junit" value="build/classes/com/varun/JUnitTest"/>
 	 <property name="lib.dir" value="WebContent/WEB-INF/lib"/>
 	 <property name="web.xml" value="WebContent/WEB-INF/web.xml"/>
@@ -23,7 +25,6 @@
 	 </path>
 	
 	<target name="protoc">
-	 	<delete file="${src.dir}/com/varun/ProtoModel/UserModel.java"/>
 		<exec executable="protoc" failonerror="true">
 	        	 <arg value="--java_out=src"/>
 	        	 <arg value="UserModel.proto"/>
@@ -35,14 +36,20 @@
 		<javac srcdir="src"
 		       destdir="${build.dir}/classes"
 		       classpathref="classpath" includeantruntime="false" failonerror="true" debug="true"/>
-        
 	 	<!--
 	 	<delete dir="${build.dir}"/>
 		 	 <copy todir="${web.dir}/WEB-INF/classes">
 		 	   <fileset dir="${build.dir}/classes"/>
 		 	 </copy>
+		 <delete dir="${src.dir}/com" includes="ProtoModel/**"/>
+		<delete dir="${build.dir}/classes/com" includes="ProtoModel/**"/>
+				<delete file="${lib.dir}/protoclasses.jar"/>
 	 	-->
      </target>
+	<target name="protojar">
+		<jar destfile="${lib.dir}/protoclasses.jar" basedir="${build.dir}/classes" includes="com/ProtoModel/**" />
+		
+	</target>
 	
 	<target name="junit" depends="build">             <!-- Junit test /> -->
 		<junitlauncher printSummary="true" haltOnFailure="true">

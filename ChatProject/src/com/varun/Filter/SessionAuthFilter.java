@@ -24,8 +24,8 @@ import com.varun.Dao.ChatDao;
 import com.varun.Dao.LRUCache;
 import com.varun.Dao.UserDao;
 import com.varun.Logger.LoggerUtil;
-import com.varun.Model.SessionTableModel;
-import com.varun.Model.UserinfoTableModel;
+import com.varun.Model.SessionModel;
+import com.varun.Model.UserModel;
 
 /**
  * Servlet Filter implementation class SessionFilter "/profilepage.jsp"
@@ -73,18 +73,18 @@ public class SessionAuthFilter implements Filter{
 			       
 			        if(sessionid!=null){
 			        	UserDao dao=new UserDao();
-			        	UserinfoTableModel userModel=null;
-			        	SessionTableModel sessionObject=null;
+			        	UserModel userModel=null;
+			        	SessionModel sessionObject=null;
 			        	
 			        	if(userModel==null){
-			        		userModel=new UserinfoTableModel();
+			        		userModel=new UserModel();
 			        	}
 			        	
                         //Get Session Object 
 			        	
 			       	    if(LRUCache.get(sessionid)!=null){
 			       	    	System.out.println("---session validate from cache---");
-			       	    	sessionObject=(SessionTableModel)LRUCache.get(sessionid);
+			       	    	sessionObject=(SessionModel)LRUCache.get(sessionid);
 			       	    }else{
 			       	    	System.out.println("---session validate from DB---");
 			       	    	sessionObject=dao.getSessionObject(sessionid);
@@ -101,7 +101,7 @@ public class SessionAuthFilter implements Filter{
                             //get basic user object including Username
 			       	    	if(LRUCache.get("userid"+sessionObject.getUser_id())!=null){
 				       	    	System.out.println("filter ud frm cache");
-			       	    		userModel=(UserinfoTableModel)LRUCache.get("userid"+sessionObject.getUser_id());
+			       	    		userModel=(UserModel)LRUCache.get("userid"+sessionObject.getUser_id());
 			       	    	}else{
 				       	    	System.out.println("filter ud frm db");
 			       	    		userModel=dao.getUserById(sessionObject.getUser_id());

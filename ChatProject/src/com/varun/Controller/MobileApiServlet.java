@@ -15,7 +15,7 @@ import org.json.JSONArray;
 import com.varun.Api.EmailTableApi;
 import com.varun.Api.MobileTableApi;
 import com.varun.Model.DataObject;
-import com.varun.Model.MobileTableModel;
+import com.varun.Model.MobileModel;
 import com.varun.Orm.OrmImp;
 
 /**
@@ -53,8 +53,8 @@ public class MobileApiServlet extends HttpServlet{
 		    	ormObj=new OrmImp();
 				try{
 					Integer userId=Integer.parseInt(segments[1]);
-					List<MobileTableModel> emails=api.getMobileById(userId);
-					for(MobileTableModel object:emails){
+					List<MobileModel> emails=api.getMobileById(userId);
+					for(MobileModel object:emails){
 						jsonArray.put(object.getDataObject().getDataMap());
 					}
 				}catch(Exception e){

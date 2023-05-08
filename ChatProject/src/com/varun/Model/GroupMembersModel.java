@@ -7,7 +7,7 @@ import java.util.logging.Logger;
 
 import com.varun.Controller.ChatList;
 import com.varun.Logger.LoggerUtil;
-import com.varun.Model.EmailTableModel.DbColumn;
+import com.varun.Model.EmailModel.DbColumn;
 import com.varun.Orm.Table;
 
 @Table(name="group_members")

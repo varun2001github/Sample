@@ -1,6 +1,6 @@
 package com.varun.JUnitTest;
 
-import com.varun.Model.EmailTableModel;
+import com.varun.Model.EmailModel;
 
 public class TestCase{
 	
@@ -59,26 +59,26 @@ public class TestCase{
 	public static Object[] updateEmailTestCase(){
 			return new Object[]{
 				//valid cases 
-		    		new Object[] {new EmailTableModel(1,"varunsashi@gmail.com",null,null),new EmailTableModel(1,"varun@123.com",null,null),true},
-		    		new Object[] {new EmailTableModel(1,"varunsashi@gmail.com",null,null),new EmailTableModel(null,"varun@123.com",null,null),true},
-		    		new Object[] {new EmailTableModel(1,"varunsashi@gmail.com",null,null),new EmailTableModel(1,"varun.sashi@zohocorp.com",null,null),true},
-		    		new Object[] {new EmailTableModel(2,"ramesh@gmail.com",null,null),new EmailTableModel(2,"ramesh@123.com",null,null),true},
+		    		new Object[] {new EmailModel(1,"varunsashi@gmail.com",null,null),new EmailModel(1,"varun@123.com",null,null),true},
+		    		new Object[] {new EmailModel(1,"varunsashi@gmail.com",null,null),new EmailModel(null,"varun@123.com",null,null),true},
+		    		new Object[] {new EmailModel(1,"varunsashi@gmail.com",null,null),new EmailModel(1,"varun.sashi@zohocorp.com",null,null),true},
+		    		new Object[] {new EmailModel(2,"ramesh@gmail.com",null,null),new EmailModel(2,"ramesh@123.com",null,null),true},
 		    		
 	    		//invalid cases
-		    		new Object[] {new EmailTableModel(1,"@.com",null,null),new EmailTableModel(1,"varun@123.com",null,null),false},                          //invalid old email regex
-		    		new Object[] {new EmailTableModel(1,"varunsashi@gmail.com",null,null),new EmailTableModel(1,"@.com",null,null),false},                  //invalid new email regex
-		    		new Object[] {new EmailTableModel(1,"a",null,null),new EmailTableModel(1,"sdf",null,null),false},                                       //invalid regex both
-		    		new Object[] {new EmailTableModel(-1,"varunsashi@gmail.com",null,null),new EmailTableModel(null,"varun@123.com",null,null),false},      //invalid userId
-		    		new Object[] {new EmailTableModel(245,"varunsashi@gmail.com",null,null),new EmailTableModel(null,"varun@123.com",null,null),false},     //invalid userId
-		    		new Object[] {new EmailTableModel(1,"varunsashi@gmail.com",null,null),new EmailTableModel(null,"varunsashi@gmail.com",null,null),false},//same email
-		    		new Object[] {new EmailTableModel(1,"varunsashi@gmail.com",null,null),new EmailTableModel(null,"",null,null),false},                    // new email=""
-		    		new Object[] {new EmailTableModel(1,"varunsashi@gmail.com",null,null),new EmailTableModel(null,"        ",null,null),false},            // new email="     "
-		    		new Object[] {new EmailTableModel(1,"varunsashi@gmail.com",null,null),new EmailTableModel(null,null,null,null),false},                  // new email= null
-		    		new Object[] {new EmailTableModel(1,null,null,null),new EmailTableModel(2,null,null,null),false},                                       // new email= null
-		    		new Object[] {new EmailTableModel(null,null,null,null),new EmailTableModel(null,null,null,null),false},                                 // new email= null
-	    		    new Object[] {new EmailTableModel(1,"suresh@om",null,null),new EmailTableModel(1,"varun@123.com",null,null),false},                     // incorrect old email
-		    		new Object[] {null,new EmailTableModel(1,"varunsashi@gmail.com",null,null),false},
-		    		new Object[] {new EmailTableModel(1,"varunsashi@gmail.com",null,null),null,false},
+		    		new Object[] {new EmailModel(1,"@.com",null,null),new EmailModel(1,"varun@123.com",null,null),false},                          //invalid old email regex
+		    		new Object[] {new EmailModel(1,"varunsashi@gmail.com",null,null),new EmailModel(1,"@.com",null,null),false},                  //invalid new email regex
+		    		new Object[] {new EmailModel(1,"a",null,null),new EmailModel(1,"sdf",null,null),false},                                       //invalid regex both
+		    		new Object[] {new EmailModel(-1,"varunsashi@gmail.com",null,null),new EmailModel(null,"varun@123.com",null,null),false},      //invalid userId
+		    		new Object[] {new EmailModel(245,"varunsashi@gmail.com",null,null),new EmailModel(null,"varun@123.com",null,null),false},     //invalid userId
+		    		new Object[] {new EmailModel(1,"varunsashi@gmail.com",null,null),new EmailModel(null,"varunsashi@gmail.com",null,null),false},//same email
+		    		new Object[] {new EmailModel(1,"varunsashi@gmail.com",null,null),new EmailModel(null,"",null,null),false},                    // new email=""
+		    		new Object[] {new EmailModel(1,"varunsashi@gmail.com",null,null),new EmailModel(null,"        ",null,null),false},            // new email="     "
+		    		new Object[] {new EmailModel(1,"varunsashi@gmail.com",null,null),new EmailModel(null,null,null,null),false},                  // new email= null
+		    		new Object[] {new EmailModel(1,null,null,null),new EmailModel(2,null,null,null),false},                                       // new email= null
+		    		new Object[] {new EmailModel(null,null,null,null),new EmailModel(null,null,null,null),false},                                 // new email= null
+	    		    new Object[] {new EmailModel(1,"suresh@om",null,null),new EmailModel(1,"varun@123.com",null,null),false},                     // incorrect old email
+		    		new Object[] {null,new EmailModel(1,"varunsashi@gmail.com",null,null),false},
+		    		new Object[] {new EmailModel(1,"varunsashi@gmail.com",null,null),null,false},
 		    		new Object[] {null,null,false}
 		    };
     }

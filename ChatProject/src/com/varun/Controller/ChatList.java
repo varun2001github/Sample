@@ -58,19 +58,19 @@ public class ChatList extends HttpServlet{
 				  int id=jsondata.getInt("userid");
        	          recieverName="";
                   ChatDao dao= new ChatDao(request);
-                  List<UserinfoTableModel> chatList=null;
+                  List<UserModel> chatList=null;
                   List<GroupInfoModel> grpChatList=dao.fetchGroups(id);
-                  UserinfoTableModel userObject=null;
+                  UserModel userObject=null;
                   
                   try {
                 	  if(LRUCache.getThreadLocal()!=null){
                     	  
                     	  int uid=(Integer)request.getAttribute("userid");
 //                    	  System.out.println(LRUCache.get(key));
-                    	  userObject=(UserinfoTableModel)LRUCache.get("userid"+uid);
+                    	  userObject=(UserModel)LRUCache.get("userid"+uid);
                     	  
                     	  if(userObject==null){
-                    		  userObject=new UserinfoTableModel();
+                    		  userObject=new UserModel();
                     	  }
                     	  
                 		  if(userObject.getChatList()==null){
@@ -80,7 +80,7 @@ public class ChatList extends HttpServlet{
                     		  LRUCache.put("userid"+uid,userObject);
                     	  }else{
         			 		  System.out.println("---- cache chatlist----");
-        			 		  userObject=(UserinfoTableModel)LRUCache.get("userid"+uid);
+        			 		  userObject=(UserModel)LRUCache.get("userid"+uid);
         			 		  chatList=userObject.getChatList();
                           }
                 		  
@@ -91,7 +91,7 @@ public class ChatList extends HttpServlet{
                     		  LRUCache.put("userid"+uid,userObject);
                     	  }else{
         			 		  System.out.println("---- cache grp chatlist----");
-        			 		  userObject=(UserinfoTableModel)LRUCache.get("userid"+uid);
+        			 		  userObject=(UserModel)LRUCache.get("userid"+uid);
         			 		  grpChatList=userObject.getGroupChatList();
                           }
                       }
@@ -115,7 +115,7 @@ public class ChatList extends HttpServlet{
                   }
  	              
  	              if(chatList!=null) {
- 	            	 for(UserinfoTableModel obj:chatList){
+ 	            	 for(UserModel obj:chatList){
  	         			 recieverId=obj.getUser_id();
  	         			 recieverName=obj.getUser_name();
 // 	 	            	 JSONObject json=new JSONObject();

@@ -15,20 +15,20 @@ import com.varun.Orm.OrmImp;
 public class ChatDao{
 	private static final Logger logger=Logger.getLogger(ChatDao.class.getName());
     private OrmImp ormObj=null;
-	private AuditTableModel auditModel=null;
+	private AuditModel auditModel=null;
 
     public ChatDao(){
 		
 	}
     public ChatDao(HttpServletRequest request){
-    	auditModel=new AuditTableModel((Integer)request.getAttribute("userid"),(String)request.getAttribute("sessionid"),request.getRemoteAddr());
+    	auditModel=new AuditModel((Integer)request.getAttribute("userid"),(String)request.getAttribute("sessionid"),request.getRemoteAddr());
 	}
     
-	public List<UserinfoTableModel> fetchFrnds(Integer uid){
+	public List<UserModel> fetchFrnds(Integer uid){
           logger.log(Level.INFO,"method called");
   		  ormObj=new OrmImp();
 		  UserTableApi userApi=new UserTableApi(ormObj);
-		  List<UserinfoTableModel> list=null;
+		  List<UserModel> list=null;
 		  list =userApi.fetchChatList(uid);
     	  ormObj.close();
 		  return list;
