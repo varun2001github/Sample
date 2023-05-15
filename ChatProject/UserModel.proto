@@ -2,7 +2,7 @@ syntax = "proto3";
 package ProtoModel;
 option java_package = "com.ProtoModel";
 
-message UserModel{
+message UserinfoModel{
 	   int32 user_id = 1;
 	   string user_name = 2;
 	   string gender = 3;
@@ -11,11 +11,9 @@ message UserModel{
 	   int64 created_time = 6;
 	   int64 modif_time =7;
 	   SessionModel sessionObject=8;
-	   PasswordModel passTableObj=9;
-	   repeated EmailModel emailTableObj=10;
-	   repeated MobileModel mobileTableObjs=11;
-	   repeated UserModel chatList=12;
-	   repeated GroupInfoModel groupChatList=13;
+	   PasswordModel passObj=9;
+	   repeated EmailModel emailObj=10;
+	   repeated MobileModel mobileObj=11;
 } 
 
 message SessionModel{
@@ -35,27 +33,20 @@ message PasswordModel{
 message EmailModel{
        int32 user_id = 1;
        string emailid = 2 ;
-       int64 is_primary = 3;
-       int64 is_verified = 4;
-       int64 created_time = 5;
-       int64 modif_time = 6;
-}
-
-message MobileModel{
-       int32 user_id = 1;
-       int32 mobileno = 2;
        int32 is_primary = 3;
        int32 is_verified = 4;
        int64 created_time = 5;
        int64 modif_time = 6;
 }
 
-message GroupInfoModel{
-       int32 group_id = 1;
-       string group_name = 2;
-       int32 admin_id = 3;
-       int64 created_time = 4;
-       int64 modif_time = 5;
+message MobileModel{
+       int32 user_id = 1;
+       int64 mobileno = 2;
+       int32 is_primary = 3;
+       int32 is_verified = 4;
+       int64 created_time = 5;
+       int64 modif_time = 6;
 }
+
 
 

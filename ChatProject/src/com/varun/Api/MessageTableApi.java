@@ -1,23 +1,20 @@
 package com.varun.Api;
 
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.varun.Logger.LoggerUtil;
 import com.varun.Model.*;
 import com.varun.Orm.CriteriaBuilder;
 import com.varun.Orm.OrmImp;
-import com.varun.Orm.Table;
 
 public class MessageTableApi{
 	private MessagesModel messageObj=null;
 	private OrmImp ormObj;
 	private static final Logger logger=Logger.getLogger(MessageTableApi.class.getName());
 	private CriteriaBuilder cb=new CriteriaBuilder();
-	private static String Table=MessagesModel.class.getAnnotation(Table.class).name();
+	private static String Table="messages";
 
 	public MessageTableApi(OrmImp obj){
 		this.ormObj=obj;
@@ -36,7 +33,7 @@ public class MessageTableApi{
        	    if(dataList.size()>0){
              	l=new ArrayList<MessagesModel>();
             	for(DataObject ob:dataList){
-            		l.add(new MessagesModel(ob));
+            		l.add(new MessagesModel(ob.getDataMap()));
             	}
        	    }
     	   	return l;
@@ -59,7 +56,7 @@ public class MessageTableApi{
     	    if(dataList.size()>0) {
 	          	l=new ArrayList<MessagesModel>();
 	         	for(DataObject ob:dataList){
-	         		l.add(new MessagesModel(ob));
+	         		l.add(new MessagesModel(ob.getDataMap()));
 	         	}
     	    }
     	   	return l;
@@ -67,8 +64,8 @@ public class MessageTableApi{
  		     logger.log(Level.WARNING,"unexpected",e);
  	   	 }
  		 return null;
-		
     }
+	
 	public boolean addNormalMessage(Integer senderid,Integer recieverid,String text) {
         logger.log(Level.INFO,"method called");
         messageObj=new MessagesModel();
@@ -87,4 +84,8 @@ public class MessageTableApi{
  		 return false;
 	}
 
+	public static void main(String args[]){
+		MessagesModel messages=new MessageTableApi(new OrmImp()).getNormalMsg(1,2).get(0);
+		System.out.println(messages.getSenderid()+messages.getText());
+	}
 }

@@ -4,15 +4,10 @@ package com.varun.Model;
 import java.util.HashMap;
 import java.util.logging.Logger;
 
-import com.varun.Controller.ChatList;
-import com.varun.Logger.LoggerUtil;
-import com.varun.Orm.Table;
-
-public class GroupMessagesModel{
-    private static final Logger logger=Logger.getLogger(GroupMessagesModel.class.getName());
+public class GroupMessagesModel extends DataObject{
 	
-	private HashMap<String,Object> map=new HashMap<String,Object>();
-    
+    private static final Logger logger=Logger.getLogger(GroupMessagesModel.class.getName());
+	    
 	private Integer groupChatid=null;
 
 	private Integer senderid=null;
@@ -31,14 +26,21 @@ public class GroupMessagesModel{
 		chattime,
     }
 	///// constructor
-	public GroupMessagesModel(DataObject ob){
-		this.map=ob.getDataMap();
-		setMapInVariables();
+
+	public GroupMessagesModel(HashMap<String,Object> map){
+		this.map=map;
+		initialize(map);
 	}
+	
 	public GroupMessagesModel(){
 	}
 	
-	private void setMapInVariables(){
+	public GroupMessagesModel init(){
+		initialize(super.getDataMap());
+        return this;
+	}
+	
+	private void initialize(HashMap<String,Object> map){
 		this.groupChatid=(Integer)map.get(DbColumn.groupchat_id.name());
 		this.senderid=(Integer)map.get(DbColumn.senderid.name());
 		this.groupid=(Integer)map.get(DbColumn.groupid.name());

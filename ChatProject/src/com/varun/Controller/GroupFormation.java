@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.ProtoModel.UserModel.UserinfoModel;
 import com.varun.Dao.ChatDao;
 import com.varun.Logger.LoggerUtil;
 import com.varun.Model.*;
@@ -37,14 +38,14 @@ public class GroupFormation extends HttpServlet{
 			    dao=new ChatDao(request);
 				userid=Integer.parseInt(request.getParameter("uid"));
 				out=response.getWriter();
-				List<UserModel> l=null;
+				List<UserinfoModel> l=null;
 				l=dao.fetchFrnds(userid);
 				if(l.size()>0){
 					out.println("<form action=\"/WebServlet/GroupFormation?uid="+userid+"\" method=\"post\">");
 					out.println("<input type=\"text\" placeholder=\"Group Name\" name=\"groupname\"><br>");
-					for(UserModel u:l){
-						out.println(" <input type=\"checkbox\" name=\"groupusers\" value="+u.getUser_id()+">");
-						out.println("<label for=\"names\">"+u.getUser_name()+"</label><br>");
+					for(UserinfoModel u:l){
+						out.println(" <input type=\"checkbox\" name=\"groupusers\" value="+u.getUserId()+">");
+						out.println("<label for=\"names\">"+u.getUserName()+"</label><br>");
 					}
 					out.println("<input type=\"submit\" value=\"create\"></form>");
 					out.println("<br><button onclick=\"closeGroupCreation()\">Close</button>\n");

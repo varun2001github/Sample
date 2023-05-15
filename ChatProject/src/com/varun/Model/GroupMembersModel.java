@@ -1,21 +1,12 @@
 package com.varun.Model;
 
 import java.util.HashMap;
-import java.util.Map;
-import java.util.function.Function;
 import java.util.logging.Logger;
 
-import com.varun.Controller.ChatList;
-import com.varun.Logger.LoggerUtil;
-import com.varun.Model.EmailModel.DbColumn;
-import com.varun.Orm.Table;
-
-public class GroupMembersModel{
+public class GroupMembersModel extends DataObject{
 	
 	private static final Logger logger=Logger.getLogger(GroupMembersModel.class.getName());
 	
-	private HashMap<String,Object> map=new HashMap<String,Object>();
-
     Integer member_id=null;
 	
  	Integer group_id=null;
@@ -26,7 +17,7 @@ public class GroupMembersModel{
 
 	public GroupMembersModel() {
 	}
-
+	
 	public static enum DbColumn{
 		member_id,
 		group_id,
@@ -35,12 +26,15 @@ public class GroupMembersModel{
 	}
 	
 	///// constructor
-	public GroupMembersModel(DataObject ob){
-		this.map=ob.getDataMap();
-		setMapInVariables();
+
+	public GroupMembersModel(HashMap<String,Object> map){
+		initialize(map);
 	}
-	
-	private void setMapInVariables(){
+	public GroupMembersModel init(){
+		initialize(super.getDataMap());
+        return this;
+	}
+	private void initialize(HashMap<String,Object> map){
 		this.member_id=(Integer)map.get(DbColumn.member_id.name());
 		this.group_id=(Integer)map.get(DbColumn.group_id.name());
 		this.created_time=(Long)map.get(DbColumn.created_time.name());

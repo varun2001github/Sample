@@ -1,20 +1,12 @@
 package com.varun.Model;
 
 import java.util.HashMap;
-import java.util.Map;
-import java.util.function.Function;
 import java.util.logging.Logger;
-import com.varun.Controller.ChatList;
-import com.varun.Logger.LoggerUtil;
-import com.varun.Model.UserModel.DbColumn;
-import com.varun.Orm.Table;
 
-public class GroupInfoModel{
+public class GroupInfoModel extends DataObject{
 	
 	private static final Logger logger=Logger.getLogger(GroupInfoModel.class.getName());
-	
-	private HashMap<String,Object> map=new HashMap<String,Object>();
-    
+	    
     Integer group_id=null;
 	
 	String group_name=null;
@@ -34,14 +26,20 @@ public class GroupInfoModel{
     }
 	
 /////
-	public GroupInfoModel(DataObject ob){
-		this.map=ob.getDataMap();
-		setMapInVariables();
+
+	public GroupInfoModel(HashMap<String,Object> map){
+		this.map=map;
+		initialize(map);
 	}
+	
 	public GroupInfoModel(){
 	}
 	
-	private void setMapInVariables(){
+	public GroupInfoModel init(){
+		initialize(super.getDataMap());
+        return this;
+	}
+	public void initialize(HashMap<String,Object> map){
 		this.group_id=(Integer)map.get(DbColumn.group_id.name());
 		this.group_name=(String)map.get(DbColumn.group_name.name());
 		this.admin_id=(Integer)map.get(DbColumn.admin_id.name());
@@ -73,7 +71,7 @@ public class GroupInfoModel{
 	public void setGroup_id(Integer group_id) {
 		this.group_id = group_id;
 	}
-	public String getGroup_name() {
+	public String getGroup_name(){
 		return group_name;
 	}
 	public void setGroup_name(String group_name) {
@@ -93,11 +91,17 @@ public class GroupInfoModel{
 		this.created_time = created_time;
 	}
 
-	public Long getModif_time() {
+	public Long getModif_time(){
 		return modif_time;
 	}
 
 	public void setModif_time(Long modif_time) {
 		this.modif_time = modif_time;
 	}
+	   public static void main(String args[]){
+		   DataObject ob=new DataObject();
+		   GroupInfoModel g=(GroupInfoModel)ob;
+		   System.out.println(g instanceof DataObject);
+		   System.out.println(ob instanceof GroupInfoModel);
+	   }
 }

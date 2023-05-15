@@ -1,31 +1,22 @@
 package com.varun.Controller;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.math.BigInteger;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.jasper.tagplugins.jstl.core.Url;
-
+import com.ProtoModel.UserModel.UserinfoModel;
+import com.ProtoModel.UserModel.EmailModel;
+import com.ProtoModel.UserModel.MobileModel;
 import com.varun.Dao.*;
-import com.varun.Logger.LoggerUtil;
-import com.varun.Model.EmailModel;
-import com.varun.Model.MobileModel;
-import com.varun.Model.UserModel;
 
 /**
  * Servlet implementation class ProfileEdit
@@ -55,61 +46,66 @@ public class ProfileServlet extends HttpServlet{
 		Integer userId=null;
 		String sessionId=null;
 		HttpSession session=request.getSession();
-	    UserModel dataObj=null;
+	    UserinfoModel userObject=null;
   	    UserDao dao=null;
 		if(request.getAttribute("userid")!=null){
 			userId=(Integer)request.getAttribute("userid");
 			sessionId=(String)request.getAttribute("sessionid");
 			dao=new UserDao(request);
 			if(LRUCache.getThreadLocal()!=null){
-				dataObj=LRUCache.getThreadLocal();
+				userObject=LRUCache.getThreadLocal();
 			}else if(LRUCache.get("userid"+userId)!=null){
-				dataObj=(UserModel)LRUCache.get("userid"+userId);
+				userObject=(UserinfoModel)LRUCache.get("userid"+userId);
 			}else{
-				dataObj=dao.getUserById(userId);
+				userObject=dao.getUserById(userId);
 			}
-			System.out.println("do not null"+dataObj);
+			System.out.println("do not null"+userObject);
 		}else{
 			System.out.println("do null"+request.getAttribute("dataobj"));
 		}
 		
-	    UserModel updatedObj=new UserModel();
+		UserinfoModel updatedUserObject=null;
+	    UserinfoModel.Builder userObjBuilder=UserinfoModel.newBuilder();
+	    
 		String name=request.getParameter("username");
 		String gender=request.getParameter("gender");
 		String country=request.getParameter("country");
 		String[] emailArr=request.getParameterValues("email[]");
 		String[] mobileArr=request.getParameterValues("mobile[]");
 		try{
-			if(name!=null && !(dataObj.getUser_name().equals(name))){
-					updatedObj.setUser_name(name);
+			if(name!=null && !(userObject.getUserName().equals(name))){
+					userObjBuilder.setUserName(name);
 			}
-			if(country!=null && !(dataObj.getCountry().equals(country))){
-					updatedObj.setCountry(country);
+			if(country!=null && !(userObject.getCountry().equals(country))){
+					userObjBuilder.setCountry(country);
 			}			
-			if( gender!=null && !(dataObj.getGender().equals(gender))){
-					updatedObj.setGender(gender);
+			if( gender!=null && !(userObject.getGender().equals(gender))){
+					userObjBuilder.setGender(gender);
 			}	
 			if(emailArr!=null){
-				List<EmailModel> l=new ArrayList<EmailModel>();
+				List<EmailModel> emailObjList=new ArrayList<EmailModel>();
 				for(String email:emailArr){
-					EmailModel ob=new EmailModel();
-					ob.setEmailid(email);
-					l.add(ob);
+					EmailModel.Builder emailBuilder=EmailModel.newBuilder();
+					emailBuilder.setEmailid(email);
+					emailObjList.add(emailBuilder.build());
 				}
-				updatedObj.setEmailTableObj(l);
+				userObjBuilder.addAllEmailObj(emailObjList);
 			}
+			
 			if(mobileArr!=null){
-				List<MobileModel> l=new ArrayList<MobileModel>();
+				List<MobileModel> mobileObjList=new ArrayList<MobileModel>();
 	            for(String mobile:mobileArr){
-					MobileModel ob=new MobileModel();
-					ob.setMobileno(Long.parseLong(mobile));
-					l.add(ob);
+					MobileModel.Builder mobileBuilder=MobileModel.newBuilder();
+					mobileBuilder.setMobileno(Long.parseLong(mobile));
+					mobileObjList.add(mobileBuilder.build());
 				}
-	            updatedObj.setMobileTableObj(l);
-            }		
+	            userObjBuilder.addAllMobileObj(mobileObjList);
+            }	
+			updatedUserObject=userObjBuilder.build();
+			
 //          System.out.println(dataObj+" "+updatedObj);
             boolean isUpdated=false;
-            isUpdated=dao.updateProfile(dataObj,updatedObj);
+            isUpdated=dao.updateProfile(userObject,updatedUserObject);
             
             //clear cache
             LRUCache.remove("userid"+request.getAttribute("userid"));

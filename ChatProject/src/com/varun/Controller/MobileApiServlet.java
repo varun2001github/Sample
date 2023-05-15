@@ -5,31 +5,29 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.json.JSONArray;
 
-import com.varun.Api.EmailTableApi;
+import com.ProtoModel.UserModel.MobileModel;
 import com.varun.Api.MobileTableApi;
-import com.varun.Model.DataObject;
-import com.varun.Model.MobileModel;
 import com.varun.Orm.OrmImp;
+import com.varun.Orm.ProtoMapper;
 
 /**
  * Servlet implementation class MobileApiServlet
  */
-public class MobileApiRested extends HttpServlet{
+public class MobileApiServlet extends HttpServlet{
 	
 	private static final long serialVersionUID = 1L;
 	private OrmImp ormObj=null;
-	private static final Logger logger=Logger.getLogger(MobileApiRested.class.getName());
+	private static final Logger logger=Logger.getLogger(MobileApiServlet.class.getName());
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public MobileApiRested(){
+    public MobileApiServlet(){
         super();
         // TODO Auto-generated constructor stub
     }
@@ -55,7 +53,7 @@ public class MobileApiRested extends HttpServlet{
 					Integer userId=Integer.parseInt(segments[1]);
 					List<MobileModel> emails=api.getMobileById(userId);
 					for(MobileModel object:emails){
-						jsonArray.put(object.getDataObject().getDataMap());
+						jsonArray.put(ProtoMapper.getDataObject(object));
 					}
 				}catch(Exception e){
 					e.printStackTrace();

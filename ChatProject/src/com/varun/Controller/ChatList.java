@@ -11,10 +11,11 @@ import org.json.HTTP;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.ProtoModel.UserModel.UserinfoModel;
 import com.varun.Dao.ChatDao;
 import com.varun.Dao.LRUCache;
 import com.varun.Logger.LoggerUtil;
-import com.varun.Model.*;
+import com.varun.Model.GroupInfoModel;
 import com.varun.Security.EncryptionHandler;
 
 //import java.sql.SQLException;
@@ -58,41 +59,42 @@ public class ChatList extends HttpServlet{
 				  int id=jsondata.getInt("userid");
        	          recieverName="";
                   ChatDao dao= new ChatDao(request);
-                  List<UserModel> chatList=null;
-                  List<GroupInfoModel> grpChatList=dao.fetchGroups(id);
-                  UserModel userObject=null;
-                  
+                  List<UserinfoModel> chatList=null;
+                  List<GroupInfoModel> grpChatList=null;
+                  UserinfoModel userObject=null;
+                  UserinfoModel.Builder userBuilder=null;
                   try {
                 	  if(LRUCache.getThreadLocal()!=null){
                     	  
                     	  int uid=(Integer)request.getAttribute("userid");
 //                    	  System.out.println(LRUCache.get(key));
-                    	  userObject=(UserModel)LRUCache.get("userid"+uid);
+//                    	  userObject=(UserinfoModel)LRUCache.get("userid"+uid);
+//                    	  
+//                    	  if(userObject==null){
+//                    		  userBuilder=UserinfoModel.newBuilder();
+//                    		  userObject=UserinfoModel.getDefaultInstance();
+////                    		  userObject.getChatListList()
+//                    	  }
+  //                  	  chatList=(List<UserinfoModel>)LRUCache.get("chatlist"+uid);
+   //                 	  grpChatList=(List<GroupInfoModel>) LRUCache.get("groupchatlist"+uid);
                     	  
-                    	  if(userObject==null){
-                    		  userObject=new UserModel();
-                    	  }
-                    	  
-                		  if(userObject.getChatList()==null){
+                		  if(LRUCache.get("chatlist"+uid)==null){
                     		  System.out.println("---- DB chatlist----");
-                    		  chatList= dao.fetchFrnds(id);
-                    		  userObject.setChatList(chatList);
-                    		  LRUCache.put("userid"+uid,userObject);
+                    		  chatList=dao.fetchFrnds(id);
+                    		  LRUCache.put("chatlist"+uid,chatList);
                     	  }else{
         			 		  System.out.println("---- cache chatlist----");
-        			 		  userObject=(UserModel)LRUCache.get("userid"+uid);
-        			 		  chatList=userObject.getChatList();
+        			 		  chatList=(List<UserinfoModel>)LRUCache.get("chatlist"+uid);
                           }
                 		  
-                		  if(userObject.getGroupChatList()==null){
+                		  if(LRUCache.get("groupchatlist"+uid)==null){
                     		  System.out.println("---- DB grp chatlist----");
                     		  grpChatList =dao.fetchGroups(id);
-                    		  userObject.setGroupChatList(grpChatList);
-                    		  LRUCache.put("userid"+uid,userObject);
+                    		  LRUCache.put("groupchatlist"+uid,grpChatList);
                     	  }else{
         			 		  System.out.println("---- cache grp chatlist----");
-        			 		  userObject=(UserModel)LRUCache.get("userid"+uid);
-        			 		  grpChatList=userObject.getGroupChatList();
+        			 		  grpChatList=(List<GroupInfoModel>) LRUCache.get("groupchatlist"+uid);
+//        			 		  grpChatList=userObject.getGroupChatList();
                           }
                       }
                   }catch(Exception e) {
@@ -115,15 +117,15 @@ public class ChatList extends HttpServlet{
                   }
  	              
  	              if(chatList!=null) {
- 	            	 for(UserModel obj:chatList){
- 	         			 recieverId=obj.getUser_id();
- 	         			 recieverName=obj.getUser_name();
+ 	            	 for(UserinfoModel obj:chatList){
+ 	         			 recieverId=obj.getUserId();
+ 	         			 recieverName=obj.getUserName();
 // 	 	            	 JSONObject json=new JSONObject();
 // 	         			 json.put("groupyn",1);
-// 	                   json.put("recieverid",recieverId);
+// 	                     json.put("recieverid",recieverId);
 // 	         			 json.put("senderid",id);
  	          			 out.println("<button type=\"button\" class=\"btn btn-primary active\" onclick=\"chat("+id+","+recieverId+","+0+",'"+recieverName+"');\">"+recieverName+"</button><br>");
-// 	          		 if(status.equals("1")){
+// 	          		     if(status.equals("1")){
 // 	            		    out.println("<div style=\"padding-left:5px;padding-top:4px\"><div class=\"status\" style=\"background-color:#40CF49;width:10px;height:10px;border-radius:100%;\"></div></div><br></div>");
 // 	            	     }else{
 // 	            	    	out.println("<br></div>");

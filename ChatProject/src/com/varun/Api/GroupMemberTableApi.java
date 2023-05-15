@@ -3,19 +3,17 @@ package com.varun.Api;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.varun.Logger.LoggerUtil;
 import com.varun.Model.DataObject;
 import com.varun.Model.GroupMembersModel;
 import com.varun.Orm.CriteriaBuilder;
 import com.varun.Orm.OrmImp;
-import com.varun.Orm.Table;
 
 public class GroupMemberTableApi {
 	private OrmImp ormObj;
 	private static final Logger logger=Logger.getLogger(GroupMemberTableApi.class.getName());
 	private GroupMembersModel memberObj=null;
 	private CriteriaBuilder cb=new CriteriaBuilder();
-	private String Table=GroupMembersModel.class.getAnnotation(Table.class).name();
+	private String Table="group_members";
 
 	public GroupMemberTableApi(OrmImp obj){
 		try{
@@ -25,6 +23,7 @@ public class GroupMemberTableApi {
 	        logger.log(Level.WARNING,"constructor",e);
 		}
 	}
+	
 	public void closeOrmConnection(){
 		ormObj.close();
 	}

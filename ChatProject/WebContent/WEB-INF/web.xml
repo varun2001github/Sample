@@ -70,7 +70,7 @@
   
     <servlet>
        <servlet-name>MobileApiServlet</servlet-name>
-       <servlet-class>com.varun.Controller.MobileApiRested</servlet-class>
+       <servlet-class>com.varun.RestfulApi.MobileApiServlet</servlet-class>
    </servlet>
    <servlet-mapping>
        <servlet-name>MobileApiServlet</servlet-name> 

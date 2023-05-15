@@ -18,11 +18,11 @@ import javax.servlet.http.HttpSession;
 
 import org.json.JSONObject;
 
+import com.ProtoModel.UserModel.UserinfoModel;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.varun.Dao.LRUCache;
 import com.varun.Dao.UserDao;
 import com.varun.Logger.LoggerUtil;
-import com.varun.Model.UserModel;
 import com.varun.Security.CookieEncrypt;
 import com.varun.Security.SessionidGenerator;
 
@@ -71,7 +71,7 @@ public class AuthenticationServlet extends HttpServlet{
 	private void Login(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		System.out.println("Getting here....login"); 
 		HttpSession session=request.getSession();
-		UserModel userDataObj=null;
+		UserinfoModel userDataObj=null;
 		try{      
 		          UserDao dao=new UserDao();
 				  String userId=request.getParameter("name");
@@ -98,40 +98,39 @@ public class AuthenticationServlet extends HttpServlet{
 			        	System.out.println("dao ret"+userDataObj);
 						if(userDataObj!=null){
 							
-								long passCreatedTime=userDataObj.getPassTableObj().getCreated_time().longValue();
+								long passCreatedTime=userDataObj.getPassObj().getCreatedTime();
 								long usedDays = TimeUnit.MILLISECONDS.toDays(System.currentTimeMillis()-passCreatedTime);
 								System.out.println("used days "+usedDays);
 								
 								//add to cache
-								LRUCache.put("userid"+userDataObj.getUser_id(), userDataObj);
+								LRUCache.put("userid"+userDataObj.getUserId(), userDataObj);
 
 								//if login valid
 								if(usedDays<60){
-									request.setAttribute("userid",userDataObj.getUser_id());
+									request.setAttribute("userid",userDataObj.getUserId());
 									
 									//for auditing
 									dao=new UserDao(request);
 									//delete expired sessions of user
-									dao.deleteExpiredSessions(userDataObj.getUser_id());
+									dao.deleteExpiredSessions(userDataObj.getUserId());
 									
 									//create session
 									String sessionid=SessionidGenerator.Generate();
-									dao.createSession(userDataObj.getUser_id(), sessionid);
+									dao.createSession(userDataObj.getUserId(), sessionid);
 																		
 							    	//session id cookie
 							    	Cookie c1=new Cookie("sessionid",sessionid);
 								    c1.setHttpOnly(true);
 									c1.setMaxAge(800);
 									c1.setSecure(true);
-									c1.setPath("/");
+									c1.setPath("/ChatProject");
 								    response.addCookie(c1);
 								    session.setAttribute("dataobj", userDataObj);
-							    	System.out.println("___--   "+request.getContextPath());
 							    	response.sendRedirect(request.getContextPath()+"/userpage.jsp");
 									
 								}else{
 									  //pass expired
-								      session.setAttribute("userid",userDataObj.getUser_id());
+								      session.setAttribute("userid",userDataObj.getUserId());
 							    	  response.sendRedirect("passchange.jsp");
 								} 
 						  }else{
@@ -174,12 +173,16 @@ public class AuthenticationServlet extends HttpServlet{
 			    		    sessionId=c.getValue();
 				       		dao.sessionInvalidate(sessionId);
 					       	LRUCache.remove(sessionId);
-				       		c.setMaxAge(0);
-				       		response.addCookie(c);
+				       		System.out.println("session removed");
 				      }
+			       	  System.out.println("cookie : "+c.getValue());
+			       	  c.setHttpOnly(true);
+					  c.setSecure(true);
+					  c.setPath("/ChatProject");
+			    	  c.setMaxAge(0);
+			       	  response.addCookie(c);
 			      }
 		      }
-	       	  LRUCache.showCacheList();
 		      if(request.getAttribute("responseerr")!=null && !request.getAttribute("responseerr").equals("")){
 		    	  int res=(int)request.getAttribute("responseerr");
 		    	  response.sendError(res);

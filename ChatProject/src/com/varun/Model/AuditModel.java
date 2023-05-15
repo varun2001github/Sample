@@ -2,11 +2,9 @@
 package com.varun.Model;
 
 import java.util.HashMap;
-
 import com.varun.Model.DataObject;
-import com.varun.Model.EmailModel.DbColumn;
 
-public class AuditModel{
+public class AuditModel extends DataObject{
 
 	private Integer user_id=null;
 	private String table_name=null;
@@ -17,8 +15,6 @@ public class AuditModel{
 	private String ip_address=null;
 	private Long audit_time=null;
     
-    private HashMap<String,Object> map=new HashMap<String,Object>();
-
     public static enum DbColumn{
     	user_id,
 		table_name,
@@ -31,9 +27,10 @@ public class AuditModel{
     }
   
 	//constructor
-	public AuditModel(DataObject ob){
-		map=ob.getDataMap();
-		setMapInVariables();
+
+	public AuditModel(HashMap<String,Object> map){
+		super(map);
+		initialize();
 	}
 	
 	public AuditModel(AuditModel copyAudit){
@@ -42,11 +39,16 @@ public class AuditModel{
 		this.ip_address=copyAudit.ip_address;
 	}
 	
+	public AuditModel init(){
+		initialize();
+        return this;
+	}
+	
 	public AuditModel(){
 		
 	}
 	
-	private void setMapInVariables(){
+	private void initialize(){
 		this.user_id =(Integer)map.get(DbColumn.user_id.name());
 		this.table_name =(String)map.get(DbColumn.table_name.name());
 		this.action_type=(String)map.get(DbColumn.action_type.name());

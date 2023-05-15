@@ -8,9 +8,10 @@ import java.util.Collection;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
+
+import com.ProtoModel.UserModel.EmailModel;
 import com.varun.Api.EmailTableApi;
 import com.varun.Model.AuditModel;
-import com.varun.Model.EmailModel;
 import com.varun.Orm.OrmImp;
 
 public class EmailsApiTest{

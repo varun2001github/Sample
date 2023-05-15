@@ -2,10 +2,6 @@ package com.varun.Orm;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import com.varun.Controller.ChatList;
-import com.varun.Logger.LoggerUtil;
-import com.varun.Model.UserModel;
-
 
 public class CriteriaBuilder{
 	 String condition="";

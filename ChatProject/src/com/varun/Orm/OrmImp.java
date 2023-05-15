@@ -4,7 +4,6 @@ import java.sql.*;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.varun.Controller.ChatList;
@@ -115,7 +114,7 @@ public class OrmImp{
 	    	        
 	            key = mapElement.getKey();
 	 			value =mapElement.getValue();
-	 			if(value!=null && key!="Table" && !value.equals(oldObjectMap.get(key))){
+	 			if(value!=null && value!="" && value !="0" && value.equals(0)!=true && key!="Table" && !value.equals(oldObjectMap.get(key))){
 	 				//if value not null 
 	   				if(counter!=0){
 	   						 keyval+=",";							 
@@ -389,8 +388,8 @@ public class OrmImp{
 	     return false;
     }
     
-	public <T extends CommonMethod> OrmImp InnerJoin(T obj,CriteriaBuilder cb){
-    	query+=" INNER JOIN "+obj.getDataObject().getDataMap().get("Table")+cb.getCriteria();
+	public <T extends CommonMethod> OrmImp InnerJoin(String Table,CriteriaBuilder cb){
+    	query+=" INNER JOIN "+Table+cb.getCriteria();
         logger.log(Level.INFO," inner join concat "+query);
         return this;
     }
@@ -438,11 +437,11 @@ public class OrmImp{
         logger.log(Level.INFO," FROM concat "+table);
     	return this;
     }
-    public <t extends CommonMethod> OrmImp From(t obj){
-    	query+=" FROM "+obj.getDataObject().getDataMap().get("Table");
-        logger.log(Level.INFO," FROM concat "+obj.getDataObject().getDataMap().get("Table"));
-    	return this;
-    }
+//    public <t extends CommonMethod> OrmImp From(t obj){
+//    	query+=" FROM "+obj.getDataObject().getDataMap().get("Table");
+//        logger.log(Level.INFO," FROM concat "+obj.getDataObject().getDataMap().get("Table"));
+//    	return this;
+//    }
     public OrmImp As(String alias){
     	query+="AS "+alias;
         logger.log(Level.INFO," AS "+alias);

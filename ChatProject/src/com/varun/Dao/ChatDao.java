@@ -1,14 +1,12 @@
 package com.varun.Dao;
-import java.io.*;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.ProtoModel.UserModel.UserinfoModel;
 import com.varun.Api.*;
-import com.varun.Controller.ChatList;
-import com.varun.Logger.LoggerUtil;
 import com.varun.Model.*;
 import com.varun.Orm.OrmImp;
 
@@ -24,11 +22,11 @@ public class ChatDao{
     	auditModel=new AuditModel((Integer)request.getAttribute("userid"),(String)request.getAttribute("sessionid"),request.getRemoteAddr());
 	}
     
-	public List<UserModel> fetchFrnds(Integer uid){
+	public List<UserinfoModel> fetchFrnds(Integer uid){
           logger.log(Level.INFO,"method called");
   		  ormObj=new OrmImp();
 		  UserTableApi userApi=new UserTableApi(ormObj);
-		  List<UserModel> list=null;
+		  List<UserinfoModel> list=null;
 		  list =userApi.fetchChatList(uid);
     	  ormObj.close();
 		  return list;
@@ -48,7 +46,6 @@ public class ChatDao{
           logger.log(Level.INFO,"method called");
   		  ormObj=new OrmImp();
 	      MessageTableApi messageApi=new MessageTableApi(ormObj);
-	      groupMessageTableApi groupMessageApi=new groupMessageTableApi();
 	      List<MessagesModel> chatmsg=null;
 		  chatmsg=messageApi.getNormalMsg(senderid,recieverid);
 		  ormObj.close();

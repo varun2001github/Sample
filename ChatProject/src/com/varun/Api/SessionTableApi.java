@@ -1,25 +1,23 @@
 package com.varun.Api;
 
-import java.math.BigInteger;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import com.varun.Model.DataObject;
-import com.varun.Model.EmailModel;
-import com.varun.Model.SessionModel;
-import com.varun.Model.UserModel;
+//import com.varun.Model.SessionModel;
+import com.ProtoModel.UserModel.SessionModel;
+import com.ProtoModel.UserModel.SessionModel.Builder;
 import com.varun.Orm.CriteriaBuilder;
 import com.varun.Orm.OrmImp;
-import com.varun.Orm.Table;
+import com.varun.Orm.ProtoMapper;
 
 public class SessionTableApi{
 	private static final Logger logger=Logger.getLogger(SessionTableApi.class.getName());
 	private SessionModel sessionTableObj=null;
-	private static String Table=SessionModel.class.getAnnotation(Table.class).name();
+	private static String Table="session_info";
 	private static CriteriaBuilder cb=new CriteriaBuilder();
 	private OrmImp orm;
     
@@ -34,12 +32,12 @@ public class SessionTableApi{
     }
     
     public boolean createSession(Integer userid,String sessionid){
-    	sessionTableObj=new SessionModel();
     	Instant now = Instant.now();
-    	sessionTableObj.setUser_id(userid);
-    	sessionTableObj.setSession_id(sessionid);
-    	sessionTableObj.setExpiry(Date.from(now.plus(500, ChronoUnit.MINUTES)).getTime());
-    	Integer ins=orm.InsertQuery(sessionTableObj.getDataObject()).Insert();
+    	sessionTableObj=SessionModel.newBuilder()
+    	.setUserId(userid)
+    	.setSessionId(sessionid)
+    	.setExpiry(Date.from(now.plus(500, ChronoUnit.MINUTES)).getTime()).build();
+    	Integer ins=orm.InsertQuery(ProtoMapper.getDataObject(sessionTableObj)).Insert();
     	if(ins!=null){
     		return true;
     	}
@@ -51,7 +49,7 @@ public class SessionTableApi{
         List<DataObject> l=orm.getSelect();
         SessionModel sessionObject=null;
         if(l.size()>0){
-        	sessionObject=new SessionModel(l.get(0));
+        	sessionObject=(SessionModel)ProtoMapper.getProtoObject(SessionModel.newBuilder(),l.get(0));
             return sessionObject;
         }
         return null;

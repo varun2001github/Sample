@@ -1,19 +1,12 @@
 package com.varun.Model;
 
 import java.util.HashMap;
-import java.util.function.Function;
 import java.util.logging.Logger;
-import com.varun.Controller.ChatList;
-import com.varun.Logger.LoggerUtil;
-import com.varun.Model.MobileModel.DbColumn;
-import com.varun.Orm.Table;
 
-public class MessagesModel{
+public class MessagesModel extends DataObject{
 
     private static final Logger logger=Logger.getLogger(MessagesModel.class.getName());
-	
-	private HashMap<String,Object> map=new HashMap<String,Object>();
-    
+	    
 	private Integer chat_id=null;
 
 	private Integer senderid=null;
@@ -31,16 +24,28 @@ public class MessagesModel{
 		text,
 		chattime,
     }
-	///// constructor
-	public MessagesModel(DataObject ob){
-		this.map=ob.getDataMap();
-		setMapInVariables();
+//	///// constructor
+//	public MessagesModel(DataObject ob){
+//		super(ob)
+//		this.map=ob.getDataMap();
+//		setMapInVariables();
+//	}
+	public MessagesModel(HashMap<String,Object> map){
+		super(map);
+		this.map=map;
+		initialize(map);
+	}
+	
+	public MessagesModel init(){
+		initialize(super.map);
+        return this;
 	}
 	
 	public MessagesModel(){
+		super();
 	}
 	
-	private void setMapInVariables(){
+	private void initialize(HashMap<String,Object> map){
 		this.chat_id=(Integer)map.get(DbColumn.chat_id.name());
 		this.senderid=(Integer)map.get(DbColumn.senderid.name());
 		this.recieverid=(Integer)map.get(DbColumn.recieverid.name());
@@ -91,14 +96,18 @@ public class MessagesModel{
 		return text;
 	}
 	
-	public void setText(String text) {
+	public void setText(String text){
 		this.text = text;
 	}
-    public Long getChattime() {
+    public Long getChattime(){
 		return chattime;
 	}
 
-	public void setChattime(Long chattime) {
+	public void setChattime(Long chattime){
 		this.chattime = chattime;
+	}
+	public static void main(String[] args){
+		DataObject ob=new DataObject();
+		MessagesModel messages=(MessagesModel)ob;
 	}
 }

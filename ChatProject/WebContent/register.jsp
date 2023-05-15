@@ -14,7 +14,7 @@
 	         response.sendRedirect("userpage.jsp");           
 	    }
     %>
-    <div  style="text-shadow: 10px;padding:13%;justify-content: center;align-items: center;display:flex;flex-direction:column;">
+    <div style="text-shadow: 10px;padding:13%;justify-content: center;align-items: center;display:flex;flex-direction:column;">
 		    <form action="servlet/Authentication/register"  method="post" className="login-screen-container" name="body" >
 				<div className="log-con">
 			        <h1 className="login-title">Register Now</h1>
