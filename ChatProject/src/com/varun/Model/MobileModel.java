@@ -12,7 +12,6 @@ import com.varun.Model.PasswordModel.DbColumn;
 import com.varun.Orm.CommonMethod;
 import com.varun.Orm.Table;
 
-@Table(name="mobile")
 public class MobileModel implements CommonMethod{
 	
     private static final Logger logger=Logger.getLogger(MobileModel.class.getName());

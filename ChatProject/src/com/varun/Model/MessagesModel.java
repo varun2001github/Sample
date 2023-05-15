@@ -8,7 +8,6 @@ import com.varun.Logger.LoggerUtil;
 import com.varun.Model.MobileModel.DbColumn;
 import com.varun.Orm.Table;
 
-@Table(name="messages")
 public class MessagesModel{
 
     private static final Logger logger=Logger.getLogger(MessagesModel.class.getName());

@@ -15,7 +15,6 @@ import com.varun.Model.EmailModel.DbColumn;
 import com.varun.Orm.OrmImp;
 import com.varun.Orm.Table;
 
-@Table(name="userinfo")
 public class UserModel{
 	
     private static final Logger logger=Logger.getLogger(UserModel.class.getName());

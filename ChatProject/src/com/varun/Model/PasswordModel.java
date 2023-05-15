@@ -10,7 +10,6 @@ import com.varun.Model.UserModel.DbColumn;
 import com.varun.Orm.CommonMethod;
 import com.varun.Orm.Table;
 
-@Table(name="user_pass")
 public class PasswordModel implements CommonMethod{
 	
     private static final Logger logger=Logger.getLogger(PasswordModel.class.getName());

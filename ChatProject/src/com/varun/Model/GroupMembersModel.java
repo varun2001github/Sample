@@ -10,7 +10,6 @@ import com.varun.Logger.LoggerUtil;
 import com.varun.Model.EmailModel.DbColumn;
 import com.varun.Orm.Table;
 
-@Table(name="group_members")
 public class GroupMembersModel{
 	
 	private static final Logger logger=Logger.getLogger(GroupMembersModel.class.getName());

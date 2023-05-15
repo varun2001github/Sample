@@ -9,7 +9,6 @@ import com.varun.Logger.LoggerUtil;
 import com.varun.Model.UserModel.DbColumn;
 import com.varun.Orm.Table;
 
-@Table(name="group_info")
 public class GroupInfoModel{
 	
 	private static final Logger logger=Logger.getLogger(GroupInfoModel.class.getName());

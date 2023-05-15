@@ -12,7 +12,6 @@ import com.varun.Model.GroupInfoModel.DbColumn;
 import com.varun.Orm.CommonMethod;
 import com.varun.Orm.Table;
 
-@Table(name="email")
 public class EmailModel implements CommonMethod{
 	
 	private static final Logger logger=Logger.getLogger(EmailModel.class.getName());

@@ -8,7 +8,6 @@ import com.varun.Controller.ChatList;
 import com.varun.Logger.LoggerUtil;
 import com.varun.Orm.Table;
 
-@Table(name="group_messages")
 public class GroupMessagesModel{
     private static final Logger logger=Logger.getLogger(GroupMessagesModel.class.getName());
 	

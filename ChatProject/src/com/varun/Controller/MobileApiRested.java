@@ -21,15 +21,15 @@ import com.varun.Orm.OrmImp;
 /**
  * Servlet implementation class MobileApiServlet
  */
-public class MobileApiServlet extends HttpServlet{
+public class MobileApiRested extends HttpServlet{
 	
 	private static final long serialVersionUID = 1L;
 	private OrmImp ormObj=null;
-	private static final Logger logger=Logger.getLogger(MobileApiServlet.class.getName());
+	private static final Logger logger=Logger.getLogger(MobileApiRested.class.getName());
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public MobileApiServlet(){
+    public MobileApiRested(){
         super();
         // TODO Auto-generated constructor stub
     }

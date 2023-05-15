@@ -10,7 +10,6 @@ import com.varun.Logger.LoggerUtil;
 import com.varun.Model.UserModel.DbColumn;
 import com.varun.Orm.Table;
 
-@Table(name="session_info")
 public class SessionModel{
 	
     private static final Logger logger=Logger.getLogger(SessionModel.class.getName());

@@ -4,10 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import com.varun.Controller.AuthenticationServlet;
-import com.varun.Controller.ChatList;
-import com.varun.Logger.LoggerUtil;
 import com.varun.Model.DataObject;
 import com.varun.Model.EmailModel;
 import com.varun.Orm.CriteriaBuilder;
@@ -145,7 +141,6 @@ public class EmailTableApi {
     	 if(id==null || id<=0){
        	    return null;
          }
-    	
     	 logger.log(Level.INFO,"method called");
          try{
 	       	 CriteriaBuilder cb=new CriteriaBuilder();
