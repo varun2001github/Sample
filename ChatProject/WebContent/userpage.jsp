@@ -13,9 +13,9 @@
 <%@ page import="javax.servlet.RequestDispatcher" %>
 <%@ page import="com.varun.Security.EncryptionHandler" %> 
 <%@ page import="java.util.logging.*"%>
-<%@ page import="com.ProtoModel.UserModel.UserinfoModel" %>
-<%@ page import="com.ProtoModel.UserModel.EmailModel" %>
-<%@ page import="com.ProtoModel.UserModel.MobileModel" %>
+<%@ page import="com.ProtoModel.UserModel.User" %>
+<%@ page import="com.ProtoModel.UserModel.Email" %>
+<%@ page import="com.ProtoModel.UserModel.Mobile" %>
 
 <html>
    <head> 
@@ -29,13 +29,13 @@
                    System.out.println("-------------inside userpage------------------");
         	       String sessioninfo="";
               	   UserDao dao=new UserDao();
-        	       UserinfoModel dataObj=null;
+        	       User dataObj=null;
         	       Integer userid=null;
         	       String username=null;
         	       String email=null;
         	       
-        	       List<EmailModel> emailList=null;
-        	       List<MobileModel> mobileList=null;
+        	       List<Email> emailList=null;
+        	       List<Mobile> mobileList=null;
         	       if(request.getAttribute("userid")!=null){
         	    	    userid=(Integer)request.getAttribute("userid");
         	    	    
@@ -43,7 +43,7 @@
         	    	    	System.out.println("userpage userDataObject from THreadlocal");
    	  	    			    dataObj=LRUCache.getThreadLocal();
         	    	    }else if(LRUCache.get("userid"+userid)!=null){
-        	    	    	dataObj=(UserinfoModel)LRUCache.get("userid"+userid);
+        	    	    	dataObj=(User)LRUCache.get("userid"+userid);
         	    	    }else{
         	    	    	dataObj=dao.getUserById(userid);
        	      	    	    System.out.println("userpage userDataObject from db");

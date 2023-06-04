@@ -11,7 +11,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.ProtoModel.UserModel.SessionModel;
+import com.ProtoModel.UserModel.Session;
 import com.varun.Dao.UserDao;
 
 /**
@@ -49,7 +49,7 @@ public class LoginPageFilter implements Filter{
 	        	if(c.getName().equals("sessionid")){
 		       		sessionid=c.getValue();
 		       		UserDao dao=new UserDao();
-		        	SessionModel sessionObject=dao.getSessionObject(sessionid);
+		        	Session sessionObject=dao.getSessionObject(sessionid);
 		        	if(sessionObject!=null){
 		       	    	httpResponse.sendRedirect("/WebProject/userpage.jsp");
 	            	}else{

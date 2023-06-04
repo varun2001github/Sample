@@ -11,37 +11,45 @@ import com.varun.Controller.ChatList;
 import com.varun.Logger.LoggerUtil;
 
 public class DbConnectionSource{
-	private static Connection con=null;
-	private static BasicDataSource dataSource=null;
-    private static String  urlpath="jdbc:mysql://localhost/chatappDB";
+    private static String urlpath="jdbc:mysql://localhost/chatappDB";
     private static final Logger logger=Logger.getLogger(DbConnectionSource.class.getName());
-	
-	public void createDataSource(){
-		// TODO Auto-generated constructor stub
-					
-    }
-    
-	public static Connection getConnection() throws SQLException{
-		if(dataSource==null) {
+	private static BasicDataSource dataSource=createSourceConfig();
+
+	private static final BasicDataSource createSourceConfig(){
+		    System.out.println(urlpath);
+		    // TODO Auto-generated constructor stub
 			try{
 				Class.forName("com.mysql.cj.jdbc.Driver");
-		        logger.log(Level.INFO,"db connection occured to "+urlpath);
+	
 			}catch(ClassNotFoundException e) {
 				// TODO Auto-generated catch block
 		        logger.log(Level.INFO,"db connection not occured to ");
 		        e.printStackTrace();
 			}
-	        dataSource =new BasicDataSource();
-	        System.out.println("ds "+dataSource);
+		    BasicDataSource dataSource=new BasicDataSource();
 			dataSource.setUrl(urlpath);
 			dataSource.setUsername("root");
 			dataSource.setPassword("Varunsashi@2001");
 			dataSource.setInitialSize(-1);
 			dataSource.setMaxTotal(1000);
+			return dataSource;
+			
+    }
+    
+	public static Connection getConnection(){
+		Connection con=null;
+		try {
+			con = dataSource.getConnection();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-		con=dataSource.getConnection();
         logger.log(Level.INFO,"dataSource connection object returned ");
 		return con;	
+		
 	}
-
+	public static void main(String[] args){
+		OrmImp orm=new OrmImp();
+		
+	}
 }

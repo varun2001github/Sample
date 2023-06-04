@@ -9,14 +9,14 @@ import com.varun.Model.*;
 import com.varun.Orm.CriteriaBuilder;
 import com.varun.Orm.OrmImp;
 
-public class MessageTableApi{
+public class MessageApi{
 	private MessagesModel messageObj=null;
 	private OrmImp ormObj;
-	private static final Logger logger=Logger.getLogger(MessageTableApi.class.getName());
+	private static final Logger logger=Logger.getLogger(MessageApi.class.getName());
 	private CriteriaBuilder cb=new CriteriaBuilder();
 	private static String Table="messages";
 
-	public MessageTableApi(OrmImp obj){
+	public MessageApi(OrmImp obj){
 		this.ormObj=obj;
 	}
 
@@ -85,7 +85,7 @@ public class MessageTableApi{
 	}
 
 	public static void main(String args[]){
-		MessagesModel messages=new MessageTableApi(new OrmImp()).getNormalMsg(1,2).get(0);
+		MessagesModel messages=new MessageApi(new OrmImp()).getNormalMsg(1,2).get(0);
 		System.out.println(messages.getSenderid()+messages.getText());
 	}
 }

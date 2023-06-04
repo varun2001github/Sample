@@ -11,7 +11,7 @@ import org.json.HTTP;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.ProtoModel.UserModel.UserinfoModel;
+import com.ProtoModel.UserModel.User;
 import com.varun.Dao.ChatDao;
 import com.varun.Dao.LRUCache;
 import com.varun.Logger.LoggerUtil;
@@ -59,23 +59,23 @@ public class ChatList extends HttpServlet{
 				  int id=jsondata.getInt("userid");
        	          recieverName="";
                   ChatDao dao= new ChatDao(request);
-                  List<UserinfoModel> chatList=null;
+                  List<User> chatList=null;
                   List<GroupInfoModel> grpChatList=null;
-                  UserinfoModel userObject=null;
-                  UserinfoModel.Builder userBuilder=null;
+                  User userObject=null;
+                  User.Builder userBuilder=null;
                   try {
                 	  if(LRUCache.getThreadLocal()!=null){
                     	  
                     	  int uid=(Integer)request.getAttribute("userid");
 //                    	  System.out.println(LRUCache.get(key));
-//                    	  userObject=(UserinfoModel)LRUCache.get("userid"+uid);
+//                    	  userObject=(User)LRUCache.get("userid"+uid);
 //                    	  
 //                    	  if(userObject==null){
-//                    		  userBuilder=UserinfoModel.newBuilder();
-//                    		  userObject=UserinfoModel.getDefaultInstance();
+//                    		  userBuilder=User.newBuilder();
+//                    		  userObject=User.getDefaultInstance();
 ////                    		  userObject.getChatListList()
 //                    	  }
-  //                  	  chatList=(List<UserinfoModel>)LRUCache.get("chatlist"+uid);
+  //                  	  chatList=(List<User>)LRUCache.get("chatlist"+uid);
    //                 	  grpChatList=(List<GroupInfoModel>) LRUCache.get("groupchatlist"+uid);
                     	  
                 		  if(LRUCache.get("chatlist"+uid)==null){
@@ -84,7 +84,7 @@ public class ChatList extends HttpServlet{
                     		  LRUCache.put("chatlist"+uid,chatList);
                     	  }else{
         			 		  System.out.println("---- cache chatlist----");
-        			 		  chatList=(List<UserinfoModel>)LRUCache.get("chatlist"+uid);
+        			 		  chatList=(List<User>)LRUCache.get("chatlist"+uid);
                           }
                 		  
                 		  if(LRUCache.get("groupchatlist"+uid)==null){
@@ -117,7 +117,7 @@ public class ChatList extends HttpServlet{
                   }
  	              
  	              if(chatList!=null) {
- 	            	 for(UserinfoModel obj:chatList){
+ 	            	 for(User obj:chatList){
  	         			 recieverId=obj.getUserId();
  	         			 recieverName=obj.getUserName();
 // 	 	            	 JSONObject json=new JSONObject();

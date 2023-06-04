@@ -1,6 +1,7 @@
 //$Id$
 package com.varun.Model;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import com.varun.Model.DataObject;
 

@@ -4,32 +4,44 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import com.varun.Api.Interface.EmailApi;
 import com.varun.Model.DataObject;
-import com.ProtoModel.UserModel.EmailModel;
+import com.ProtoModel.UserModel.Email;
 import com.varun.Orm.CriteriaBuilder;
 import com.varun.Orm.OrmImp;
 import com.varun.Orm.ProtoMapper;
 
-public class EmailTableApi {
+public class EmailApiImpl implements EmailApi {
 	private OrmImp ormObj=null;
-	private static final Logger logger=Logger.getLogger(EmailTableApi.class.getName());
-	private EmailModel emailObject=null;
+	private static final Logger logger=Logger.getLogger(EmailApiImpl.class.getName());
+	private Email emailObject=null;
 	private String Table="email";
 
-	public EmailTableApi(OrmImp ob){
-		try {
+	public EmailApiImpl(OrmImp ob){
+		try{
 			this.ormObj=ob;
+		}catch(Exception e){
+			// TODO Auto-generated catch block
+	        logger.log(Level.WARNING,"constructor",e);
+		}
+	}
+	
+	public EmailApiImpl(){
+		try {
+			this.ormObj=new OrmImp();
 		}catch (Exception e){
 			// TODO Auto-generated catch block
 	        logger.log(Level.WARNING,"constructor",e);
 		}
 	}
 	
-    public void closeOrmConnection(){
+	public void closeOrmConnection(){
     	ormObj.close();
 	}
     
-    public Integer getIdByEmail(String email){
+    @Override
+	public Integer getIdByEmail(String email){
          logger.log(Level.INFO,"method called");
          
          if(email==null){
@@ -42,10 +54,10 @@ public class EmailTableApi {
         	 CriteriaBuilder cb=new CriteriaBuilder();
         	 ormObj.SelectQuery("user_id").From(Table).Where(cb.addEquals("emailid",email));
         	 List<DataObject> dataList=ormObj.getSelect();
-         	 EmailModel emailModel=null;
+         	 Email Email=null;
          	 if(dataList.size()>0){
-         		emailModel=(EmailModel)ProtoMapper.getProtoObject(EmailModel.newBuilder(), dataList.get(0));
-            	return emailModel.getUserId();
+         		Email=(Email)ProtoMapper.getProtoObject(Email.newBuilder(), dataList.get(0));
+            	return Email.getUserId();
          	 }
      	 }catch(Exception e){
  	        logger.log(Level.WARNING,"unexpected",e);
@@ -53,7 +65,8 @@ public class EmailTableApi {
     	return null;
     }
     
-    public Boolean checkEmail(String email){
+    @Override
+	public Boolean checkEmail(String email){
     	
     	 if(email==null){
     		return false;
@@ -75,7 +88,8 @@ public class EmailTableApi {
          return false;
     }
     
-    public Boolean addEmail(Integer uid,String email){
+    @Override
+	public Boolean addEmail(Integer uid,String email){
     	
     	if(email==null || uid==null || uid<=0){
     		 return false;
@@ -86,7 +100,7 @@ public class EmailTableApi {
     	
     	try{
     		logger.log(Level.INFO,"method called");
-    		emailObject=EmailModel.newBuilder()
+    		emailObject=Email.newBuilder()
     				.setUserId(uid)
     				.setEmailid(email).build();
         	Integer isInserted=ormObj.InsertQuery(ProtoMapper.getDataObject(emailObject)).Insert();
@@ -99,7 +113,8 @@ public class EmailTableApi {
          return false;
     }
     
-    public boolean updateEmail(EmailModel oldEmail,EmailModel newEmail){
+    @Override
+	public boolean updateEmail(Email oldEmail,Email newEmail){
     	System.out.println("before updateEmail");
 		logger.log(Level.INFO,"method called");
     	if(oldEmail==null || newEmail==null){
@@ -133,7 +148,8 @@ public class EmailTableApi {
          return false;
     }
     
-    public List<EmailModel> getEmailById(Integer id){
+    @Override
+	public List<Email> getEmailById(Integer id){
     	 if(id==null || id<=0){
        	    return null;
          }
@@ -142,11 +158,11 @@ public class EmailTableApi {
 	       	 CriteriaBuilder cb=new CriteriaBuilder();
 	       	 ormObj.SelectQuery("user_id","emailid").From(Table).Where(cb.addEquals("user_id",id));
 	       	 List<DataObject> dataList=ormObj.getSelect();
-        	 List<EmailModel> l=null;
+        	 List<Email> l=null;
         	 if(dataList.size()>0){
-            	l=new ArrayList<EmailModel>();
+            	l=new ArrayList<Email>();
             	for(DataObject object:dataList){
-            		l.add((EmailModel)ProtoMapper.getProtoObject(EmailModel.newBuilder(),object));
+            		l.add((Email)ProtoMapper.getProtoObject(Email.newBuilder(),object));
             	}
         	 }
 	       	 return l;
@@ -156,7 +172,7 @@ public class EmailTableApi {
 		return null;
     }
 	public static void main(String args[]){
-		EmailTableApi ap=new EmailTableApi(new OrmImp());
+		EmailApi ap=new EmailApiImpl(new OrmImp());
 		System.out.println(ap.getEmailById(1).get(0).getEmailid());
 	}
 }

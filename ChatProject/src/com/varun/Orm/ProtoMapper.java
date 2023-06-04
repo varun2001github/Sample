@@ -6,12 +6,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.ProtoModel.UserModel.EmailModel;
-import com.ProtoModel.UserModel.SessionModel;
-import com.ProtoModel.UserModel.UserinfoModel;
+import com.ProtoModel.UserModel.Email;
+import com.ProtoModel.UserModel.Session;
+import com.ProtoModel.UserModel.User;
 import com.google.protobuf.Descriptors;
+import com.google.protobuf.Any;
 import com.google.protobuf.Descriptors.FieldDescriptor;
 import com.google.protobuf.Descriptors.FieldDescriptor.Type;
+import com.google.protobuf.Field;
 import com.google.protobuf.Message;
 import com.varun.Model.DataObject;
 
@@ -21,11 +23,11 @@ public class ProtoMapper{
     
     public static HashMap<String, Object> getTableMap() {
     	HashMap<String, Object> tableObjMap=new HashMap<String, Object>();
-    	tableObjMap.put("UserinfoModel","userinfo");
-    	tableObjMap.put("SessionModel","session_info");
-    	tableObjMap.put("PasswordModel","user_pass");
-    	tableObjMap.put("EmailModel","email");
-    	tableObjMap.put("MobileModel","mobile");
+    	tableObjMap.put("User","userinfo");
+    	tableObjMap.put("Session","session_info");
+    	tableObjMap.put("Password","user_pass");
+    	tableObjMap.put("Email","email");
+    	tableObjMap.put("Mobile","mobile");
 		return tableObjMap;
     }
     
@@ -49,7 +51,7 @@ public class ProtoMapper{
 		Message.Builder builder=message.toBuilder();
 		HashMap<String, Object> dataMap=new HashMap<String, Object>();
 		dataMap.put("Table",tableObjMap.get(builder.getDescriptorForType().getName()));
-		for(Map.Entry<Descriptors.FieldDescriptor,Object> entry : builder.getAllFields().entrySet()) {
+		for(Map.Entry<Descriptors.FieldDescriptor,Object> entry : builder.getAllFields().entrySet()){
 			if(!entry.getKey().getType().equals(Type.MESSAGE)){
 			    dataMap.put(entry.getKey().getName(),entry.getValue());
 			}
@@ -58,13 +60,15 @@ public class ProtoMapper{
 	}
 	
     public static void main(String args[]){
+    	Object obj=new Object();
+    	
 //    	HashMap<String, Object> h=new HashMap<String, Object>();
 //    	h.put("user_id",1);
 //    	h.put("session_id","");
 //    	Message message=setProtoMap(SessionModel.getDescriptor(),new DataObject(h));
-    	List<EmailModel> l=new ArrayList<EmailModel>();
-    	l.add(EmailModel.newBuilder().setEmailid("email123").build());
-    	UserinfoModel sessionObject=UserinfoModel.newBuilder().setUserId(1).setCountry("india").addAllEmailObj(l).build();
+    	List<Email> l=new ArrayList<Email>();
+    	l.add(Email.newBuilder().setEmailid("email123").build());
+    	User sessionObject=User.newBuilder().setUserId(1).setCountry("india").addAllEmailObject(l).build();
     	DataObject dataobj=getDataObject(sessionObject);
 		for(Map.Entry<String,Object> entry : dataobj.getDataMap().entrySet()){
 			System.out.println("Recieved map="+entry.getKey()+"-"+entry.getValue());

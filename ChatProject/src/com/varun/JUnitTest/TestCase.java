@@ -1,6 +1,6 @@
 package com.varun.JUnitTest;
 
-import com.ProtoModel.UserModel.EmailModel;
+import com.ProtoModel.UserModel.Email;
 
 public class TestCase{
 	
@@ -59,19 +59,19 @@ public class TestCase{
 	public static Object[] updateEmailTestCase(){
 			return new Object[]{
 				//valid cases 
-		    		new Object[] {EmailModel.newBuilder().setUserId(1).setEmailid("varunsashi@gmail.com").build(),EmailModel.newBuilder().setUserId(1).setEmailid("varun@123.com").build(),true},
-		    		new Object[] {EmailModel.newBuilder().setUserId(1).setEmailid("varunsashi@gmail.com").build(),EmailModel.newBuilder().setUserId(1).setEmailid("varun.sashi@zohocorp.com").build(),true},
-		    		new Object[] {EmailModel.newBuilder().setUserId(2).setEmailid("ramesh@gmail.com").build(),EmailModel.newBuilder().setUserId(2).setEmailid("ramesh@123.com").build(),true},
+		    		new Object[] {Email.newBuilder().setUserId(1).setEmailid("varunsashi@gmail.com").build(),Email.newBuilder().setUserId(1).setEmailid("varun@123.com").build(),true},
+		    		new Object[] {Email.newBuilder().setUserId(1).setEmailid("varunsashi@gmail.com").build(),Email.newBuilder().setUserId(1).setEmailid("varun.sashi@zohocorp.com").build(),true},
+		    		new Object[] {Email.newBuilder().setUserId(2).setEmailid("ramesh@gmail.com").build(),Email.newBuilder().setUserId(2).setEmailid("ramesh@123.com").build(),true},
 //		    		new Object[] {new EmailModel(1,"varunsashi@gmail.com",null,null),new EmailModel(1,"varun.sashi@zohocorp.com",null,null),true},
 //		    		new Object[] {new EmailModel(2,"ramesh@gmail.com",null,null),new EmailModel(2,"ramesh@123.com",null,null),true},
 		    		
 	    		//invalid cases
-		    		new Object[] {EmailModel.newBuilder().setUserId(1).setEmailid("@.com").build(),EmailModel.newBuilder().setUserId(1).setEmailid("varun@123.com").build(),false},
-		    		new Object[] {EmailModel.newBuilder().setUserId(1).setEmailid("varunsashi@gmail.com").build(),EmailModel.newBuilder().setUserId(1).setEmailid("@.com").build(),false},
-		    		new Object[] {EmailModel.newBuilder().setUserId(1).build(),EmailModel.newBuilder().setUserId(1).setEmailid("varunsashi@gmail.com").build(),false},
-		    		new Object[] {EmailModel.newBuilder().setUserId(-1).setEmailid("varunsashi@gmail.com").build(),EmailModel.newBuilder().setUserId(1).setEmailid("varunsashi@gmail.com").build(),false},
-		    		new Object[] {EmailModel.newBuilder().build(),EmailModel.newBuilder().build(),true},
-		    		new Object[] {EmailModel.newBuilder().build(),EmailModel.newBuilder().build(),true},
+		    		new Object[] {Email.newBuilder().setUserId(1).setEmailid("@.com").build(),Email.newBuilder().setUserId(1).setEmailid("varun@123.com").build(),false},
+		    		new Object[] {Email.newBuilder().setUserId(1).setEmailid("varunsashi@gmail.com").build(),Email.newBuilder().setUserId(1).setEmailid("@.com").build(),false},
+		    		new Object[] {Email.newBuilder().setUserId(1).build(),Email.newBuilder().setUserId(1).setEmailid("varunsashi@gmail.com").build(),false},
+		    		new Object[] {Email.newBuilder().setUserId(-1).setEmailid("varunsashi@gmail.com").build(),Email.newBuilder().setUserId(1).setEmailid("varunsashi@gmail.com").build(),false},
+		    		new Object[] {Email.newBuilder().build(),Email.newBuilder().build(),true},
+		    		new Object[] {Email.newBuilder().build(),Email.newBuilder().build(),true},
 //		    		new Object[] {new EmailModel(1,"@.com",null,null),new EmailModel(1,"varun@123.com",null,null),false},                          //invalid old email regex
 //		    		new Object[] {new EmailModel(1,"varunsashi@gmail.com",null,null),new EmailModel(1,"@.com",null,null),false},                  //invalid new email regex
 //		    		new Object[] {new EmailModel(1,"a",null,null),new EmailModel(1,"sdf",null,null),false},                                       //invalid regex both

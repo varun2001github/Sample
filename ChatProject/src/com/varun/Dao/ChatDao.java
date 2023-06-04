@@ -5,8 +5,9 @@ import java.util.logging.Logger;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.ProtoModel.UserModel.UserinfoModel;
+import com.ProtoModel.UserModel.User;
 import com.varun.Api.*;
+import com.varun.Api.Interface.UserApi;
 import com.varun.Model.*;
 import com.varun.Orm.OrmImp;
 
@@ -22,12 +23,12 @@ public class ChatDao{
     	auditModel=new AuditModel((Integer)request.getAttribute("userid"),(String)request.getAttribute("sessionid"),request.getRemoteAddr());
 	}
     
-	public List<UserinfoModel> fetchFrnds(Integer uid){
+	public List<User> fetchFrnds(Integer uid){
           logger.log(Level.INFO,"method called");
   		  ormObj=new OrmImp();
-		  UserTableApi userApi=new UserTableApi(ormObj);
-		  List<UserinfoModel> list=null;
-		  list =userApi.fetchChatList(uid);
+		  UserApi userApiImpl=new UserApiImpl(ormObj);
+		  List<User> list=null;
+		  list =userApiImpl.fetchChatList(uid);
     	  ormObj.close();
 		  return list;
     }	
@@ -35,7 +36,7 @@ public class ChatDao{
 	public List<GroupInfoModel> fetchGroups(Integer uid){
           logger.log(Level.INFO,"method called");
   		  ormObj=new OrmImp();
-		  GroupTableApi grpApi=new GroupTableApi(ormObj);
+		  GroupApi grpApi=new GroupApi(ormObj);
 		  List<GroupInfoModel> list=null;
     	  list =grpApi.fetchChatList(uid);
     	  ormObj.close();
@@ -45,7 +46,7 @@ public class ChatDao{
 	public List<MessagesModel> chatFetch(Integer senderid,Integer recieverid){
           logger.log(Level.INFO,"method called");
   		  ormObj=new OrmImp();
-	      MessageTableApi messageApi=new MessageTableApi(ormObj);
+	      MessageApi messageApi=new MessageApi(ormObj);
 	      List<MessagesModel> chatmsg=null;
 		  chatmsg=messageApi.getNormalMsg(senderid,recieverid);
 		  ormObj.close();
@@ -55,7 +56,7 @@ public class ChatDao{
 	public List<GroupMessagesModel> groupChatFetch(Integer groupid){
         logger.log(Level.INFO,"method called");
 		  ormObj=new OrmImp();
-	      groupMessageTableApi groupMessageApi=new groupMessageTableApi(ormObj);
+	      GroupMessageApi groupMessageApi=new GroupMessageApi(ormObj);
 	      List<GroupMessagesModel> chatmsg=null;
 		  
 	      //reciever id is group uid
@@ -66,8 +67,8 @@ public class ChatDao{
 	public boolean sendMessage(Integer senderid,Integer recieverid,String text,int isGroup){
           logger.log(Level.INFO,"method called");
   		  ormObj=new OrmImp(auditModel);
-		  MessageTableApi msgApi=new MessageTableApi(ormObj);
-	      groupMessageTableApi groupMessageApi=new groupMessageTableApi(ormObj);
+		  MessageApi msgApi=new MessageApi(ormObj);
+	      GroupMessageApi groupMessageApi=new GroupMessageApi(ormObj);
 		  boolean isAdded=false;
 		  if(isGroup==1){
 			isAdded=groupMessageApi.addGroupMessage(senderid,recieverid,text);
@@ -81,8 +82,8 @@ public class ChatDao{
 	public void createGroup(Integer adminid,String groupname,String[] members){
           logger.log(Level.INFO,"method called");
   		  ormObj=new OrmImp(auditModel);
-          GroupTableApi groupApi=new GroupTableApi(ormObj);
-	      GroupMemberTableApi memberApi=new GroupMemberTableApi(ormObj); 
+          GroupApi groupApi=new GroupApi(ormObj);
+	      GroupMemberApi memberApi=new GroupMemberApi(ormObj); 
 		  if(adminid!=0 && groupname!="" && members!=null) {
 		 	try {
 				Integer groupId=groupApi.addGroup(adminid, groupname);

@@ -8,14 +8,14 @@ import com.varun.Model.GroupMembersModel;
 import com.varun.Orm.CriteriaBuilder;
 import com.varun.Orm.OrmImp;
 
-public class GroupMemberTableApi {
+public class GroupMemberApi {
 	private OrmImp ormObj;
-	private static final Logger logger=Logger.getLogger(GroupMemberTableApi.class.getName());
+	private static final Logger logger=Logger.getLogger(GroupMemberApi.class.getName());
 	private GroupMembersModel memberObj=null;
 	private CriteriaBuilder cb=new CriteriaBuilder();
 	private String Table="group_members";
 
-	public GroupMemberTableApi(OrmImp obj){
+	public GroupMemberApi(OrmImp obj){
 		try{
 			this.ormObj=obj;
 		}catch (Exception e){

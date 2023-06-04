@@ -15,10 +15,13 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.ProtoModel.UserModel.SessionModel;
-import com.ProtoModel.UserModel.UserinfoModel;
+import com.ProtoModel.UserModel.Session;
+import com.ProtoModel.UserModel.User;
 import com.varun.Dao.LRUCache;
 import com.varun.Dao.UserDao;
+
+import redis.clients.jedis.Jedis;
+import redis.clients.jedis.JedisPool;
 
 /**
  * Servlet Filter implementation class SessionFilter "/profilepage.jsp"
@@ -26,28 +29,20 @@ import com.varun.Dao.UserDao;
 //@WebFilter(filterName = "MyFilter", urlPatterns = {"/sendmessage","/profilepage.jsp","/editprofile","/userpage.jsp","/ShowMessages","/chatlist"})
 public class SessionAuthFilter implements Filter{
 	private static final Logger logger=Logger.getLogger(SessionAuthFilter.class.getName());
-
+    static JedisPool jpool=new JedisPool("localhost", 6379);
+    private Jedis jedis=null;
     /**
      * Default constructor. 
      */
     public SessionAuthFilter(){
         // TODO Auto-generated constructor stub
+		jedis = jpool.getResource();
     }
-
-	/**
-	 * @see Filter#destroy()
-	 */
-	public void destroy(){
-		// TODO Auto-generated method stub
-	}
-
-	/**
-	 * @see Filter#doFilter(ServletRequest, ServletResponse, FilterChain)
-	*/
+	
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException{
 		// TODO Auto-generated method stub
 		// place your code here
-		System.out.println("session auth filter");
+		System.out.println("session auth filter"+ jedis.get("a"));
         logger.log(Level.INFO,"Servlet Filter");
         String sessionid=null;
         int redirectFlag=0;
@@ -61,50 +56,50 @@ public class SessionAuthFilter implements Filter{
 			    	   if(c.getName().equals("sessionid")){
 				       		sessionid=c.getValue();
 				       		System.out.println("cookie avl"+sessionid);
-		                }
+		               }
 				    }
 			       
 			        if(sessionid!=null){
 			        	UserDao dao=new UserDao();
 //			        	UserinfoModel.Builder userBuilder=null;
-			        	UserinfoModel userObject=null;
-			        	SessionModel sessionObject=null;
+			        	User userObject=null;
+			        	Session sessionObject=null;
 			        	
 			        	if(userObject==null){
-			        		userObject=UserinfoModel.getDefaultInstance();
+			        		userObject=User.getDefaultInstance();
 			        	}
 			        	
-                        //Get Session Object 
-			        	
-			       	    if(LRUCache.get(sessionid)!=null){
-			       	    	System.out.println("---session validate from cache---");
-			       	    	sessionObject=(SessionModel)LRUCache.get(sessionid);
+                        //Get Session Object from redis/db
+			       	    if(jedis.get(sessionid.getBytes())!=null){
+			       	    	System.out.println("---session validate from redis cache---");
+			       	    	sessionObject=Session.parseFrom(jedis.get(sessionid.getBytes()));
 			       	    }else{
 			       	    	System.out.println("---session validate from DB---");
 			       	    	sessionObject=dao.getSessionObject(sessionid);
-			       	    	LRUCache.put(sessionid,sessionObject);
+			       			jedis.set(sessionid.getBytes(),sessionObject.toByteArray());
 			       	    }
 			       	    
 			       	    //if session valid
 			       	    if(sessionObject!=null){
 							System.out.println("cookie ses valid");
+	
+//                            //get basic user object from redis/db
+//			       	    	if(jedis.get(("userid"+sessionObject.getUserId()).getBytes())!=null){
+//				       	    	System.out.println("filter ud frm cache");
+//				       	    	userObject=UserinfoModel.parseFrom( jedis.get(("userid"+sessionObject.getUserId()).getBytes()) );
+//			       	    	}else{
+//				       	    	System.out.println("filter ud frm db");
+//				       	    	jedis.set(("userid"+sessionObject.getUserId()).getBytes(),userObject.toByteArray());
+//			       	    	}
+			       	    	userObject=dao.getUserById(sessionObject.getUserId());
 
-			       	    	//add sessionObject to cache
-			       	    	LRUCache.put(sessionid,sessionObject);
-			       	    	
-                            //get basic user object including Username
-			       	    	if(LRUCache.get("userid"+sessionObject.getUserId())!=null){
-				       	    	System.out.println("filter ud frm cache");
-				       	    	userObject=(UserinfoModel)LRUCache.get("userid"+sessionObject.getUserId());
-			       	    	}else{
-				       	    	System.out.println("filter ud frm db");
-				       	    	userObject=dao.getUserById(sessionObject.getUserId());
-			       	    		LRUCache.put("userid"+sessionObject.getUserId(),userObject);
-			       	    	}
 			       	    	LRUCache.setThreadLocal(userObject);
 			       	    	httpRequest.setAttribute("userid",sessionObject.getUserId());
 			       	    	httpRequest.setAttribute("sessionid",sessionid);
 			       	    	redirectFlag=1;
+			       	    	//sd
+			       	    	jedis.disconnect();
+//			       	    	jedis.close();
 		            		chain.doFilter(request, response);
 		            	}else{
 		            		redirectFlag=1;
@@ -119,6 +114,7 @@ public class SessionAuthFilter implements Filter{
 		 }catch(Exception e){
  	        logger.log(Level.WARNING,"unexpected",e);
      	 }
+		
 		 if(redirectFlag==0) {
 			RequestDispatcher rd = httpRequest.getRequestDispatcher("/servlet/Authentication/logout");
 			rd.forward(request, response);
@@ -126,6 +122,16 @@ public class SessionAuthFilter implements Filter{
 	
 	}
 
+	/**
+	 * @see Filter#destroy()
+	 */
+	public void destroy(){
+		// TODO Auto-generated method stub
+	}
+
+	/**
+	 * @see Filter#doFilter(ServletRequest, ServletResponse, FilterChain)
+	*/
 	/**
 	 * @see Filter#init(FilterConfig)
 	 */

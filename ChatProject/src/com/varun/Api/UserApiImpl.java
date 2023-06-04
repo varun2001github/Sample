@@ -5,21 +5,24 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.ws.rs.Path;
-import com.ProtoModel.UserModel.UserinfoModel;
+import com.ProtoModel.UserModel.User;
+import com.varun.Api.Interface.EmailApi;
+import com.varun.Api.Interface.MobileApi;
+import com.varun.Api.Interface.UserApi;
 import com.varun.Model.DataObject;
 import com.varun.Orm.*;
 
-@Path("/UserApi")
-public class UserTableApi{
+public class UserApiImpl implements UserApi{
 	//logger 
-	private static final Logger logger=Logger.getLogger(UserTableApi.class.getName());
-	private static UserinfoModel userObject=null;
+	private static final Logger logger=Logger.getLogger(UserApiImpl.class.getName());
+	private static User userObject=null;
 	private CriteriaBuilder c=new CriteriaBuilder();
 	private OrmImp orm;
 	private static String Table="userinfo";
+	private int ormFlag=0; 
 	
-    public UserTableApi(OrmImp ob){
+    public UserApiImpl(OrmImp ob){
+    	ormFlag=1;
 		try{
 			this.orm=ob;
    	    	logger.log(Level.INFO,"constructor");
@@ -29,15 +32,26 @@ public class UserTableApi{
 		}
     }
     
-    public UserinfoModel getUser(Integer userid){
+    public UserApiImpl(){
+		try{
+			this.orm=new OrmImp();
+   	    	logger.log(Level.INFO,"constructor");
+		}catch(Exception e){
+			// TODO Auto-generated catch block
+   	    	logger.log(Level.WARNING," constructor ",e);
+		}
+    }
+    
+    @Override
+	public User getUser(Integer userid){
 	    logger.log(Level.INFO,"id passed "+userid);
 
     	//query formation
     	orm.SelectAll().From(Table)
     	.Where(c.addEquals("user_id",userid));
     	
-    	EmailTableApi emailApi=new EmailTableApi(orm);
-		MobileTableApi mobileApi=new MobileTableApi(orm);
+    	EmailApi emailApiImpl=new EmailApiImpl(orm);
+		MobileApi mobileApi=new MobileApiImpl(orm);
 		
 	    logger.log(Level.INFO," query generated ");
 	    List<DataObject> dataList=orm.getSelect();
@@ -48,23 +62,38 @@ public class UserTableApi{
 		
     	if(dataList.size()>0){
    	       logger.log(Level.INFO,"select list available");
-   	       UserinfoModel user=(UserinfoModel)ProtoMapper.getProtoObject(UserinfoModel.newBuilder(),dataList.get(0));
-   	       user=user.toBuilder().addAllMobileObj(mobileApi.getMobileById(userid))
-		                     .addAllEmailObj(emailApi.getEmailById(userid)).build();
+   	       User user=(User)ProtoMapper.getProtoObject(User.newBuilder(),dataList.get(0));
+   	       user=user.toBuilder().addAllMobileObject(mobileApi.getMobileById(userid))
+		                     .addAllEmailObject(emailApiImpl.getEmailById(userid)).build();
+   	       if(ormFlag==0){
+   	    	   orm.close();
+   	       }
     	   return user;
     	}
     	return null;
     }
-  //proto 
-    public UserinfoModel getUserSample(Integer userid){
+    
+    public Boolean getBoolean(){
+    	return true;
+    }
+    public int getInt(){
+    	int i=12;
+    	return i;
+    }
+    public void print() {
+    	System.out.println("printing");
+    }
+    //proto 
+    @Override
+	public User getUserSample(Integer userid){
 	    logger.log(Level.INFO,"id passed "+userid);
 
     	//query formation
     	orm.SelectAll().From(Table)
     	.Where(c.addEquals("user_id",userid));
     	
-    	EmailTableApi emailApi=new EmailTableApi(orm);
-		MobileTableApi mobileApi=new MobileTableApi(orm);
+    	EmailApi emailApiImpl=new EmailApiImpl(orm);
+		MobileApi mobileApi=new MobileApiImpl(orm);
 		
 	    logger.log(Level.INFO," query generated ");
 	    List<DataObject> dataList=orm.getSelect();
@@ -75,28 +104,31 @@ public class UserTableApi{
     	if(dataList.size()>0){
    	       logger.log(Level.INFO,"select list available");
    	      
-   	       UserinfoModel user=(UserinfoModel)ProtoMapper.getProtoObject(UserinfoModel.newBuilder(),dataList.get(0));
-   	       user=user.toBuilder().addAllMobileObj(mobileApi.getMobileById(userid))
-		                     .addAllEmailObj(emailApi.getEmailById(userid)).build();
+   	       User user=(User)ProtoMapper.getProtoObject(User.newBuilder(),dataList.get(0));
+   	       user=user.toBuilder().addAllMobileObject(mobileApi.getMobileById(userid))
+		                     .addAllEmailObject(emailApiImpl.getEmailById(userid)).build();
     	   return user;
     	}
     	return null;
     }
-    public List<UserinfoModel> fetchChatList(Integer uid){
+    
+    @Override
+	public List<User> fetchChatList(Integer uid){
     	orm.SelectQuery("user_id","user_name").From(Table).Where(c.addNotEquals("user_id",uid));
     	System.out.println(orm.getQuery());
     	List<DataObject> dataList=orm.getSelect();
-    	List<UserinfoModel> l=null;
+    	List<User> l=null;
     	if(dataList.size()>0){
-        	l=new ArrayList<UserinfoModel>();
+        	l=new ArrayList<User>();
         	for(DataObject ob:dataList){
-        		l.add((UserinfoModel)ProtoMapper.getProtoObject(UserinfoModel.newBuilder(),ob));
+        		l.add((User)ProtoMapper.getProtoObject(User.newBuilder(),ob));
         	}
     	}
     	return l;
     }
     
-    public boolean updateUserinfo(UserinfoModel oldObj,UserinfoModel newObj){
+    @Override
+	public boolean updateUser(User oldObj,User newObj){
 	    logger.log(Level.INFO,"METHOD CALLED");
     	orm.UpdateQuery(ProtoMapper.getDataObject(oldObj),ProtoMapper.getDataObject(newObj))
     	.Where(c.addEquals("user_id",oldObj.getUserId()));
@@ -105,7 +137,8 @@ public class UserTableApi{
     	return isUpdated;
     }
     
-    public Integer addUser(UserinfoModel userObject){
+    @Override
+	public Integer addUser(User userObject){
     	orm.InsertQuery(ProtoMapper.getDataObject(userObject));
     	System.out.println(orm.getQuery());
     	Integer id=orm.Insert();
@@ -115,16 +148,16 @@ public class UserTableApi{
     
     public static void main(String[] args){
     	OrmImp orm=new OrmImp();
-    	UserTableApi ap=new UserTableApi(orm);
-    	UserinfoModel userModel=ap.getUserSample(1);
-    	System.out.println("Select list !?->> "+userModel.getUserId()+" , "+userModel.getUserName()+": "+userModel.getEmailObjList().size());
+    	UserApi ap=new UserApiImpl(orm);
+    	User userModel=ap.getUserSample(1);
+    	System.out.println("Select list !?->> "+userModel.getUserId()+" , "+userModel.getUserName()+": "+userModel.getEmailObjectList().size());
 
-//    	List<UserinfoModel> userList=ap.fetchChatList(1);
-//    	for(UserinfoModel userModel:userList){
+//    	List<User> userList=ap.fetchChatList(1);
+//    	for(User userModel:userList){
 //        	System.out.println("Select list -> "+userModel.getUserId()+" , "+userModel.getUserName());
 //    	}
 //    	orm.beginTransaction();
-//    	UserinfoModel userModel= UserinfoModel.newBuilder().setUserName("varun").setCreatedTime(System.currentTimeMillis()).build();
+//    	User userModel= User.newBuilder().setUserName("varun").setCreatedTime(System.currentTimeMillis()).build();
 //    	Integer isUpdated=ap.addUser(userModel);
 //    	System.out.println(isUpdated);
 //    	orm.close();

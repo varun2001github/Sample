@@ -9,14 +9,14 @@ import com.varun.Model.GroupInfoModel;
 import com.varun.Orm.CriteriaBuilder;
 import com.varun.Orm.OrmImp;
 
-public class GroupTableApi{
+public class GroupApi{
 	private GroupInfoModel grpObj=null;
 	private static OrmImp ormObj;
-	private static final Logger logger=Logger.getLogger(GroupTableApi.class.getName());
+	private static final Logger logger=Logger.getLogger(GroupApi.class.getName());
 	private CriteriaBuilder cb=new CriteriaBuilder();
 	private String Table="group_info";
 	
-	public GroupTableApi(OrmImp obj){
+	public GroupApi(OrmImp obj){
 		ormObj=obj;
 	}
 	
@@ -27,7 +27,7 @@ public class GroupTableApi{
 	public List<GroupInfoModel> fetchChatList(Integer uid){
         logger.log(Level.INFO,"method called");
         try{
-        	GroupMemberTableApi groupmemApi=new GroupMemberTableApi(new OrmImp());
+        	GroupMemberApi groupmemApi=new GroupMemberApi(new OrmImp());
     		ormObj.SelectQuery("group_id","group_name").From(Table).Where(cb.addIn("group_id",groupmemApi.getGroupOrmByUid(uid)));
             System.out.println(ormObj.getQuery());
 	       	List<DataObject> dataList=ormObj.getSelect();

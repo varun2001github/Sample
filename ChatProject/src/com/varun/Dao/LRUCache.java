@@ -2,14 +2,15 @@
 package com.varun.Dao;
 
 import java.util.concurrent.ConcurrentLinkedQueue;
-import com.ProtoModel.UserModel.UserinfoModel;
+
+import com.ProtoModel.UserModel.User;
 
 import java.util.concurrent.ConcurrentHashMap;
 
 public class LRUCache{
 	 protected static int MAX_SIZE=6;
  	
-     private static ThreadLocal<UserinfoModel> ThreadLocal = new ThreadLocal<>();
+     private static ThreadLocal<User> ThreadLocal = new ThreadLocal<>();
      private static ConcurrentLinkedQueue<String> CacheList=new ConcurrentLinkedQueue<>();
      private static ConcurrentHashMap<String,Object> Map=new ConcurrentHashMap<>();
 
@@ -34,11 +35,11 @@ public class LRUCache{
     	 System.out.println(CacheList);
      }
      
-     public static void setThreadLocal(UserinfoModel obj){
+     public static void setThreadLocal(User obj){
     	 ThreadLocal.set(obj);
      }
      
-     public static UserinfoModel getThreadLocal(){
+     public static User getThreadLocal(){
     	 return ThreadLocal.get();
      }
      

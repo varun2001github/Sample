@@ -11,8 +11,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.json.JSONArray;
 
-import com.ProtoModel.UserModel.MobileModel;
-import com.varun.Api.MobileTableApi;
+import com.ProtoModel.UserModel.Mobile;
+import com.varun.Api.MobileApiImpl;
+import com.varun.Api.Interface.MobileApi;
 import com.varun.Orm.OrmImp;
 import com.varun.Orm.ProtoMapper;
 
@@ -43,7 +44,7 @@ public class MobileApiServlet extends HttpServlet{
 		String path=request.getPathInfo().substring(1);
 		String[] segments=path.split("/");
    	    JSONArray jsonArray=new JSONArray();
-		MobileTableApi api=new MobileTableApi(ormObj);
+		MobileApi api=new MobileApiImpl(ormObj);
 
 		//getAll
 		if(segments[0].equals("getMobile")){
@@ -51,8 +52,8 @@ public class MobileApiServlet extends HttpServlet{
 		    	ormObj=new OrmImp();
 				try{
 					Integer userId=Integer.parseInt(segments[1]);
-					List<MobileModel> emails=api.getMobileById(userId);
-					for(MobileModel object:emails){
+					List<Mobile> emails=api.getMobileById(userId);
+					for(Mobile object:emails){
 						jsonArray.put(ProtoMapper.getDataObject(object));
 					}
 				}catch(Exception e){

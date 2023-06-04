@@ -13,9 +13,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import com.ProtoModel.UserModel.UserinfoModel;
-import com.ProtoModel.UserModel.EmailModel;
-import com.ProtoModel.UserModel.MobileModel;
+import com.ProtoModel.UserModel.User;
+import com.ProtoModel.UserModel.Email;
+import com.ProtoModel.UserModel.Mobile;
 import com.varun.Dao.*;
 
 /**
@@ -25,8 +25,8 @@ public class ProfileServlet extends HttpServlet{
 	private PrintWriter out=null;
 	private static final Logger logger=Logger.getLogger(ProfileServlet.class.getName());
 	private static final long serialVersionUID = 1L;
-	 List<EmailModel> emailList=null;
-     List<MobileModel> mobileList=null;
+	 List<Email> emailList=null;
+     List<Mobile> mobileList=null;
     /**
      * @see HttpServlet#HttpServlet()
      */
@@ -46,26 +46,28 @@ public class ProfileServlet extends HttpServlet{
 		Integer userId=null;
 		String sessionId=null;
 		HttpSession session=request.getSession();
-	    UserinfoModel userObject=null;
+	    User userObject=null;
   	    UserDao dao=null;
 		if(request.getAttribute("userid")!=null){
 			userId=(Integer)request.getAttribute("userid");
 			sessionId=(String)request.getAttribute("sessionid");
 			dao=new UserDao(request);
+			
 			if(LRUCache.getThreadLocal()!=null){
 				userObject=LRUCache.getThreadLocal();
 			}else if(LRUCache.get("userid"+userId)!=null){
-				userObject=(UserinfoModel)LRUCache.get("userid"+userId);
+				userObject=(User)LRUCache.get("userid"+userId);
 			}else{
 				userObject=dao.getUserById(userId);
 			}
+			
 			System.out.println("do not null"+userObject);
 		}else{
 			System.out.println("do null"+request.getAttribute("dataobj"));
 		}
 		
-		UserinfoModel updatedUserObject=null;
-	    UserinfoModel.Builder userObjBuilder=UserinfoModel.newBuilder();
+		User updatedUserObject=null;
+		User.Builder userObjBuilder=User.newBuilder();
 	    
 		String name=request.getParameter("username");
 		String gender=request.getParameter("gender");
@@ -81,25 +83,26 @@ public class ProfileServlet extends HttpServlet{
 			}			
 			if( gender!=null && !(userObject.getGender().equals(gender))){
 					userObjBuilder.setGender(gender);
-			}	
+			}
+			
 			if(emailArr!=null){
-				List<EmailModel> emailObjList=new ArrayList<EmailModel>();
+				List<Email> emailObjList=new ArrayList<Email>();
 				for(String email:emailArr){
-					EmailModel.Builder emailBuilder=EmailModel.newBuilder();
+					Email.Builder emailBuilder=Email.newBuilder();
 					emailBuilder.setEmailid(email);
 					emailObjList.add(emailBuilder.build());
 				}
-				userObjBuilder.addAllEmailObj(emailObjList);
+				userObjBuilder.addAllEmailObject(emailObjList);
 			}
 			
 			if(mobileArr!=null){
-				List<MobileModel> mobileObjList=new ArrayList<MobileModel>();
+				List<Mobile> mobileObjList=new ArrayList<Mobile>();
 	            for(String mobile:mobileArr){
-					MobileModel.Builder mobileBuilder=MobileModel.newBuilder();
+	            	Mobile.Builder mobileBuilder=Mobile.newBuilder();
 					mobileBuilder.setMobileno(Long.parseLong(mobile));
 					mobileObjList.add(mobileBuilder.build());
 				}
-	            userObjBuilder.addAllMobileObj(mobileObjList);
+	            userObjBuilder.addAllMobileObject(mobileObjList);
             }	
 			updatedUserObject=userObjBuilder.build();
 			

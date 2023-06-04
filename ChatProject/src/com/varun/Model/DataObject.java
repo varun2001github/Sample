@@ -3,11 +3,6 @@ package com.varun.Model;
 import java.util.HashMap;
 import java.util.List;
 
-import com.ProtoModel.UserModel.UserinfoModel;
-import com.ProtoModel.UserModel.SessionModel;
-import com.ProtoModel.UserModel.PasswordModel;
-import com.ProtoModel.UserModel.EmailModel;
-import com.ProtoModel.UserModel.MobileModel;
 
 //Parent class for model
 public class DataObject{

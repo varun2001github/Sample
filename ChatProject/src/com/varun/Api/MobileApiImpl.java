@@ -8,28 +8,36 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import com.varun.Model.DataObject;
-import com.ProtoModel.UserModel.MobileModel;
 
-public class MobileTableApi {
-	private static final Logger logger=Logger.getLogger(MobileTableApi.class.getName());
+import com.varun.Api.Interface.MobileApi;
+import com.varun.Model.DataObject;
+import com.ProtoModel.UserModel.Mobile;
+
+public class MobileApiImpl implements MobileApi{
+	private static final Logger logger=Logger.getLogger(MobileApiImpl.class.getName());
 	private OrmImp ormObj;
 	private CriteriaBuilder cb=new CriteriaBuilder();
-	private static MobileModel mobileObject=null;
+	private static Mobile mobileObject=null;
 	private static String Table="mobile";
 
-	public MobileTableApi(OrmImp obj){
+	public MobileApiImpl(OrmImp obj){
 		this.ormObj=obj;
 	}
     
-    public Integer getIdByMobile(String mobileno){
+	public MobileApiImpl(){
+		this.ormObj=new OrmImp();
+	}
+	
+    @Override
+	public Integer getIdByMobile(String mobileno){
          logger.log(Level.INFO,"method called");
     	 ormObj.SelectQuery("user_id").From(Table).Where(cb.addEquals("mobileno",mobileno));
     	 List<DataObject> dataList=ormObj.getSelect();
-    	 mobileObject=(MobileModel)ProtoMapper.getProtoObject(MobileModel.newBuilder(),dataList.get(0));
+    	 mobileObject=(Mobile)ProtoMapper.getProtoObject(Mobile.newBuilder(),dataList.get(0));
     	 return (Integer) mobileObject.getUserId();
     }
     
+	@Override
 	public boolean checkMobile(Long mobileno){
         logger.log(Level.INFO,"method called");
    	    ormObj.SelectQuery("user_id").From(Table).Where(cb.addEquals("mobileno",mobileno));
@@ -40,9 +48,10 @@ public class MobileTableApi {
 	    return false;
     }
     
-    public boolean addMobile(Integer uid,Long mobile){
+    @Override
+	public boolean addMobile(Integer uid,Long mobile){
         logger.log(Level.INFO,"method called");
-        MobileModel mobileObject=MobileModel.newBuilder().setUserId(uid).setMobileno(Integer.parseInt(""+mobile)).build();
+        Mobile mobileObject=Mobile.newBuilder().setUserId(uid).setMobileno(Integer.parseInt(""+mobile)).build();
 //    	mobileObject.setUser_id(uid);
 //    	mobileObject.setMobileno(mobile);
     	System.out.println("mob ins pass"+mobileObject.getCreatedTime());
@@ -53,7 +62,8 @@ public class MobileTableApi {
     	return false;
     }
     
-    public boolean updateMobile(MobileModel oldMobileObject,MobileModel  newMobileObject){
+    @Override
+	public boolean updateMobile(Mobile oldMobileObject,Mobile  newMobileObject){
     	System.out.println("mob upd");
     	try{
        	    CriteriaBuilder cb=new CriteriaBuilder();
@@ -70,17 +80,18 @@ public class MobileTableApi {
          return false;
     }
     
-    public List<MobileModel> getMobileById(Integer id){
+    @Override
+	public List<Mobile> getMobileById(Integer id){
     	 logger.log(Level.INFO,"method called");
          try{
 		   	CriteriaBuilder cb=new CriteriaBuilder();
 		   	ormObj.SelectQuery("user_id","mobileno").From(Table).Where(cb.addEquals("user_id",id));
 		   	List<DataObject> dataList=ormObj.getSelect();
-	    	List<MobileModel> ModelList=null;
+	    	List<Mobile> ModelList=null;
 	    	if(dataList.size()>0){
-	    		ModelList=new ArrayList<MobileModel>();
+	    		ModelList=new ArrayList<Mobile>();
 	        	for(DataObject ob:dataList){
-	        		ModelList.add((MobileModel)ProtoMapper.getProtoObject(MobileModel.newBuilder(),ob));
+	        		ModelList.add((Mobile)ProtoMapper.getProtoObject(Mobile.newBuilder(),ob));
 	        	}
 	    	}		
 	    	return ModelList;

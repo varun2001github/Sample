@@ -23,6 +23,10 @@ public class OrmImp{
 	private OrmImp auditOrm=null;
 	private String deleteAuditTable=null;
 	
+	public static OrmImp getInstance() {
+		return new OrmImp();
+	}
+	
 	public OrmImp(){
 		this.auditModelObject=new AuditModel();
 		try{

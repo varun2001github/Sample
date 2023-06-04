@@ -1,8 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import="java.util.logging.*"%>
-<%@ page import="com.ProtoModel.UserModel.UserinfoModel" %>
-<%@ page import="com.ProtoModel.UserModel.EmailModel" %>
-<%@ page import="com.ProtoModel.UserModel.MobileModel" %>
+<%@ page import="com.ProtoModel.UserModel.User" %>
+<%@ page import="com.ProtoModel.UserModel.Email" %>
+<%@ page import="com.ProtoModel.UserModel.Mobile" %>
 <%@ page import="java.util.*" %>
 <%@ page import="com.varun.Dao.*" %>
 
@@ -14,15 +14,15 @@
         	           System.out.println("----------Inside profilepage------------");
             	       String sessioninfo="";
                  	   UserDao dao=new UserDao();
-            	       UserinfoModel dataObj=null;
+            	       User dataObj=null;
             	       Integer userid=null;
             	       String username=null;
             	       String email=null;
             	       String country=null;
             	       String gender=null;
             	       System.out.println(" pp tl "+LRUCache.getThreadLocal());
-            	       List<EmailModel> emailList=null;
-            	       List<MobileModel> mobileList=null;
+            	       List<Email> emailList=null;
+            	       List<Mobile> mobileList=null;
             	       if(request.getAttribute("userid")!=null && LRUCache.getThreadLocal()!=null){
             	    	    userid=(Integer)request.getAttribute("userid");
             	    	    
@@ -32,7 +32,7 @@
                  	    		 dataObj=LRUCache.getThreadLocal();
                  	    	}else if(LRUCache.get("userid"+userid)!=null){
             	      	    	 System.out.println("profilepage userDataObject from Cache");
-            	      	    	 dataObj=(UserinfoModel)LRUCache.get("userid"+userid);
+            	      	    	 dataObj=(User)LRUCache.get("userid"+userid);
                  	    	}else{
                  	    		 dataObj=dao.getUserById(userid);
             	      	    	 System.out.println("profilepage userDataObject from db");
@@ -40,27 +40,27 @@
                  	    	}
                             
                  	    	//fetch email objects
-                 	    	if(dataObj.getEmailObjList()==null || dataObj.getEmailObjCount()==0){
+                 	    	if(dataObj.getEmailObjectList()==null || dataObj.getEmailObjectCount()==0){
                  	    		System.out.println("profilepage email from db");
                  	    		emailList=dao.getEmail(userid);
-                 	    		dataObj.toBuilder().addAllEmailObj(emailList);
+                 	    		dataObj.toBuilder().addAllEmailObject(emailList);
                  	    		LRUCache.put("userid"+userid, dataObj);
                  	    	}else{
             	      	    	System.out.println("profilepage email from cache/TL object");
-                 	    		emailList=dataObj.getEmailObjList();
+                 	    		emailList=dataObj.getEmailObjectList();
                  	    		System.out.println(emailList);
                  	    		
                  	    	}
                  	    	
                  	    	//fetch mobile objects
-                 	    	if(dataObj.getMobileObjList()==null || dataObj.getMobileObjCount()==0){
+                 	    	if(dataObj.getMobileObjectList()==null || dataObj.getMobileObjectCount()==0){
             	      	    	System.out.println("profilepage mobile from db");
                  	    		mobileList=dao.getMobile(userid);
-                 	    		dataObj.toBuilder().addAllMobileObj(mobileList);
+                 	    		dataObj.toBuilder().addAllMobileObject(mobileList);
                  	    		LRUCache.put("userid"+userid, dataObj);
                  	    	}else{
             	      	    	System.out.println("profilepage mobile from cache/TL object");
-                 	    		mobileList=dataObj.getMobileObjList();
+                 	    		mobileList=dataObj.getMobileObjectList();
                  	    	}
                  	    	
                  	    	int flag=0;
@@ -109,7 +109,7 @@
                    		     if(dataObj!=null){
                    	         //System.out.println("em mob ret frm db"+emailList.size());
                		             //System.out.println(mobileList.size());
-               		        	 for(EmailModel emailData:emailList){
+               		        	 for(Email emailData:emailList){
                	                    out.println("<input name=\"email[]\" value="+emailData.getEmailid()+" disabled><br>");
                		             }
                  		     }else{
@@ -118,7 +118,7 @@
                  		         out.println("<br><label>MOBILE</label><br>"); 
                  		       
                  		     if(dataObj!=null){
-                 		         for(MobileModel mobileData:mobileList){
+                 		         for(Mobile mobileData:mobileList){
                  	                out.println("<input name=\"mobile[]\" id=\"mobile\" value="+mobileData.getMobileno()+" disabled><br>");
                  	             }
                  		     }else{

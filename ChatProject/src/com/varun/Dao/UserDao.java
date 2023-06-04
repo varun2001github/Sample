@@ -5,17 +5,24 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
-import com.ProtoModel.UserModel.EmailModel;
-import com.ProtoModel.UserModel.MobileModel;
-import com.ProtoModel.UserModel.PasswordModel;
-import com.ProtoModel.UserModel.SessionModel;
-import com.ProtoModel.UserModel.UserinfoModel;
+
+import com.ProtoModel.UserModel.Email;
+import com.ProtoModel.UserModel.Mobile;
+import com.ProtoModel.UserModel.Password;
+import com.ProtoModel.UserModel.Session;
+import com.ProtoModel.UserModel.User;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.varun.Api.EmailTableApi;
-import com.varun.Api.MobileTableApi;
-import com.varun.Api.PassTableApi;
-import com.varun.Api.SessionTableApi;
-import com.varun.Api.UserTableApi;
+import com.varun.Api.ApiProxy;
+import com.varun.Api.EmailApiImpl;
+import com.varun.Api.MobileApiImpl;
+import com.varun.Api.PasswordApiImpl;
+import com.varun.Api.SessionApiImpl;
+import com.varun.Api.UserApiImpl;
+import com.varun.Api.Interface.EmailApi;
+import com.varun.Api.Interface.MobileApi;
+import com.varun.Api.Interface.PasswordApi;
+import com.varun.Api.Interface.SessionApi;
+import com.varun.Api.Interface.UserApi;
 import com.varun.Model.AuditModel;
 import com.varun.Orm.OrmImp;
 
@@ -36,41 +43,42 @@ public class UserDao{
     	auditModel=new AuditModel((Integer)request.getAttribute("userid"),(String)request.getAttribute("sessionid"),request.getRemoteAddr());
 	}
 	
-	public UserinfoModel validate(String loginId,String password) throws ClassNotFoundException {
+	public User validate(String loginId,String password) throws ClassNotFoundException {
         logger.log(Level.INFO,"method called");
 		Integer userid=null;
 		OrmImp ormObj=new OrmImp(auditModel);
 		
-		UserTableApi userApi=new UserTableApi(ormObj);
-		PassTableApi passApi=new PassTableApi(ormObj);
-		UserinfoModel userDataObj=UserinfoModel.getDefaultInstance();
+		UserApi userApiImpl=new UserApiImpl(ormObj);
+		PasswordApi passApi=new PasswordApiImpl(ormObj);
+		User userDataObj=User.getDefaultInstance();
 		boolean isvalid=false;
 		String temp="$argon2i$v=19$m=500,t=1,p=1$";
 		
 		try{
 			//System.out.print(quer2);
-			PasswordModel passObj=passApi.getPassByloginid(loginId);
+			Password passObj=passApi.getPassByloginid(loginId);
 			if(passObj!=null){
 				String hash=temp+passObj.getPassSalt()+"$"+passObj.getPassHash();
 				isvalid=argon2.verify(hash,password);
-//				System.out.println("pass validity"+isvalid);
+                // System.out.println("pass validity"+isvalid);
 			}
 			//<-argon
             //if use and pass matching,then 
 
 			if(isvalid){	
 				userid=passObj.getUserId();
-				userDataObj=userApi.getUser(userid);
+				
+				userDataObj=userApiImpl.getUser(userid);
 				
 				//password policy check- 30days
 			    if(userDataObj!=null){
 			    	userDataObj=userDataObj.toBuilder()
-							   .setPassObj(passObj).build();
+							   .setPassObject(passObj).build();
 			    }
 			    ormObj.close();
                 return userDataObj;
 			}else{
-//				System.out.print("no record");
+                //System.out.print("no record");
 				ormObj.close();
                 return null;
 			}
@@ -86,34 +94,34 @@ public class UserDao{
 	public boolean registerUser(String name,String email,Long mobile,String pass){
         logger.log(Level.INFO,"method called");
 		OrmImp ormObj=new OrmImp(auditModel);
-		EmailTableApi emailApi=new EmailTableApi(ormObj);
-		MobileTableApi mobileApi=new MobileTableApi(ormObj);
+		EmailApi emailApiImpl=new EmailApiImpl(ormObj);
+		MobileApi mobileApi=new MobileApiImpl(ormObj);
 		try{
-		   boolean emailPresent=emailApi.checkEmail(email);
+			
+		   boolean emailPresent=emailApiImpl.checkEmail(email);
 		   boolean mobilePresent=mobileApi.checkMobile(mobile);
 
 		   System.out.println(emailPresent+":"+mobilePresent);
             //check if the mobile,email,user-pass match already exists
 			if(!emailPresent && !mobilePresent){
-				UserTableApi userApi=new UserTableApi(ormObj);
-				PassTableApi passApi=new PassTableApi(ormObj);
+				UserApi userApiImpl=new UserApiImpl(ormObj);
+				PasswordApi passApi=new PasswordApiImpl(ormObj);
 				
-				UserinfoModel user=UserinfoModel.newBuilder().setUserName(name).build();
+				User user=User.newBuilder().setUserName(name).build();
 				//insert userName
 				
 				ormObj.beginTransaction();
 
-				Integer uidGenerated=userApi.addUser(user);
+				Integer uidGenerated=userApiImpl.addUser(user);
 				System.out.println(uidGenerated);
 				if(uidGenerated!=null  && uidGenerated!=0){
-					System.out.println("uid----"+uidGenerated);
 					//insert hashed password
 				    String h=argon2.hash(1, 500, 1,pass);
 				    String[] hasharr=h.split("[$]");
 					passApi.addPass(uidGenerated,hasharr[hasharr.length-2],hasharr[hasharr.length-1]);
 					
 					//insert email
-					emailApi.addEmail(uidGenerated, email);
+					emailApiImpl.addEmail(uidGenerated, email);
 					
 					//insert mobile
 					mobileApi.addMobile(uidGenerated, mobile);
@@ -135,40 +143,43 @@ public class UserDao{
 		return false;
 	}
 	
-	public List<EmailModel> getEmail(Integer userid){
+	public List<Email> getEmail(Integer userid){
 		OrmImp ormObj=new OrmImp();
-		EmailTableApi emailApi=new EmailTableApi(ormObj);
-		return emailApi.getEmailById(userid);
+		EmailApi emailApiImpl=new EmailApiImpl(ormObj);
+		return emailApiImpl.getEmailById(userid);
 	}
 	
-	public List<MobileModel> getMobile(Integer userid){
+	public List<Mobile> getMobile(Integer userid){
 		OrmImp ormObj=new OrmImp();
-		MobileTableApi mobileApi=new MobileTableApi(ormObj);
+		MobileApi mobileApi=new MobileApiImpl(ormObj);
 		return mobileApi.getMobileById(userid);
 	}
 	
-	public SessionModel getSessionObject(String sessionid){
+	public Session getSessionObject(String sessionid){
         logger.log(Level.INFO,"method called");
 		OrmImp ormObj=new OrmImp();
-        SessionTableApi sessionApi=new SessionTableApi(ormObj);
-        SessionModel sessionObject=sessionApi.getObjectBySession(sessionid);
+        SessionApi sessionApi=new SessionApiImpl(ormObj);
+        Session sessionObject=sessionApi.getObjectBySession(sessionid);
 	    ormObj.close();
 	    return sessionObject;
 	}
 	
-	public UserinfoModel getUserById(Integer userId){
+	
+	//proxy 
+	public User getUserById(Integer userId){
         logger.log(Level.INFO,"method called");
-		OrmImp ormObj=new OrmImp();
-		UserTableApi userApi=new UserTableApi(ormObj);
-		UserinfoModel ud=userApi.getUser(userId);
-	    ormObj.close();
+		UserApi userApi=ApiProxy.getInstance().getUserApi();
+		User ud=userApi.getUser(userId);
 	    return ud;
 	}
+	
+	
+	//
 	
 	public boolean createSession(Integer userid,String sessionid){
         logger.log(Level.INFO,"method called");
 		OrmImp ormObj=new OrmImp(auditModel);
-        SessionTableApi sessionApi=new SessionTableApi(ormObj);
+        SessionApi sessionApi=new SessionApiImpl(ormObj);
         boolean isValid=sessionApi.createSession(userid, sessionid);
 		ormObj.close();
         return isValid;
@@ -177,7 +188,7 @@ public class UserDao{
 	public void deleteExpiredSessions(Integer uid){
         logger.log(Level.INFO,"method called");
 		OrmImp ormObj=new OrmImp(auditModel);
-        SessionTableApi sessionApi=new SessionTableApi(ormObj);
+        SessionApi sessionApi=new SessionApiImpl(ormObj);
         sessionApi.deleteExpiredSession(uid);
         ormObj.close();
 	}
@@ -185,36 +196,36 @@ public class UserDao{
 	public void sessionInvalidate(String sessionid){
         logger.log(Level.INFO,"method called");
 		OrmImp ormObj=new OrmImp(auditModel);
-        SessionTableApi sessionApi=new SessionTableApi(ormObj);
+        SessionApi sessionApi=new SessionApiImpl(ormObj);
         sessionApi.deleteSession(sessionid);
         ormObj.close();
     }
 	
-	public boolean updateProfile(UserinfoModel oldUserObject,UserinfoModel newUserObject) throws JsonProcessingException{
+	public boolean updateProfile(User oldUserObject,User newUserObject) throws JsonProcessingException{
 		OrmImp ormObj=new OrmImp(auditModel);
-		UserTableApi userApi=new UserTableApi(ormObj);
-		EmailTableApi emailApi=new EmailTableApi(ormObj);
-		MobileTableApi mobileApi=new MobileTableApi(ormObj);
+		UserApi userApiImpl=new UserApiImpl(ormObj);
+		EmailApi emailApiImpl=new EmailApiImpl(ormObj);
+		MobileApi mobileApi=new MobileApiImpl(ormObj);
 
 		boolean isUpdated=false;
 		if(newUserObject.getUserName()!="" || 
 		   newUserObject.getCountry() !="" || 
 				newUserObject.getGender()!=""){
 			           System.out.println("ud up"+newUserObject.getUserName());
-			           isUpdated=userApi.updateUserinfo(oldUserObject,newUserObject);
+			           isUpdated=userApiImpl.updateUser(oldUserObject,newUserObject);
 		}
         logger.log(Level.INFO,"p Dao after");
-		for(int i=0;i<oldUserObject.getEmailObjCount();i++){
+		for(int i=0;i<oldUserObject.getEmailObjectCount();i++){
 			    //if old email not equal to new
-				if(!oldUserObject.getEmailObj(i).getEmailid().equals(newUserObject.getEmailObj(i).getEmailid())){
-			            isUpdated=emailApi.updateEmail(oldUserObject.getEmailObj(i),newUserObject.getEmailObj(i));
+				if(!oldUserObject.getEmailObject(i).getEmailid().equals(newUserObject.getEmailObject(i).getEmailid())){
+			            isUpdated=emailApiImpl.updateEmail(oldUserObject.getEmailObject(i),newUserObject.getEmailObject(i));
 				}
 		}
-		for(int i=0;i<oldUserObject.getMobileObjCount();i++){
+		for(int i=0;i<oldUserObject.getMobileObjectCount();i++){
 		        //if old mobile not equal to new
-				if(oldUserObject.getMobileObj(i).getMobileno()!=newUserObject.getMobileObj(i).getMobileno()) {
+				if(oldUserObject.getMobileObject(i).getMobileno()!=newUserObject.getMobileObject(i).getMobileno()) {
 		            logger.log(Level.INFO,"p Dao mobile update before");
-		            isUpdated=mobileApi.updateMobile(oldUserObject.getMobileObj(i),newUserObject.getMobileObj(i));
+		            isUpdated=mobileApi.updateMobile(oldUserObject.getMobileObject(i),newUserObject.getMobileObject(i));
 		            logger.log(Level.INFO,"p Dao mobile update after");
 				}
 		}
@@ -225,16 +236,17 @@ public class UserDao{
 	public boolean addNewPass(Integer id,String oldpass,String newpass) throws JsonProcessingException{
         logger.log(Level.INFO,"method called");
 		OrmImp ormObj=new OrmImp(auditModel);
-		PassTableApi passApi=new PassTableApi(ormObj);
-		PasswordModel oldPassobj=null;
+		PasswordApi passApi=new PasswordApiImpl(ormObj);
+		Password oldPassobj=null;
 
 		String temp="$argon2i$v=19$m=500,t=1auditModel,p=1$";
 		boolean isdub=false,iscurpass=false;
 		String hash="";
 		
 		//check if new pass already exist
-		List<PasswordModel> passObjList=passApi.getAllPassById(id);
-		for(PasswordModel u:passObjList){
+		List<Password> passObjList=passApi.getAllPassById(id);
+		for(Password u:passObjList){
+			Password ad=null;;
 			hash=temp+u.getPassSalt()+"$"+u.getPassHash();
 			System.out.println(" new pass check "+argon2.verify(hash, newpass)+" ");
 			isdub=argon2.verify(hash,newpass);
@@ -244,7 +256,7 @@ public class UserDao{
 		}
 		//check if old pass is current pass
 		if(isdub==false){
-			for(PasswordModel passwordObj:passObjList){
+			for(Password passwordObj:passObjList){
 				//current pass in db
 				if(passwordObj.getPassStatus()==1){
 					hash=temp+passwordObj.getPassSalt()+"$"+passwordObj.getPassHash();
@@ -260,7 +272,7 @@ public class UserDao{
 			if(iscurpass==true){
 			    String h=argon2.hash(1, 500, 1,newpass);
 
-				PasswordModel newPassobj=PasswordModel.newBuilder().setPassStatus(0).build();
+				Password newPassobj=Password.newBuilder().setPassStatus(0).build();
 				
 				passApi.updatePassById(oldPassobj,newPassobj,id);
 				
@@ -275,6 +287,6 @@ public class UserDao{
     }
 	public static void main(String args[]) throws ClassNotFoundException{
 		UserDao obj=new UserDao();
-		System.out.println(obj.validate("varunsashi@gmail.com", "Varun@123").getEmailObj(0).getEmailid());
+		System.out.println(obj.validate("varunsashi@gmail.com", "Varun@123").getEmailObject(0).getEmailid());
 	}
 }

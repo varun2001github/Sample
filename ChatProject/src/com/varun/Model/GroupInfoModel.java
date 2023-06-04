@@ -25,7 +25,7 @@ public class GroupInfoModel extends DataObject{
 		modif_time;
     }
 	
-/////
+////
 
 	public GroupInfoModel(HashMap<String,Object> map){
 		this.map=map;

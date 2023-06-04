@@ -18,7 +18,7 @@ import javax.servlet.http.HttpSession;
 
 import org.json.JSONObject;
 
-import com.ProtoModel.UserModel.UserinfoModel;
+import com.ProtoModel.UserModel.User;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.varun.Dao.LRUCache;
 import com.varun.Dao.UserDao;
@@ -71,7 +71,7 @@ public class AuthenticationServlet extends HttpServlet{
 	private void Login(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		System.out.println("Getting here....login"); 
 		HttpSession session=request.getSession();
-		UserinfoModel userDataObj=null;
+		User userDataObj=null;
 		try{      
 		          UserDao dao=new UserDao();
 				  String userId=request.getParameter("name");
@@ -90,6 +90,7 @@ public class AuthenticationServlet extends HttpServlet{
 //				  }else{
 //					  loginidmatch=emailpat.matcher(pass).matches();
 //				  }
+		          
 				  loginidmatch=true;
 				  passmatch=true;
 				  if(loginidmatch && passmatch){
@@ -98,7 +99,7 @@ public class AuthenticationServlet extends HttpServlet{
 			        	System.out.println("dao ret"+userDataObj);
 						if(userDataObj!=null){
 							
-								long passCreatedTime=userDataObj.getPassObj().getCreatedTime();
+								long passCreatedTime=userDataObj.getPassObject().getCreatedTime();
 								long usedDays = TimeUnit.MILLISECONDS.toDays(System.currentTimeMillis()-passCreatedTime);
 								System.out.println("used days "+usedDays);
 								

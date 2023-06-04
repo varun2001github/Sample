@@ -6,24 +6,30 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.ProtoModel.UserModel.PasswordModel;
+import com.ProtoModel.UserModel.Password;
+import com.varun.Api.Interface.PasswordApi;
 import com.varun.Model.DataObject;
 import com.varun.Orm.CriteriaBuilder;
 import com.varun.Orm.OrmImp;
 import com.varun.Orm.ProtoMapper;
 
-public class PassTableApi{
-	private static final Logger logger=Logger.getLogger(PassTableApi.class.getName());
-	private static PasswordModel passObject=PasswordModel.getDefaultInstance();
+public class PasswordApiImpl implements PasswordApi{
+	private static final Logger logger=Logger.getLogger(PasswordApiImpl.class.getName());
+	private static Password passObject=Password.getDefaultInstance();
 	private static String Table="user_pass";
 	private static CriteriaBuilder c=new CriteriaBuilder();
 	private OrmImp orm;
     
-    public PassTableApi(OrmImp obj){
+    public PasswordApiImpl(OrmImp obj){
 	   this.orm=obj;
     }
     
-    public PasswordModel getPassById(Integer uid){
+    public PasswordApiImpl(){
+ 	   this.orm=new OrmImp();
+     }
+     
+    @Override
+	public Password getPassById(Integer uid){
         logger.log(Level.INFO,"inside "+uid);
     	//query formation
     	try{
@@ -33,7 +39,7 @@ public class PassTableApi{
         	List<DataObject> selectList=orm.getSelect();
             logger.log(Level.INFO,"got select list,list size="+selectList.size());
         	if(selectList.size()>0){
-            	return (PasswordModel)ProtoMapper.getProtoObject(PasswordModel.newBuilder(),selectList.get(0));
+            	return (Password)ProtoMapper.getProtoObject(Password.newBuilder(),selectList.get(0));
         	}
     	}catch(Exception e){
 	        logger.log(Level.WARNING,"unexpected",e);
@@ -41,7 +47,8 @@ public class PassTableApi{
     	return null;
     }
     
-    public PasswordModel getPassByloginid(String loginid){
+    @Override
+	public Password getPassByloginid(String loginid){
     	System.out.println(loginid);
         logger.log(Level.INFO,"inside "+loginid);
     	//query formation
@@ -65,7 +72,7 @@ public class PassTableApi{
         	List<DataObject> selectList=orm.getSelect();
             logger.log(Level.INFO,"got select list,list size="+selectList.size());
         	if(selectList.size()>0){
-            	return (PasswordModel)ProtoMapper.getProtoObject(PasswordModel.newBuilder(),selectList.get(0));
+            	return (Password)ProtoMapper.getProtoObject(Password.newBuilder(),selectList.get(0));
         	}
     	}catch(Exception e){
 	        logger.log(Level.WARNING,"unexpected",e);
@@ -73,7 +80,8 @@ public class PassTableApi{
     	return null;
     }
     
-    public List<PasswordModel> getAllPassById(Integer uid){
+    @Override
+	public List<Password> getAllPassById(Integer uid){
         logger.log(Level.INFO,"inside "+uid);
     	//query formation
     	try{
@@ -81,11 +89,11 @@ public class PassTableApi{
     		orm.SelectAll().From(Table)
         	.Where(c.addEquals("user_id",uid));
         	List<DataObject> dataList=orm.getSelect();
-        	List<PasswordModel> selectList=null;
+        	List<Password> selectList=null;
         	if(dataList.size()>0) {
-        		selectList=new ArrayList<PasswordModel>();
+        		selectList=new ArrayList<Password>();
             	for(DataObject object:dataList){
-            		selectList.add((PasswordModel)ProtoMapper.getProtoObject(PasswordModel.newBuilder(),object));
+            		selectList.add((Password)ProtoMapper.getProtoObject(Password.newBuilder(),object));
             	}
             	logger.log(Level.INFO,"got select lists,list size="+selectList.size());
                 return selectList;
@@ -96,8 +104,9 @@ public class PassTableApi{
     	return null;
     }
     
-    public boolean addPass(Integer userid,String passSalt,String passHash){
-    	passObject=PasswordModel.newBuilder()
+    @Override
+	public boolean addPass(Integer userid,String passSalt,String passHash){
+    	passObject=Password.newBuilder()
     			.setUserId(userid)
     			.setPassSalt(passSalt)
     			.setPassHash(passHash).build();
@@ -110,7 +119,8 @@ public class PassTableApi{
     	return false;
     }
     
-    public boolean updatePassById(PasswordModel oldObj,PasswordModel newObj,Integer uid){
+    @Override
+	public boolean updatePassById(Password oldObj,Password newObj,Integer uid){
     	boolean returned=orm.UpdateQuery(ProtoMapper.getDataObject(oldObj),ProtoMapper.getDataObject(newObj))
     			         .Where(c.addEquals("user_id",uid)).update();
     	if(returned){

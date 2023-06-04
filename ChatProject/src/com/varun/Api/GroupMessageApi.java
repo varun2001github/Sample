@@ -10,45 +10,45 @@ import com.varun.Model.*;
 import com.varun.Orm.CriteriaBuilder;
 import com.varun.Orm.OrmImp;
 
-public class groupMessageTableApi{
+public class GroupMessageApi{
 	private MessagesModel messageObj=null;
 	private OrmImp ormObj=new OrmImp();
-	private static final Logger logger=Logger.getLogger(groupMessageTableApi.class.getName());
+	private static final Logger logger=Logger.getLogger(GroupMessageApi.class.getName());
 	private CriteriaBuilder cb=new CriteriaBuilder();
 	private static String Table="group_messages";
 	
-	public groupMessageTableApi(){
+	public GroupMessageApi(){
 	}
 	
-	public groupMessageTableApi(OrmImp obj){
+	public GroupMessageApi(OrmImp obj){
 		this.ormObj=obj;
 	}
 	
 	public List<GroupMessagesModel> getGroupMsg(Integer groupid){
         logger.log(Level.INFO,"method called");
         try{
-       	CriteriaBuilder cbNested=new CriteriaBuilder();
-   		ormObj.SelectQuery("senderid","text","chattime").From(Table)
-   		.Where(cb.addEquals("groupid",groupid));
-   		
-   		 
-		List<DataObject> dataList=ormObj.getSelect();
-   	    List<GroupMessagesModel> l=null;
-   	    GroupMessagesModel groupMessages=null;
-   	    if(dataList.size()>0){
-   	    	System.out.println("got");
-          	l=new ArrayList<GroupMessagesModel>();
-         	for(DataObject object:dataList){
-         		l.add(new GroupMessagesModel(object.getDataMap()));
-         	}
-   	    }
-   	   	return l;
+	       	CriteriaBuilder cbNested=new CriteriaBuilder();
+	   		ormObj.SelectQuery("senderid","text","chattime").From(Table)
+	   		.Where(cb.addEquals("groupid",groupid));
+	   		 
+			List<DataObject> dataList=ormObj.getSelect();
+	   	    List<GroupMessagesModel> l=null;
+	   	    GroupMessagesModel groupMessages=null;
+	   	    if(dataList.size()>0){
+	   	    	System.out.println("got");
+	          	l=new ArrayList<GroupMessagesModel>();
+	         	for(DataObject object:dataList){
+	         		l.add(new GroupMessagesModel(object.getDataMap()));
+	         	}
+	   	    }
+	   	   	return l;
 	   	}catch(Exception e){
 		     logger.log(Level.WARNING,"unexpected",e);
 	   	}
 		return null;
    }
-	public boolean addGroupMessage(Integer senderid,Integer groupid,String text){
+	
+   public boolean addGroupMessage(Integer senderid,Integer groupid,String text){
         logger.log(Level.INFO,"method called");
         GroupMessagesModel messageObj=new GroupMessagesModel();
         try{
@@ -66,7 +66,7 @@ public class groupMessageTableApi{
  		 return false;
 	}
    public static void main(String args[]){
-	   groupMessageTableApi go=new groupMessageTableApi();
+	   GroupMessageApi go=new GroupMessageApi();
 	   List<GroupMessagesModel> ob=go.getGroupMsg(4);
 	   System.out.println(ob);
 	   if(ob!=null) {

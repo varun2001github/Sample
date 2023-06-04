@@ -9,26 +9,27 @@ import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import com.ProtoModel.UserModel.EmailModel;
-import com.varun.Api.EmailTableApi;
+import com.ProtoModel.UserModel.Email;
+import com.varun.Api.EmailApiImpl;
+import com.varun.Api.Interface.EmailApi;
 import com.varun.Model.AuditModel;
 import com.varun.Orm.OrmImp;
 
 public class EmailsApiTest{
 	private OrmImp orm=new OrmImp(new AuditModel());
-	private EmailTableApi emailApi=new EmailTableApi(orm);
+	private EmailApi emailApiImpl=new EmailApiImpl(orm);
     
 	@ParameterizedTest
     @MethodSource("com.varun.JUnitTest.TestCase#checkEmailTestCase")
 	public void checkEmailTest(String email,Boolean isValid){
-		assertEquals(isValid,emailApi.checkEmail(email));
+		assertEquals(isValid,emailApiImpl.checkEmail(email));
 	}
 	
 	
 	@ParameterizedTest
     @MethodSource("com.varun.JUnitTest.TestCase#getIdByEmailTestCase")
 	public void getIdByEmailTest(String email,Integer uid){
-		assertEquals(uid,emailApi.getIdByEmail(email));
+		assertEquals(uid,emailApiImpl.getIdByEmail(email));
 	}
 
 	
@@ -36,17 +37,17 @@ public class EmailsApiTest{
     @MethodSource("com.varun.JUnitTest.TestCase#getEmailByIdTestCase")
 	public void getEmailByIdTest(Integer uid,String expectedEmail){
 		if(expectedEmail!=null){
-			assertNotNull(emailApi.getEmailById(uid));
+			assertNotNull(emailApiImpl.getEmailById(uid));
 		}else{
-			assertNull(emailApi.getEmailById(uid));
+			assertNull(emailApiImpl.getEmailById(uid));
 		}
 	}
 	
 	@ParameterizedTest
     @MethodSource("com.varun.JUnitTest.TestCase#updateEmailTestCase")
-	public void updateEmail(EmailModel oldEmail,EmailModel newEmail,Boolean expected){
+	public void updateEmail(Email oldEmail,Email newEmail,Boolean expected){
 		orm.beginTransaction();
-		assertEquals(expected,emailApi.updateEmail(oldEmail,newEmail));
+		assertEquals(expected,emailApiImpl.updateEmail(oldEmail,newEmail));
 		orm.rollback();
 	}
 	
@@ -54,7 +55,7 @@ public class EmailsApiTest{
     @MethodSource("com.varun.JUnitTest.TestCase#InsertEmailTestCase")
 	public void insertEmail(Integer userId,String email,Boolean expected){
 		orm.beginTransaction();
-		assertEquals(expected,emailApi.addEmail(userId, email));
+		assertEquals(expected,emailApiImpl.addEmail(userId, email));
 		orm.rollback();
 	}
 	
