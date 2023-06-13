@@ -43,7 +43,7 @@ public class UserDao{
     	auditModel=new AuditModel((Integer)request.getAttribute("userid"),(String)request.getAttribute("sessionid"),request.getRemoteAddr());
 	}
 	
-	public User validate(String loginId,String password) throws ClassNotFoundException {
+	public User validate(String loginId,String password) throws ClassNotFoundException{
         logger.log(Level.INFO,"method called");
 		Integer userid=null;
 		OrmImp ormObj=new OrmImp(auditModel);

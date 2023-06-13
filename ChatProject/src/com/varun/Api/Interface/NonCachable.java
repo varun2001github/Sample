@@ -5,5 +5,5 @@ import java.util.List;
 import com.ProtoModel.UserModel.Email;
 import com.ProtoModel.UserModel.User;
 
-public interface CachableApi extends CachableUserApi,CachableEmailApi,CachableMobileApi,CachablePasswordApi,CachableSessionApi{
+public interface NonCachable{
 }

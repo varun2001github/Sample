@@ -16,7 +16,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.json.JSONObject;
 
-import com.varun.Dao.LRUCache;
+import com.varun.cache.LRUCache;
 
 public class WeatherServlet extends HttpServlet{
 	private static final long serialVersionUID = 1L;

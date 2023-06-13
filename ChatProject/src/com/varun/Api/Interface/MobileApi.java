@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.ProtoModel.UserModel.Mobile;
 
-public interface MobileApi extends CachableMobileApi{
+public interface MobileApi extends NonCachable,CachableMobileApi{
 
 	boolean addMobile(Integer uid, Long mobile);
 

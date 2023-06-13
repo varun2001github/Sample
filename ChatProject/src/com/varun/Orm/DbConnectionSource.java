@@ -40,11 +40,11 @@ public class DbConnectionSource{
 		Connection con=null;
 		try {
 			con = dataSource.getConnection();
-		} catch (SQLException e) {
+		}catch(SQLException e){
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+	        logger.log(Level.WARNING,"dataSource connection object returned ");
 		}
-        logger.log(Level.INFO,"dataSource connection object returned ");
 		return con;	
 		
 	}

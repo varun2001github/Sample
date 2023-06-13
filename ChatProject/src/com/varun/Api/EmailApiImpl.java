@@ -28,9 +28,9 @@ public class EmailApiImpl implements EmailApi {
 	}
 	
 	public EmailApiImpl(){
-		try {
+		try{
 			this.ormObj=new OrmImp();
-		}catch (Exception e){
+		}catch(Exception e){
 			// TODO Auto-generated catch block
 	        logger.log(Level.WARNING,"constructor",e);
 		}
@@ -169,7 +169,7 @@ public class EmailApiImpl implements EmailApi {
     	 }catch(Exception e){
 	        logger.log(Level.WARNING,"unexpected",e);
     	 }
-		return null;
+		 return null;
     }
 	public static void main(String args[]){
 		EmailApi ap=new EmailApiImpl(new OrmImp());

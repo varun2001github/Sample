@@ -3,7 +3,7 @@ package com.varun.Api.Interface;
 
 import com.ProtoModel.UserModel.Session;
 
-public interface SessionApi extends CachableSessionApi{
+public interface SessionApi extends NonCachable,CachableSessionApi{
 
 	boolean createSession(Integer userid, String sessionid);
 

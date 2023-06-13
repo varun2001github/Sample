@@ -20,11 +20,11 @@ import org.json.JSONObject;
 
 import com.ProtoModel.UserModel.User;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.varun.Dao.LRUCache;
 import com.varun.Dao.UserDao;
 import com.varun.Logger.LoggerUtil;
 import com.varun.Security.CookieEncrypt;
 import com.varun.Security.SessionidGenerator;
+import com.varun.cache.LRUCache;
 
 /**
  * Servlet implementation class AuthenticationServlet

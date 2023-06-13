@@ -31,10 +31,8 @@ public class OrmImp{
 		this.auditModelObject=new AuditModel();
 		try{
 			con=DbConnectionSource.getConnection();
-	        logger.log(Level.INFO,"ORM Db con from datasource");
 		}catch(Exception e){
 			// TODO Auto-generated catch block
-	        logger.log(Level.WARNING,"db con exception"+e);
 	        e.printStackTrace();
 	    }
 	}
@@ -43,7 +41,6 @@ public class OrmImp{
     	this.auditModelObject=auditModelObject;
     	try{
 			con=DbConnectionSource.getConnection();
-	        logger.log(Level.INFO,"ORM Db con from datasource");
 		}catch(Exception e){
 			// TODO Auto-generated catch block
 	        logger.log(Level.WARNING,"db con exception"+e);
@@ -54,7 +51,6 @@ public class OrmImp{
 		try{
 			this.con.close();
 			stmt.close();
-	        logger.log(Level.INFO,"ORM Db con closed");
 		}catch(SQLException e){
 			// TODO Auto-generated catch block
 	        logger.log(Level.WARNING,"ORM Db con not closed "+e);
@@ -148,7 +144,6 @@ public class OrmImp{
 	 	 
 	     query+=keyval;
 		 this.query=query;
-         logger.log(Level.INFO,"Update Query created "+query);
 		 return this;
 	}
     
@@ -164,24 +159,22 @@ public class OrmImp{
    			  counter=1;
          }
 //       System.out.println(query);
-         logger.log(Level.INFO,"SelectQuery(...) "+query);
       	 return this;
     }
     
     public OrmImp SelectAll(){
    	    query+="SELECT * ";
-        logger.log(Level.INFO,"SelectAll quer :"+query);
       	return this;
     }
     
     public List<DataObject> getSelect(){
 		List<DataObject> l=new ArrayList<DataObject>();
-        logger.log(Level.INFO,"select Query: "+query);
+		System.out.println(query);
 		try{
 			stmt = con.prepareStatement(query,ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY);
 			ResultSet rs=stmt.executeQuery();
 			if(rs.next()){
-		        logger.log(Level.INFO,"result set avl") ;
+//		        logger.log(Level.INFO,"result set avl") ;
 				ResultSetMetaData meta = rs.getMetaData();
 			    rs.beforeFirst();
 			    int colcount=meta.getColumnCount(); 
@@ -222,7 +215,6 @@ public class OrmImp{
 	    String query="INSERT INTO "+tableName,col="(",val="(";
 	    int counter=0;
 	    HashMap<String, Object> newMapAudit=new HashMap<>();
-        logger.log(Level.INFO,"Insert Query: "+query);
         String key="";
         Object value="";
         
@@ -266,7 +258,6 @@ public class OrmImp{
     }
 	
 	public Integer Insert(){
-		logger.log(Level.INFO,"Insert Query is "+query);
 //	    System.out.println(query);
 		try{
             int rowsInserted;
@@ -286,7 +277,7 @@ public class OrmImp{
 	                	return 0;
     			}
     			
-    	        logger.log(Level.INFO,"row inserted.No. of inserts "+rowsInserted);
+//    	        logger.log(Level.INFO,"row inserted.No. of inserts "+rowsInserted);
             	if(id.next()){
 	                	uid=id.getInt(1);
 	        	        logger.log(Level.INFO,"New id generated id="+uid);
@@ -296,23 +287,22 @@ public class OrmImp{
 	                	return 0;
                 }
             }
-    	    logger.log(Level.INFO,"No row inserted. No. of inserts "+rowsInserted);
             
          }catch(SQLException e){
 			// TODO Auto-generated catch block
-		    logger.log(Level.WARNING," Sql ",e);
+//		    logger.log(Level.WARNING," Sql ",e);
 		 }catch(Exception e) {
 			 e.printStackTrace();
 		 }
-        logger.log(Level.INFO,"Insert Query ret null");
+        this.query="";
 		return  null;
 	}
 	
     public boolean update(){
-         logger.log(Level.INFO,"update() called. Update Query is "+query);
 
     	 try{
 	 		stmt = con.prepareStatement(query);
+	 		
 			int rowsAffected=stmt.executeUpdate();
             this.query="";
 
@@ -328,7 +318,7 @@ public class OrmImp{
 			}
 		 }catch (SQLException e){
 			// TODO Auto-generated catch block
-		    logger.log(Level.WARNING," Sql ",e);
+//		    logger.log(Level.WARNING," Sql ",e);
 		 }
          this.query="";
 	     return false;
@@ -346,12 +336,10 @@ public class OrmImp{
     	}
     	deleteAuditTable=table;
     	this.query=query;
-        logger.log(Level.INFO,"Query created "+query);
     	return this;
     }
     
     public boolean delete(){
-         logger.log(Level.INFO,"delete() called.delete Query is "+query);
          System.out.println("-----del query-------"+query);
          List<DataObject> deleteAuditList=null;
        	 try{
@@ -394,7 +382,6 @@ public class OrmImp{
     
 	public <T extends CommonMethod> OrmImp InnerJoin(String Table,CriteriaBuilder cb){
     	query+=" INNER JOIN "+Table+cb.getCriteria();
-        logger.log(Level.INFO," inner join concat "+query);
         return this;
     }
 	
@@ -409,7 +396,6 @@ public class OrmImp{
     	}
     	query+=" WHERE "+criteria;
 
-        logger.log(Level.INFO," WHERE concat "+criteria);
         return this;
     }
     
@@ -421,7 +407,6 @@ public class OrmImp{
     	}
 		query+="AND "+criteria;
 
-        logger.log(Level.INFO," AND concat "+criteria);
       	return this;
     }
     
@@ -433,12 +418,10 @@ public class OrmImp{
     	}
 		query+=" OR "+criteria;
 
-        logger.log(Level.INFO," OR concat "+criteria);
       	return this;
     }
     public OrmImp From(String table){
     	query+=" FROM "+table;
-        logger.log(Level.INFO," FROM concat "+table);
     	return this;
     }
 //    public <t extends CommonMethod> OrmImp From(t obj){
@@ -448,12 +431,10 @@ public class OrmImp{
 //    }
     public OrmImp As(String alias){
     	query+="AS "+alias;
-        logger.log(Level.INFO," AS "+alias);
     	return this;
     }
     public OrmImp OrderBy(String column){
     	query+=" ORDER BY "+column;
-        logger.log(Level.INFO," OrderBy concat "+column);
     	return this;
     }
     public void clearQuery() {

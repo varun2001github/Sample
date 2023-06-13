@@ -17,8 +17,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.ProtoModel.UserModel.Session;
 import com.ProtoModel.UserModel.User;
-import com.varun.Dao.LRUCache;
 import com.varun.Dao.UserDao;
+import com.varun.cache.LRUCache;
 
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
@@ -58,7 +58,6 @@ public class SessionAuthFilter implements Filter{
 				       		System.out.println("cookie avl"+sessionid);
 		               }
 				    }
-			       
 			        if(sessionid!=null){
 			        	UserDao dao=new UserDao();
 //			        	UserinfoModel.Builder userBuilder=null;
@@ -68,7 +67,6 @@ public class SessionAuthFilter implements Filter{
 			        	if(userObject==null){
 			        		userObject=User.getDefaultInstance();
 			        	}
-			        	
                         //Get Session Object from redis/db
 			       	    if(jedis.get(sessionid.getBytes())!=null){
 			       	    	System.out.println("---session validate from redis cache---");

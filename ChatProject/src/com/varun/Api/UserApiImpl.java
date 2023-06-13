@@ -1,6 +1,7 @@
 package com.varun.Api;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
@@ -25,7 +26,6 @@ public class UserApiImpl implements UserApi{
     	ormFlag=1;
 		try{
 			this.orm=ob;
-   	    	logger.log(Level.INFO,"constructor");
 		}catch(Exception e){
 			// TODO Auto-generated catch block
    	    	logger.log(Level.WARNING," constructor ",e);
@@ -35,11 +35,14 @@ public class UserApiImpl implements UserApi{
     public UserApiImpl(){
 		try{
 			this.orm=new OrmImp();
-   	    	logger.log(Level.INFO,"constructor");
 		}catch(Exception e){
 			// TODO Auto-generated catch block
    	    	logger.log(Level.WARNING," constructor ",e);
 		}
+    }
+    
+    public String getString() {
+    	return "varun";
     }
     
     @Override
@@ -56,62 +59,44 @@ public class UserApiImpl implements UserApi{
 	    logger.log(Level.INFO," query generated ");
 	    List<DataObject> dataList=orm.getSelect();
 	    
-		for(Map.Entry<String, Object> entry : dataList.get(0).getDataMap().entrySet()){
-		    System.out.println(entry.getKey()+" = "+entry.getValue());
-		}
-		
     	if(dataList.size()>0){
    	       logger.log(Level.INFO,"select list available");
    	       User user=(User)ProtoMapper.getProtoObject(User.newBuilder(),dataList.get(0));
    	       user=user.toBuilder().addAllMobileObject(mobileApi.getMobileById(userid))
 		                     .addAllEmailObject(emailApiImpl.getEmailById(userid)).build();
-   	       if(ormFlag==0){
-   	    	   orm.close();
-   	       }
+   	       
     	   return user;
     	}
     	return null;
     }
     
-    public Boolean getBoolean(){
-    	return true;
-    }
-    public int getInt(){
-    	int i=12;
-    	return i;
-    }
-    public void print() {
-    	System.out.println("printing");
-    }
-    //proto 
     @Override
-	public User getUserSample(Integer userid){
-	    logger.log(Level.INFO,"id passed "+userid);
+    public User getUser(String emailId){
+    	EmailApi emailApiImpl=new EmailApiImpl();
+    	Integer userId=emailApiImpl.getIdByEmail(emailId);
+    	logger.log(Level.INFO,"id passed "+userId);
 
     	//query formation
     	orm.SelectAll().From(Table)
-    	.Where(c.addEquals("user_id",userid));
+    	.Where(c.addEquals("user_id",userId));
     	
-    	EmailApi emailApiImpl=new EmailApiImpl(orm);
 		MobileApi mobileApi=new MobileApiImpl(orm);
 		
 	    logger.log(Level.INFO," query generated ");
 	    List<DataObject> dataList=orm.getSelect();
 	    
-		for(Map.Entry<String, Object> entry : dataList.get(0).getDataMap().entrySet()){
-		    System.out.println(entry.getKey()+" = "+entry.getValue());
-		}
     	if(dataList.size()>0){
    	       logger.log(Level.INFO,"select list available");
-   	      
    	       User user=(User)ProtoMapper.getProtoObject(User.newBuilder(),dataList.get(0));
-   	       user=user.toBuilder().addAllMobileObject(mobileApi.getMobileById(userid))
-		                     .addAllEmailObject(emailApiImpl.getEmailById(userid)).build();
+   	       user=user.toBuilder().addAllMobileObject(mobileApi.getMobileById(userId))
+		                     .addAllEmailObject(emailApiImpl.getEmailById(userId)).build();
+   	       
     	   return user;
     	}
+    	
     	return null;
     }
-    
+        
     @Override
 	public List<User> fetchChatList(Integer uid){
     	orm.SelectQuery("user_id","user_name").From(Table).Where(c.addNotEquals("user_id",uid));
@@ -128,6 +113,32 @@ public class UserApiImpl implements UserApi{
     }
     
     @Override
+    public HashMap<Integer, User> getUsers(List<Integer> userIds){
+    	HashMap<Integer, User> result = new HashMap<Integer, User>();
+    	for(Integer userid : userIds){
+    		orm.SelectAll().From(Table)
+        	.Where(c.addEquals("user_id",userid));
+        	
+        	EmailApi emailApiImpl=new EmailApiImpl(orm);
+    		MobileApi mobileApi=new MobileApiImpl(orm);
+    		
+    	    logger.log(Level.INFO," query generated");
+    	    List<DataObject> dataList=orm.getSelect();
+    	    
+        	if(dataList.size()>0){
+       	       logger.log(Level.INFO,"select list available");
+       	       User user=(User)ProtoMapper.getProtoObject(User.newBuilder(),dataList.get(0));
+       	       user=user.toBuilder().addAllMobileObject(mobileApi.getMobileById(userid))
+    		                     .addAllEmailObject(emailApiImpl.getEmailById(userid)).build();
+       	       
+        	   result.put(userid, user);
+        	}
+        	result.put(userid, null);
+    	}
+    	return result.isEmpty()? null : result;
+    }
+    
+    @Override
 	public boolean updateUser(User oldObj,User newObj){
 	    logger.log(Level.INFO,"METHOD CALLED");
     	orm.UpdateQuery(ProtoMapper.getDataObject(oldObj),ProtoMapper.getDataObject(newObj))
@@ -140,26 +151,14 @@ public class UserApiImpl implements UserApi{
     @Override
 	public Integer addUser(User userObject){
     	orm.InsertQuery(ProtoMapper.getDataObject(userObject));
-    	System.out.println(orm.getQuery());
     	Integer id=orm.Insert();
-	    logger.log(Level.INFO,"object inserted");
     	return id;
     }
     
     public static void main(String[] args){
     	OrmImp orm=new OrmImp();
     	UserApi ap=new UserApiImpl(orm);
-    	User userModel=ap.getUserSample(1);
+    	User userModel=ap.getUser(1);
     	System.out.println("Select list !?->> "+userModel.getUserId()+" , "+userModel.getUserName()+": "+userModel.getEmailObjectList().size());
-
-//    	List<User> userList=ap.fetchChatList(1);
-//    	for(User userModel:userList){
-//        	System.out.println("Select list -> "+userModel.getUserId()+" , "+userModel.getUserName());
-//    	}
-//    	orm.beginTransaction();
-//    	User userModel= User.newBuilder().setUserName("varun").setCreatedTime(System.currentTimeMillis()).build();
-//    	Integer isUpdated=ap.addUser(userModel);
-//    	System.out.println(isUpdated);
-//    	orm.close();
     }
 }

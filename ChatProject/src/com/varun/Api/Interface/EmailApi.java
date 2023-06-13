@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.ProtoModel.UserModel.Email;
 
-public interface EmailApi extends  CachableEmailApi{
+public interface EmailApi extends NonCachable,CachableEmailApi{
 
 	Boolean addEmail(Integer uid, String email);
 

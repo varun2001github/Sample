@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.ProtoModel.UserModel.Password;
 
-public interface PasswordApi extends CachablePasswordApi{	
+public interface PasswordApi extends NonCachable,CachablePasswordApi{	
 
 	boolean addPass(Integer userid, String passSalt, String passHash);
 
